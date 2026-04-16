@@ -1,65 +1,57 @@
-import Image from "next/image";
+import Navbar from "@/components/sections/Navbar";
+import Hero from "@/components/sections/Hero";
+import PromoCards from "@/components/sections/PromoCards";
+import CreditSimulator from "@/components/sections/CreditSimulator";
+import TrustSection from "@/components/sections/TrustSection";
+import KopiAssistant from "@/components/sections/KopiAssistant";
+import CarCarousel from "@/components/sections/CarCarousel";
+import TipsVideos from "@/components/sections/TipsVideos";
+import HowItWorks from "@/components/sections/HowItWorks";
+import Reviews from "@/components/sections/Reviews";
+import CarTypes from "@/components/sections/CarTypes";
+import BlogSection from "@/components/sections/BlogSection";
+import SearchFilters from "@/components/sections/SearchFilters";
+import Footer from "@/components/sections/Footer";
+import type { CarCard } from "@/components/sections/CarCarousel";
 
-export default function Home() {
+const bestSellers: CarCard[] = [
+  { id: 1, name: "Chevrolet Aveo", variant: "1.5 LT A", price: 152999, monthly: 3025, year: 2020, image: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=448&h=256&fit=crop&auto=format" },
+  { id: 2, name: "MG ZS", variant: "1.5 EXCITE AUTO", price: 205999, monthly: 4109, year: 2022, image: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=448&h=256&fit=crop&auto=format" },
+  { id: 3, name: "MG MG3", variant: "1.5 EXCITE CVT", price: 169999, monthly: 3212, year: 2021, image: "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=448&h=256&fit=crop&auto=format" },
+  { id: 4, name: "Dfm Seres 3 Pro", variant: "1.5 S LUXURY CVT", price: 246999, monthly: 4878, year: 2023, badge: "Más vendido", image: "https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=448&h=256&fit=crop&auto=format" },
+  { id: 5, name: "Chery Tiggo 3 Pro", variant: "1.5 S LUXURY CVT", price: 215999, monthly: 4178, year: 2022, image: "https://images.unsplash.com/photo-1567818735868-e71b99932e29?w=448&h=256&fit=crop&auto=format" },
+  { id: 6, name: "Nissan Versa", variant: "1.6 ADVANCE CVT", price: 189999, monthly: 3750, year: 2021, image: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=448&h=256&fit=crop&auto=format" },
+];
+
+const featured: CarCard[] = [
+  { id: 7, name: "Chevrolet Aveo", variant: "1.5 LT A", price: 169999, monthly: 3412, year: 2022, image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=448&h=256&fit=crop&auto=format" },
+  { id: 8, name: "Mazda CX-5", variant: "2.5 i Grand Touring", price: 254999, monthly: 5025, year: 2021, badge: "Destacado", image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=448&h=256&fit=crop&auto=format" },
+  { id: 9, name: "Kia Soul", variant: "2.0 LX AT", price: 215999, monthly: 4212, year: 2020, image: "https://images.unsplash.com/photo-1616422285623-13ff0162193c?w=448&h=256&fit=crop&auto=format" },
+  { id: 10, name: "MG ZS", variant: "1.5 EXCITE AUTO", price: 237999, monthly: 4678, year: 2023, image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=448&h=256&fit=crop&auto=format" },
+  { id: 11, name: "MG MG5", variant: "1.5 EXCITE CVT", price: 215999, monthly: 4225, year: 2022, image: "https://images.unsplash.com/photo-1542362567-b07e54358753?w=448&h=256&fit=crop&auto=format" },
+  { id: 12, name: "Toyota Corolla", variant: "1.8 LE CVT", price: 278999, monthly: 5512, year: 2022, image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=448&h=256&fit=crop&auto=format" },
+];
+
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <main>
+        <Hero />
+        <PromoCards />
+        <CreditSimulator />
+        <TrustSection />
+        <KopiAssistant />
+        <CarCarousel title="Los más vendidos" cars={bestSellers} />
+        <CarCarousel title="Destacados del Catálogo" cars={featured} />
+        <TipsVideos />
+        <HowItWorks />
+        <Reviews />
+        <CarTypes />
+        <BlogSection />
+        <SearchFilters />
       </main>
+      <Footer />
     </div>
   );
 }
