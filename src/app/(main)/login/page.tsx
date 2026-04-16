@@ -84,7 +84,7 @@ export default function LoginPage() {
               <label htmlFor="password" className="text-sm font-medium text-foreground">
                 Contraseña
               </label>
-              <Link href="/forgot-password" className="text-xs text-blue-600 hover:underline">
+              <Link href="/forgot-password" className="text-xs text-primary hover:underline">
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>
@@ -119,7 +119,7 @@ export default function LoginPage() {
             disabled={!isValid}
             className="w-full h-12 mt-1 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer disabled:cursor-not-allowed"
             style={{
-              backgroundColor: isValid ? "oklch(0.47 0.24 264)" : "oklch(0.75 0 0)",
+              backgroundColor: isValid ? "var(--brand-primary)" : "oklch(0.75 0 0)",
               color: "white",
             }}
           >
@@ -130,7 +130,7 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-muted-foreground">
           ¿No tienes cuenta?{" "}
-          <Link href="/registro" className="text-blue-600 font-semibold hover:underline">
+          <Link href="/registro" className="text-primary font-semibold hover:underline">
             Regístrate gratis
           </Link>
         </p>

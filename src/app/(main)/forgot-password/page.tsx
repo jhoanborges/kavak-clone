@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
                 disabled={!isValid}
                 className="w-full h-12 rounded-lg text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer disabled:cursor-not-allowed"
                 style={{
-                  backgroundColor: isValid ? "oklch(0.47 0.24 264)" : "oklch(0.75 0 0)",
+                  backgroundColor: isValid ? "var(--brand-primary)" : "oklch(0.75 0 0)",
                 }}
               >
                 Enviar enlace
@@ -81,7 +81,7 @@ export default function ForgotPasswordPage() {
 
             <p className="text-center text-sm text-muted-foreground">
               ¿Recordaste tu contraseña?{" "}
-              <Link href="/login" className="text-blue-600 font-semibold hover:underline">
+              <Link href="/login" className="text-primary font-semibold hover:underline">
                 Ingresar
               </Link>
             </p>
@@ -92,9 +92,9 @@ export default function ForgotPasswordPage() {
             <div className="flex flex-col items-center gap-6 text-center">
               {/* Icon */}
               <div className="relative flex items-center justify-center">
-                <span className="absolute w-24 h-24 rounded-full bg-blue-500/10 animate-ping" style={{ animationDuration: "2s" }} />
-                <div className="relative w-16 h-16 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center">
-                  <CheckCircle className="size-8 text-blue-600" />
+                <span className="absolute w-24 h-24 rounded-full bg-primary/100/10 animate-ping" style={{ animationDuration: "2s" }} />
+                <div className="relative w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+                  <CheckCircle className="size-8 text-primary" />
                 </div>
               </div>
 

@@ -71,7 +71,7 @@ export default function AgendarPage() {
           </div>
           <Link
             href="/registro/continuar"
-            className="text-sm font-semibold text-blue-600 hover:underline shrink-0 flex items-center gap-0.5"
+            className="text-sm font-semibold text-primary hover:underline shrink-0 flex items-center gap-0.5"
           >
             Apartar auto <ChevronRight className="size-3.5" />
           </Link>
@@ -86,16 +86,16 @@ export default function AgendarPage() {
                 onClick={() => setSelectedDay(i)}
                 className={cn(
                   "flex flex-col items-center gap-1 px-4 py-3 rounded-xl border-2 bg-white shrink-0 min-w-[72px] transition-all cursor-pointer",
-                  selectedDay === i ? "border-blue-600 bg-blue-50" : "border-border hover:border-blue-300"
+                  selectedDay === i ? "border-primary bg-primary/10" : "border-border hover:border-primary/40"
                 )}
               >
-                <span className={cn("text-xs font-medium uppercase tracking-wide", selectedDay === i ? "text-blue-600" : "text-muted-foreground")}>
+                <span className={cn("text-xs font-medium uppercase tracking-wide", selectedDay === i ? "text-primary" : "text-muted-foreground")}>
                   {day.dayName}
                 </span>
-                <span className={cn("text-xl font-bold leading-none", selectedDay === i ? "text-blue-600" : "text-foreground")}>
+                <span className={cn("text-xl font-bold leading-none", selectedDay === i ? "text-primary" : "text-foreground")}>
                   {day.dayNum}
                 </span>
-                <span className={cn("text-xs font-medium", selectedDay === i ? "text-blue-600" : "text-muted-foreground")}>
+                <span className={cn("text-xs font-medium", selectedDay === i ? "text-primary" : "text-muted-foreground")}>
                   {day.month}
                 </span>
               </button>
@@ -149,7 +149,7 @@ export default function AgendarPage() {
             router.push(`/registro/agendar/exito?${params.toString()}`);
           }}
           className="w-full h-12 flex items-center justify-center rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer disabled:cursor-not-allowed"
-          style={{ backgroundColor: selectedDay !== null ? "oklch(0.47 0.24 264)" : "oklch(0.75 0 0)" }}
+          style={{ backgroundColor: selectedDay !== null ? "var(--brand-primary)" : "oklch(0.75 0 0)" }}
         >
           Agendar visita
           {selectedDay !== null && (

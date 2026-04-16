@@ -26,7 +26,7 @@ export default function RegistroPage() {
           <h1 className="text-2xl font-bold text-foreground">
             ¡No dejes escapar esta oportunidad!
           </h1>
-          <p className="text-sm text-blue-600">
+          <p className="text-sm text-primary">
             Inicia sesión para apartar o agendar una visita.
           </p>
         </div>
@@ -49,7 +49,7 @@ export default function RegistroPage() {
           disabled={phone.replace(/\D/g, "").length < 10}
           onClick={() => router.push("/registro/verificar")}
           className="w-full h-12 flex items-center justify-center rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer disabled:cursor-not-allowed"
-          style={{ backgroundColor: phone.replace(/\D/g, "").length >= 10 ? "oklch(0.47 0.24 264)" : "oklch(0.75 0 0)" }}
+          style={{ backgroundColor: phone.replace(/\D/g, "").length >= 10 ? "var(--brand-primary)" : "oklch(0.75 0 0)" }}
         >
           Continuar
         </button>
@@ -66,9 +66,9 @@ export default function RegistroPage() {
 
         <p className="text-xs text-muted-foreground text-center leading-relaxed">
           Al hacer clic en &quot;Continuar&quot; confirmo que he leído y acepto los{" "}
-          <Link href="/" className="text-blue-600 hover:underline">Términos y Condiciones</Link>
+          <Link href="/" className="text-primary hover:underline">Términos y Condiciones</Link>
           {" "}y{" "}
-          <Link href="/" className="text-blue-600 hover:underline">Aviso de Privacidad</Link>
+          <Link href="/" className="text-primary hover:underline">Aviso de Privacidad</Link>
           {" "}de {APP_NAME}.
         </p>
       </div>

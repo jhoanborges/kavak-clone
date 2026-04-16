@@ -63,7 +63,7 @@ function ExitoContent() {
 
           <div className="divide-y divide-border">
             <div className="flex items-center gap-3 px-4 py-3.5">
-              <div className="bg-blue-50 rounded-lg p-2 shrink-0"><Calendar className="size-4 text-blue-600" /></div>
+              <div className="bg-primary/10 rounded-lg p-2 shrink-0"><Calendar className="size-4 text-primary" /></div>
               <div>
                 <p className="text-xs text-muted-foreground">Fecha de visita</p>
                 <p className="text-sm font-semibold text-foreground capitalize">{dia}</p>
@@ -95,19 +95,19 @@ function ExitoContent() {
         </div>
 
         {/* Tips */}
-        <div className={`bg-blue-50 border border-blue-100 rounded-xl p-4 flex flex-col gap-2 transition-all duration-500 ease-out delay-200 ${contentVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
-          <p className="text-xs font-bold text-blue-700 uppercase tracking-wide">Recuerda traer</p>
+        <div className={`bg-primary/10 border border-primary/20 rounded-xl p-4 flex flex-col gap-2 transition-all duration-500 ease-out delay-200 ${contentVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+          <p className="text-xs font-bold text-[#033e48] uppercase tracking-wide">Recuerda traer</p>
           {["Identificación oficial vigente (INE/Pasaporte)", "Comprobante de domicilio reciente", "Estado de cuenta bancario"].map((tip) => (
             <div key={tip} className="flex items-start gap-2">
-              <span className="mt-0.5 text-blue-500">•</span>
-              <p className="text-sm text-blue-800">{tip}</p>
+              <span className="mt-0.5 text-primary/70">•</span>
+              <p className="text-sm text-[#033e48]">{tip}</p>
             </div>
           ))}
         </div>
 
         {/* Actions */}
         <div className={`flex flex-col gap-3 transition-all duration-500 ease-out delay-300 ${contentVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
-          <Link href="/compra" className="w-full h-12 flex items-center justify-center gap-1.5 rounded-lg text-sm font-semibold text-white" style={{ backgroundColor: "oklch(0.47 0.24 264)" }}>
+          <Link href="/compra" className="w-full h-12 flex items-center justify-center gap-1.5 rounded-lg text-sm font-semibold text-white" style={{ backgroundColor: "var(--brand-primary)" }}>
             Seguir explorando autos <ChevronRight className="size-4" />
           </Link>
           <Link href="/" className="w-full h-12 flex items-center justify-center rounded-lg text-sm font-medium text-foreground border border-border bg-white hover:bg-muted transition-colors">

@@ -30,7 +30,7 @@ function formatKm(n: number): string {
 }
 
 const badgeColors: Record<string, string> = {
-  "Más vendido": "bg-blue-600 text-white",
+  "Más vendido": "bg-primary text-white",
   Destacado: "bg-amber-500 text-white",
   "Nuevo ingreso": "bg-emerald-600 text-white",
 };

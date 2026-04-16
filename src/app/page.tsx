@@ -3,7 +3,7 @@ import Hero from "@/components/sections/Hero";
 import PromoCards from "@/components/sections/PromoCards";
 import CreditSimulator from "@/components/sections/CreditSimulator";
 import TrustSection from "@/components/sections/TrustSection";
-import KopiAssistant from "@/components/sections/KopiAssistant";
+import WhyUs from "@/components/sections/WhyUs";
 import CarCarousel from "@/components/sections/CarCarousel";
 import TipsVideos from "@/components/sections/TipsVideos";
 import HowItWorks from "@/components/sections/HowItWorks";
@@ -41,7 +41,7 @@ export default function HomePage() {
         <PromoCards />
         <CreditSimulator />
         <TrustSection />
-        <KopiAssistant />
+        <WhyUs />
         <CarCarousel title="Los más vendidos" cars={bestSellers} />
         <CarCarousel title="Destacados del Catálogo" cars={featured} />
         <TipsVideos />

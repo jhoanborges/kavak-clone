@@ -104,7 +104,7 @@ export default function Navbar() {
                     Favoritos {favoriteCars.length > 0 && <span className="text-muted-foreground font-normal">({favoriteCars.length})</span>}
                   </span>
                   {favoriteCars.length > 0 && (
-                    <Link href="/compra" onClick={() => setFavOpen(false)} className="text-xs text-blue-600 hover:underline">
+                    <Link href="/compra" onClick={() => setFavOpen(false)} className="text-xs text-primary hover:underline">
                       Ver todos
                     </Link>
                   )}
@@ -118,7 +118,7 @@ export default function Navbar() {
                     <Link
                       href="/compra"
                       onClick={() => setFavOpen(false)}
-                      className="mt-1 text-xs text-blue-600 hover:underline font-medium"
+                      className="mt-1 text-xs text-primary hover:underline font-medium"
                     >
                       Explorar autos →
                     </Link>

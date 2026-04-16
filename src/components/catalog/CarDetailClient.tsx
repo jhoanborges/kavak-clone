@@ -151,7 +151,7 @@ const featuredEquipment = [
 ];
 
 const categoryColors: Record<string, string> = {
-  Confort: "bg-blue-50 text-blue-700 border-blue-200",
+  Confort: "bg-primary/10 text-[#033e48] border-blue-200",
   Seguridad: "bg-red-50 text-red-700 border-red-200",
   Tapizado: "bg-amber-50 text-amber-700 border-amber-200",
   Tecnología: "bg-purple-50 text-purple-700 border-purple-200",
@@ -349,7 +349,7 @@ export default function CarDetailClient({ car, allCars }: Props) {
                     className={cn(
                       "relative shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-all cursor-pointer",
                       i === activeImg
-                        ? "border-blue-600 ring-1 ring-blue-600"
+                        ? "border-primary ring-1 ring-blue-600"
                         : "border-border hover:border-muted-foreground"
                     )}
                     aria-label={`Ver imagen ${i + 1}`}
@@ -428,7 +428,7 @@ export default function CarDetailClient({ car, allCars }: Props) {
                 <div className="grid grid-cols-2 divide-x divide-border">
                   <div className="px-5 py-4">
                     <p className="text-xs text-muted-foreground mb-0.5">Sucursal</p>
-                    <p className="text-sm font-semibold text-blue-600">Kavak WH Lerma</p>
+                    <p className="text-sm font-semibold text-primary">Kavak WH Lerma</p>
                   </div>
                   <div className="px-5 py-4">
                     <p className="text-xs text-muted-foreground mb-0.5">Stock ID</p>
@@ -545,11 +545,11 @@ export default function CarDetailClient({ car, allCars }: Props) {
                 </div>
 
                 <div className="flex flex-col gap-2 pt-1">
-                  <Button asChild className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold cursor-pointer" size="lg">
+                  <Button asChild className="w-full bg-primary hover:bg-blue-700 text-white font-semibold cursor-pointer" size="lg">
                     <Link href="/registro">Apartar o Agendar visita</Link>
                   </Button>
                   <Button asChild variant="outline" className="w-full cursor-pointer" size="lg">
-                    <Link href="/registro">Cotizar mi auto</Link>
+                    <Link href="/cotizar">Cotizar mi auto</Link>
                   </Button>
                 </div>
               </div>
@@ -578,7 +578,7 @@ export default function CarDetailClient({ car, allCars }: Props) {
                       className={cn(
                         "shrink-0 flex flex-col items-center px-3 py-2 rounded-lg border text-xs font-medium transition-all cursor-pointer",
                         item.year === car.year
-                          ? "border-blue-600 bg-blue-50 text-blue-700"
+                          ? "border-primary bg-primary/10 text-[#033e48]"
                           : "border-border bg-white text-foreground hover:border-muted-foreground"
                       )}
                     >
@@ -601,7 +601,7 @@ export default function CarDetailClient({ car, allCars }: Props) {
                       className={cn(
                         "flex items-center justify-between px-3 py-2.5 rounded-lg border text-xs font-medium transition-all cursor-pointer text-left",
                         v.label === car.variant
-                          ? "border-blue-600 bg-blue-50 text-blue-700"
+                          ? "border-primary bg-primary/10 text-[#033e48]"
                           : "border-border bg-white text-foreground hover:border-muted-foreground"
                       )}
                     >
@@ -630,8 +630,8 @@ export default function CarDetailClient({ car, allCars }: Props) {
                   Con Crédito obtén la mejor opción de financiamiento para tu auto
                 </p>
                 <div>
-                  <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white font-semibold cursor-pointer gap-2">
-                    <Link href="/registro">
+                  <Button asChild className="bg-primary text-white font-semibold cursor-pointer gap-2">
+                    <Link href="/cotizar">
                       <CreditCard className="size-4" />
                       Simular plan de pagos
                     </Link>
@@ -712,7 +712,7 @@ export default function CarDetailClient({ car, allCars }: Props) {
               <h2 className="text-xl font-bold text-foreground">También te podría interesar</h2>
               <Link
                 href="/compra"
-                className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors"
+                className="text-sm text-primary hover:text-[#033e48] flex items-center gap-1 transition-colors"
               >
                 Ver todos
                 <ArrowRight className="size-3" />
@@ -769,7 +769,7 @@ function CarFaq({ car, similarCars }: { car: CarType; similarCars: CarType[] }) 
             const s = toSlug(c);
             return (
               <span key={c.id}>
-                <Link href={`/compra/${s}`} className="text-blue-600 hover:underline">
+                <Link href={`/compra/${s}`} className="text-primary hover:underline">
                   {c.brand} {c.model} {c.year}
                 </Link>
                 {i < Math.min(similarCars.length, 3) - 1 ? ", " : ""}
@@ -809,12 +809,12 @@ function FaqItem({ question, answer }: { question: string; answer: React.ReactNo
         onClick={() => setOpen((v) => !v)}
         className="w-full flex items-center justify-between gap-4 text-left cursor-pointer group"
       >
-        <span className="text-sm font-medium text-foreground group-hover:text-blue-600 transition-colors">
+        <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
           {question}
         </span>
         <ChevronRight
           className={cn(
-            "size-4 shrink-0 text-blue-600 transition-transform duration-200",
+            "size-4 shrink-0 text-primary transition-transform duration-200",
             open ? "-rotate-90" : "rotate-90"
           )}
         />

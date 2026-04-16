@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function CreditSimulator() {
@@ -32,7 +33,9 @@ export default function CreditSimulator() {
                 Arma tu presupuesto en solo 2 minutos
               </p>
             </div>
-            <Button className="self-start cursor-pointer">Simular</Button>
+            <Button className="self-start cursor-pointer" asChild>
+              <Link href="/cotizar">Simular</Link>
+            </Button>
           </div>
 
           {/* Right: calculator */}

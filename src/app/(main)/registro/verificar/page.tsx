@@ -113,14 +113,14 @@ export default function VerificarPage() {
           {seconds > 0 ? (
             <span className="font-medium text-foreground">
               Reenviar en{" "}
-              <span className="tabular-nums text-blue-600">
+              <span className="tabular-nums text-primary">
                 {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, "0")}
               </span>
             </span>
           ) : (
             <button
               onClick={handleResend}
-              className="text-blue-600 hover:underline cursor-pointer font-medium"
+              className="text-primary hover:underline cursor-pointer font-medium"
             >
               Reenviar
             </button>
@@ -131,7 +131,7 @@ export default function VerificarPage() {
           disabled={!isComplete}
           onClick={() => isComplete && router.push("/registro/continuar")}
           className="w-full h-12 flex items-center justify-center rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer disabled:cursor-not-allowed"
-          style={{ backgroundColor: isComplete ? "oklch(0.47 0.24 264)" : "oklch(0.75 0 0)" }}
+          style={{ backgroundColor: isComplete ? "var(--brand-primary)" : "oklch(0.75 0 0)" }}
         >
           Confirmar código
         </button>

@@ -45,7 +45,7 @@ export default function ContinuarPage() {
               El apartado dura 3 días. Si no concretas la reserva, no se reembolsará este monto. Si quieres pagar a meses y tu préstamo a meses no se aprueba, sí te reembolsaremos el monto de tu reserva.
             </p>
           </div>
-          <ChevronRight className="size-5 text-blue-600 shrink-0 mt-0.5 group-hover:translate-x-0.5 transition-transform" />
+          <ChevronRight className="size-5 text-primary shrink-0 mt-0.5 group-hover:translate-x-0.5 transition-transform" />
         </button>
 
         <button
@@ -58,7 +58,7 @@ export default function ContinuarPage() {
               Ven a la sede y conoce todas las opciones. El auto seguirá disponible para otras personas.
             </p>
           </div>
-          <ChevronRight className="size-5 text-blue-600 shrink-0 mt-0.5 group-hover:translate-x-0.5 transition-transform" />
+          <ChevronRight className="size-5 text-primary shrink-0 mt-0.5 group-hover:translate-x-0.5 transition-transform" />
         </button>
 
       </div>

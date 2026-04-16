@@ -15,14 +15,17 @@ export default function Hero() {
       {/* Background video */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
-        src="https://images.kavak.services/assets/images/home-ui/VIDEO_HB_MX_KAVAK-27012026.mp4"
         autoPlay
         muted
         loop
         playsInline
-      />
+        preload="auto"
+      >
+        <source src="/hero.webm" type="video/webm" />
+        <source src="/hero.mp4" type="video/mp4" />
+      </video>
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/20" />
+      <div className="absolute inset-0 bg-black/55" />
 
       {/* Content */}
       <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-4">
