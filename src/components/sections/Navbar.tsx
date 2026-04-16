@@ -15,8 +15,8 @@ const navLinks = [
   { label: "Obtén un crédito", href: "#" },
   { label: "Compra un auto", href: "/compra" },
   { label: "Vende tu auto", href: "#" },
-  { label: "Cuida tu auto", href: "#" },
   { label: "Nosotros", href: "#", hasDropdown: true },
+  { label: "Contacto", href: "/contacto" },
 ];
 
 function toSlug(car: { brand: string; model: string; id: number }) {

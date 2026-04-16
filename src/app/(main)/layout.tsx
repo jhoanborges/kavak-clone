@@ -1,5 +1,6 @@
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         {children}
       </div>
       <Footer />
+      <Toaster position="top-right" richColors closeButton />
     </>
   );
 }

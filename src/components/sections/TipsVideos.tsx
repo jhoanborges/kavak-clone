@@ -6,25 +6,25 @@ const videos = [
   {
     id: 1,
     title: `Cómo vender tu auto con ${APP_NAME}`,
-    img: "https://images.prd.kavak.io/assets/images/home-ui/Thumbnail1_26-3-26.webp",
+    img: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=600&fit=crop&auto=format",
     label: APP_NAME,
   },
   {
     id: 2,
     title: "+6,000 autos para ti",
-    img: "https://images.prd.kavak.io/assets/images/home-ui/Thumbnail2_26-3-26.webp",
+    img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=400&h=600&fit=crop&auto=format",
     label: APP_NAME,
   },
   {
     id: 3,
     title: "¿Quién revisa tu auto?",
-    img: "https://images.prd.kavak.io/assets/images/home-ui/Thumbnail3_26-3-26.webp",
+    img: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400&h=600&fit=crop&auto=format",
     label: APP_NAME,
   },
   {
     id: 4,
     title: "Dinero por tu auto",
-    img: "https://images.prd.kavak.io/assets/images/home-ui/Thumbnail4_26-3-26.webp",
+    img: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=400&h=600&fit=crop&auto=format",
     label: APP_NAME,
   },
 ];

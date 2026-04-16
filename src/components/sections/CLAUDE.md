@@ -7,5 +7,6 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #2702 | 4:07 PM | ✅ | Replaced Kavak Asset with Unsplash Placeholder Image | ~207 |
 | #2692 | 11:36 AM | ✅ | Darkened Hero Section Overlay | ~179 |
 </claude-mem-context>

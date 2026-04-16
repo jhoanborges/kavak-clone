@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
+import { APP_NAME } from "@/lib/config";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -80,7 +81,7 @@ function ExitoContent() {
               <div className="bg-red-50 rounded-lg p-2 shrink-0"><MapPin className="size-4 text-red-500" /></div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-muted-foreground">Sede</p>
-                <p className="text-sm font-semibold text-foreground">Kavak WH Lerma</p>
+                <p className="text-sm font-semibold text-foreground">{APP_NAME} WH Lerma</p>
                 <p className="text-xs text-muted-foreground">Carr Amomoluco 4-2, Ocoyoacac</p>
               </div>
             </div>

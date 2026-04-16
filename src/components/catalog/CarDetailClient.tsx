@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { APP_NAME } from "@/lib/config";
 import Image from "next/image";
 import Link from "next/link";
 import Lightbox from "yet-another-react-lightbox";
@@ -428,7 +429,7 @@ export default function CarDetailClient({ car, allCars }: Props) {
                 <div className="grid grid-cols-2 divide-x divide-border">
                   <div className="px-5 py-4">
                     <p className="text-xs text-muted-foreground mb-0.5">Sucursal</p>
-                    <p className="text-sm font-semibold text-primary">Kavak WH Lerma</p>
+                    <p className="text-sm font-semibold text-primary">{APP_NAME} WH Lerma</p>
                   </div>
                   <div className="px-5 py-4">
                     <p className="text-xs text-muted-foreground mb-0.5">Stock ID</p>

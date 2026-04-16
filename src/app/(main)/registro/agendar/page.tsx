@@ -130,7 +130,7 @@ export default function AgendarPage() {
                 <MapPin className="size-4 text-red-500" />
               </div>
               <div className="flex flex-col gap-0.5">
-                <p className="font-bold text-foreground text-sm">Kavak WH Lerma</p>
+                <p className="font-bold text-foreground text-sm">{APP_NAME} WH Lerma</p>
                 <p className="text-sm text-muted-foreground">Carr Amomoluco 4-2, Ocoyoacac</p>
                 <p className="text-sm text-muted-foreground">Estado de México, 52740</p>
               </div>
