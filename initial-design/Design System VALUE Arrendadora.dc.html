@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<template id="__bundler_thumbnail" data-bg-color="#0D1F26">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0D1F26"/>
+    <circle cx="600" cy="330" r="120" fill="#DEF698"/>
+    <rect x="470" y="500" width="260" height="26" rx="13" fill="#A5DBD9"/>
+    <rect x="520" y="552" width="160" height="18" rx="9" fill="#004E59"/>
+  </svg>
+</template>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="omelette-owns-print" content="true">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800&family=Mulish:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{ background:#EEF1F1; }
+  a{ color:#004E59; text-decoration:none; }
+  a:hover{ color:#0D1F26; }
+  ::selection{ background:#DEF698; color:#0D1F26; }
+  html{ scroll-behavior:smooth; }
+  .ds-nav a.active{ background:#0D1F26; color:#DEF698 !important; }
+  ::-webkit-scrollbar{ width:10px;height:10px; }
+  ::-webkit-scrollbar-thumb{ background:#A5DBD9; border-radius:10px; }
+  @media print{
+    @page{ margin:14mm; }
+    body{ background:#fff; }
+    .ds-shell{ display:block !important; }
+    .ds-sidebar{ display:none !important; }
+    .ds-main{ padding:0 !important; max-width:none !important; }
+    .ds-section{ break-inside:avoid; page-break-inside:avoid; }
+    .ds-hero{ break-after:page; }
+  }
+</style>
+</helmet>
+<div class="ds-shell" style="display:flex; align-items:flex-start; min-height:100vh; font-family:'Mulish',system-ui,sans-serif; color:#0D1F26;">
+
+  <aside class="ds-sidebar" style="position:sticky; top:0; align-self:flex-start; width:264px; height:100vh; flex-shrink:0; background:#0D1F26; color:#EEF1F1; padding:32px 22px; overflow-y:auto;">
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+      <div style="width:12px; height:12px; border-radius:100px; background:#DEF698;"></div>
+      <span style="font-family:'Raleway',sans-serif; font-weight:700; font-size:15px; letter-spacing:0.14em; text-transform:uppercase; color:#A5DBD9;">VALUE</span>
+    </div>
+    <div style="font-family:'Raleway',sans-serif; font-weight:300; font-size:22px; line-height:1.15; margin-bottom:4px;">Design System</div>
+    <div style="font-size:12.5px; color:#7EA8AD; margin-bottom:26px;">Arrendadora · v1.0</div>
+    <nav class="ds-nav" style="display:flex; flex-direction:column; gap:2px; font-family:'Raleway',sans-serif; font-weight:500; font-size:13.5px;">
+      <a href="#intro" style="padding:9px 12px; border-radius:8px; color:#EEF1F1;">Introducción</a>
+      <a href="#logo" style="padding:9px 12px; border-radius:8px; color:#EEF1F1;">Marca · Logo</a>
+      <a href="#color" style="padding:9px 12px; border-radius:8px; color:#EEF1F1;">Color</a>
+      <a href="#tipografia" style="padding:9px 12px; border-radius:8px; color:#EEF1F1;">Tipografía</a>
+      <a href="#espaciado" style="padding:9px 12px; border-radius:8px; color:#EEF1F1;">Espaciado &amp; layout</a>
+      <a href="#radios" style="padding:9px 12px; border-radius:8px; color:#EEF1F1;">Radios</a>
+      <a href="#superficie" style="padding:9px 12px; border-radius:8px; color:#EEF1F1;">Superficie &amp; bordes</a>
+      <a href="#componentes" style="padding:9px 12px; border-radius:8px; color:#EEF1F1;">Componentes</a>
+      <a href="#secciones" style="padding:9px 12px; border-radius:8px; color:#EEF1F1;">Mapa de secciones</a>
+    </nav>
+    <div style="margin-top:28px; padding-top:20px; border-top:1px solid rgba(165,219,217,0.25); font-size:11.5px; line-height:1.6; color:#7EA8AD;">
+      Extraído del archivo Figma<br>VALUE Arrendadora × INTERIUS.<br>Guía para diseño y desarrollo.
+    </div>
+  </aside>
+
+  <main class="ds-main" style="flex:1; max-width:1000px; margin:0 auto; padding:0 56px 120px;">
+
+    <!-- INTRO / HERO -->
+    <section id="intro" class="ds-section ds-hero" style="padding:80px 0 56px;">
+      <div style="display:inline-block; font-family:'Raleway',sans-serif; font-weight:600; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:#004E59; background:#DEF698; padding:7px 14px; border-radius:100px; margin-bottom:24px;">Design System · Documentación</div>
+      <h1 style="font-family:'Raleway',sans-serif; font-weight:300; font-size:56px; line-height:1.05; margin:0 0 20px; letter-spacing:-0.01em;">Sistema de diseño<br><strong style="font-weight:700;">VALUE Arrendadora</strong></h1>
+      <p style="font-size:19px; line-height:1.55; max-width:620px; color:#3A4449; margin:0 0 40px;">Fundamentos, componentes y patrones extraídos directamente del archivo de Figma. Una fuente única de verdad para mantener consistencia entre diseño y desarrollo.</p>
+      <div style="display:flex; gap:28px; flex-wrap:wrap;">
+        <div style="min-width:120px;"><div style="font-family:'Raleway',sans-serif; font-weight:700; font-size:40px; color:#004E59;">6</div><div style="font-size:13px; color:#5C676E;">colores de marca</div></div>
+        <div style="min-width:120px;"><div style="font-family:'Raleway',sans-serif; font-weight:700; font-size:40px; color:#004E59;">10</div><div style="font-size:13px; color:#5C676E;">roles tipográficos</div></div>
+        <div style="min-width:120px;"><div style="font-family:'Raleway',sans-serif; font-weight:700; font-size:40px; color:#004E59;">11</div><div style="font-size:13px; color:#5C676E;">familias de componentes</div></div>
+        <div style="min-width:120px;"><div style="font-family:'Raleway',sans-serif; font-weight:700; font-size:40px; color:#004E59;">9</div><div style="font-size:13px; color:#5C676E;">secciones del sitio</div></div>
+      </div>
+    </section>
+
+    <!-- LOGO -->
+    <section id="logo" class="ds-section" style="padding:56px 0; border-top:1px solid #E2E6EA;">
+      <div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7EA8AD; margin-bottom:10px;">01 · Marca</div>
+      <h2 style="font-family:'Raleway',sans-serif; font-weight:400; font-size:34px; margin:0 0 12px;">Logo</h2>
+      <p style="font-size:16px; line-height:1.55; color:#3A4449; max-width:640px; margin:0 0 32px;">Tres presentaciones del logotipo según el fondo. Usa siempre el archivo original; no recolorees ni distorsiones la marca. Mantén un área de protección mínima equivalente a la altura de la "V".</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px;">
+        <figure style="margin:0; border:1px solid #E2E6EA; border-radius:20px; overflow:hidden;">
+          <div style="background:#EEF1F1; padding:36px 28px; display:flex; align-items:center; justify-content:center; min-height:150px;"><img src="assets/logo-verde.png" alt="Logo Value verde" style="max-width:100%; height:auto; max-height:80px;"></div>
+          <figcaption style="padding:14px 18px; font-size:13px; color:#5C676E; background:#fff;"><strong style="color:#0D1F26;">Principal · verde</strong> — fondos claros</figcaption>
+        </figure>
+        <figure style="margin:0; border:1px solid #E2E6EA; border-radius:20px; overflow:hidden;">
+          <div style="background:#fff; padding:36px 28px; display:flex; align-items:center; justify-content:center; min-height:150px;"><img src="assets/logo-negro.png" alt="Logo Value negro" style="max-width:100%; height:auto; max-height:80px;"></div>
+          <figcaption style="padding:14px 18px; font-size:13px; color:#5C676E; background:#fff;"><strong style="color:#0D1F26;">Monocromo · negro</strong> — documentos, impresos</figcaption>
+        </figure>
+        <figure style="margin:0; border:1px solid #E2E6EA; border-radius:20px; overflow:hidden;">
+          <div style="background:#004F59; padding:36px 28px; display:flex; align-items:center; justify-content:center; min-height:150px;"><img src="assets/logo-blanco.png" alt="Logo Value blanco" style="max-width:100%; height:auto; max-height:80px;"></div>
+          <figcaption style="padding:14px 18px; font-size:13px; color:#5C676E; background:#fff;"><strong style="color:#0D1F26;">Inverso · blanco</strong> — fondos oscuros / petróleo</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- COLOR -->
+    <section id="color" class="ds-section" style="padding:56px 0; border-top:1px solid #E2E6EA;">
+      <div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7EA8AD; margin-bottom:10px;">02 · Fundamentos</div>
+      <h2 style="font-family:'Raleway',sans-serif; font-weight:400; font-size:34px; margin:0 0 12px;">Color</h2>
+      <p style="font-size:16px; line-height:1.55; color:#3A4449; max-width:640px; margin:0 0 32px;">La paleta se apoya en el verde petróleo de la marca, acentos aqua y neón, y una base neutra. Las escalas van del 200 (más claro) al 800 (más oscuro) y sirven como base para los tokens de tema.</p>
+
+      <h3 style="font-family:'Raleway',sans-serif; font-weight:600; font-size:20px; margin:0 0 16px;">Colores de marca</h3>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; margin-bottom:44px;">
+        <div style="border:1px solid #E2E6EA; border-radius:16px; overflow:hidden;">
+          <div style="height:120px; background:#0D1F26;"></div>
+          <div style="padding:12px 14px;"><div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:14px;">Verde Value</div><div style="font-size:12.5px; color:#5C676E; font-variant-numeric:tabular-nums;">#0D1F26 · rgb(13,31,38)</div><div style="font-size:11.5px; color:#7EA8AD; margin-top:4px;">Primario · texto, fondos</div></div>
+        </div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; overflow:hidden;">
+          <div style="height:120px; background:#004E59;"></div>
+          <div style="padding:12px 14px;"><div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:14px;">Petróleo</div><div style="font-size:12.5px; color:#5C676E; font-variant-numeric:tabular-nums;">#004E59 · rgb(0,78,89)</div><div style="font-size:11.5px; color:#7EA8AD; margin-top:4px;">Secundario · superficies</div></div>
+        </div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; overflow:hidden;">
+          <div style="height:120px; background:#A5DBD9;"></div>
+          <div style="padding:12px 14px;"><div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:14px;">Aqua</div><div style="font-size:12.5px; color:#5C676E; font-variant-numeric:tabular-nums;">#A5DBD9 · rgb(165,219,217)</div><div style="font-size:11.5px; color:#7EA8AD; margin-top:4px;">Acento · botones primarios</div></div>
+        </div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; overflow:hidden;">
+          <div style="height:120px; background:#7EA8AD;"></div>
+          <div style="padding:12px 14px;"><div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:14px;">Salvia</div><div style="font-size:12.5px; color:#5C676E; font-variant-numeric:tabular-nums;">#7EA8AD · rgb(126,168,173)</div><div style="font-size:11.5px; color:#7EA8AD; margin-top:4px;">Acento suave · hover, degradados</div></div>
+        </div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; overflow:hidden;">
+          <div style="height:120px; background:#DEF698;"></div>
+          <div style="padding:12px 14px;"><div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:14px;">Neón</div><div style="font-size:12.5px; color:#5C676E; font-variant-numeric:tabular-nums;">#DEF698 · rgb(222,246,152)</div><div style="font-size:11.5px; color:#7EA8AD; margin-top:4px;">Highlight · destacar, badges</div></div>
+        </div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; overflow:hidden;">
+          <div style="height:120px; background:#E2E6EA; box-shadow:inset 0 0 0 1px #D9D9D9;"></div>
+          <div style="padding:12px 14px;"><div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:14px;">Gris</div><div style="font-size:12.5px; color:#5C676E; font-variant-numeric:tabular-nums;">#E2E6EA · rgb(226,230,234)</div><div style="font-size:11.5px; color:#7EA8AD; margin-top:4px;">Neutro · fondos, divisores</div></div>
+        </div>
+      </div>
+
+      <h3 style="font-family:'Raleway',sans-serif; font-weight:600; font-size:20px; margin:0 0 16px;">Escala secundaria · Aqua</h3>
+      <div style="display:flex; border-radius:14px; overflow:hidden; border:1px solid #E2E6EA; margin-bottom:36px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:96px;"><div style="height:88px; background:#DCF1EF;"></div><div style="padding:10px 12px; font-size:12px;"><div style="font-weight:700; font-family:'Raleway',sans-serif;">200</div><div style="color:#5C676E; font-variant-numeric:tabular-nums;">#DCF1EF</div></div></div>
+        <div style="flex:1; min-width:96px;"><div style="height:88px; background:#C2E7E4;"></div><div style="padding:10px 12px; font-size:12px;"><div style="font-weight:700; font-family:'Raleway',sans-serif;">300</div><div style="color:#5C676E; font-variant-numeric:tabular-nums;">#C2E7E4</div></div></div>
+        <div style="flex:1; min-width:96px;"><div style="height:88px; background:#A5DBD9;"></div><div style="padding:10px 12px; font-size:12px;"><div style="font-weight:700; font-family:'Raleway',sans-serif;">400</div><div style="color:#5C676E; font-variant-numeric:tabular-nums;">#A5DBD9</div></div></div>
+        <div style="flex:1; min-width:96px;"><div style="height:88px; background:#7FC8C4;"></div><div style="padding:10px 12px; font-size:12px;"><div style="font-weight:700; font-family:'Raleway',sans-serif;">500</div><div style="color:#5C676E; font-variant-numeric:tabular-nums;">#7FC8C4</div></div></div>
+        <div style="flex:1; min-width:96px;"><div style="height:88px; background:#54AEA9;"></div><div style="padding:10px 12px; font-size:12px;"><div style="font-weight:700; font-family:'Raleway',sans-serif;">600</div><div style="color:#5C676E; font-variant-numeric:tabular-nums;">#54AEA9</div></div></div>
+        <div style="flex:1; min-width:96px;"><div style="height:88px; background:#3A918C;"></div><div style="padding:10px 12px; font-size:12px; color:#fff; background:#3A918C;"><div style="font-weight:700; font-family:'Raleway',sans-serif;">700</div><div style="opacity:0.85; font-variant-numeric:tabular-nums;">#3A918C</div></div></div>
+        <div style="flex:1; min-width:96px;"><div style="height:88px; background:#2E726E;"></div><div style="padding:10px 12px; font-size:12px; color:#fff; background:#2E726E;"><div style="font-weight:700; font-family:'Raleway',sans-serif;">800</div><div style="opacity:0.85; font-variant-numeric:tabular-nums;">#2E726E</div></div></div>
+      </div>
+
+      <h3 style="font-family:'Raleway',sans-serif; font-weight:600; font-size:20px; margin:0 0 16px;">Neutrales</h3>
+      <div style="display:flex; border-radius:14px; overflow:hidden; border:1px solid #E2E6EA; flex-wrap:wrap;">
+        <div style="flex:1; min-width:96px;"><div style="height:88px; background:#FFFFFF; box-shadow:inset 0 0 0 1px #E2E6EA;"></div><div style="padding:10px 12px; font-size:12px;"><div style="font-weight:700; font-family:'Raleway',sans-serif;">200</div><div style="color:#5C676E; font-variant-numeric:tabular-nums;">#FFFFFF</div></div></div>
+        <div style="flex:1; min-width:96px;"><div style="height:88px; background:#F5F6F7;"></div><div style="padding:10px 12px; font-size:12px;"><div style="font-weight:700; font-family:'Raleway',sans-serif;">300</div><div style="color:#5C676E; font-variant-numeric:tabular-nums;">#F5F6F7</div></div></div>
+        <div style="flex:1; min-width:96px;"><div style="height:88px; background:#E2E6EA;"></div><div style="padding:10px 12px; font-size:12px;"><div style="font-weight:700; font-family:'Raleway',sans-serif;">400</div><div style="color:#5C676E; font-variant-numeric:tabular-nums;">#E2E6EA</div></div></div>
+        <div style="flex:1; min-width:96px;"><div style="height:88px; background:#B0B8BF;"></div><div style="padding:10px 12px; font-size:12px;"><div style="font-weight:700; font-family:'Raleway',sans-serif;">500</div><div style="color:#5C676E; font-variant-numeric:tabular-nums;">#B0B8BF</div></div></div>
+        <div style="flex:1; min-width:96px;"><div style="height:88px; background:#5C676E;"></div><div style="padding:10px 12px; font-size:12px; color:#fff; background:#5C676E;"><div style="font-weight:700; font-family:'Raleway',sans-serif;">600</div><div style="opacity:0.85; font-variant-numeric:tabular-nums;">#5C676E</div></div></div>
+        <div style="flex:1; min-width:96px;"><div style="height:88px; background:#3A4449;"></div><div style="padding:10px 12px; font-size:12px; color:#fff; background:#3A4449;"><div style="font-weight:700; font-family:'Raleway',sans-serif;">800</div><div style="opacity:0.85; font-variant-numeric:tabular-nums;">#3A4449</div></div></div>
+      </div>
+    </section>
+
+    <!-- TIPOGRAFIA -->
+    <section id="tipografia" class="ds-section" style="padding:56px 0; border-top:1px solid #E2E6EA;">
+      <div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7EA8AD; margin-bottom:10px;">03 · Fundamentos</div>
+      <h2 style="font-family:'Raleway',sans-serif; font-weight:400; font-size:34px; margin:0 0 12px;">Tipografía</h2>
+      <p style="font-size:16px; line-height:1.55; color:#3A4449; max-width:640px; margin:0 0 32px;">El sistema combina tres familias: <strong>Avenir</strong> para títulos, <strong>Museo Sans</strong> para el cuerpo de texto y <strong>Raleway</strong> para etiquetas y detalles. Cada rol define tamaño en desktop y móvil.</p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:40px;">
+        <div style="border:1px solid #E2E6EA; border-radius:16px; padding:24px; background:#fff;">
+          <div style="font-family:'Avenir Next','Avenir','Raleway',system-ui,sans-serif; font-weight:500; font-size:56px; line-height:1; margin-bottom:12px;">Aa</div>
+          <div style="font-family:'Raleway',sans-serif; font-weight:700; font-size:16px;">Avenir</div>
+          <div style="font-size:12.5px; color:#5C676E; margin-top:4px; line-height:1.5;">Títulos y destacados.<br>Light · Roman · Medium · Heavy · Black</div>
+        </div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; padding:24px; background:#fff;">
+          <div style="font-family:'Museo Sans','Mulish',system-ui,sans-serif; font-weight:500; font-size:56px; line-height:1; margin-bottom:12px;">Aa</div>
+          <div style="font-family:'Raleway',sans-serif; font-weight:700; font-size:16px;">Museo Sans</div>
+          <div style="font-size:12.5px; color:#5C676E; margin-top:4px; line-height:1.5;">Cuerpo de texto.<br>300 · 500 · 700 · 900</div>
+        </div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; padding:24px; background:#fff;">
+          <div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:56px; line-height:1; margin-bottom:12px;">Aa</div>
+          <div style="font-family:'Raleway',sans-serif; font-weight:700; font-size:16px;">Raleway</div>
+          <div style="font-size:12.5px; color:#5C676E; margin-top:4px; line-height:1.5;">Etiquetas y números.<br>Light · Medium · SemiBold · Bold</div>
+        </div>
+      </div>
+
+      <h3 style="font-family:'Raleway',sans-serif; font-weight:600; font-size:20px; margin:0 0 16px;">Escala de roles</h3>
+      <div style="border:1px solid #E2E6EA; border-radius:16px; overflow:hidden; background:#fff;">
+        <div style="display:grid; grid-template-columns:2fr 0.7fr 0.7fr 1.1fr; gap:16px; padding:14px 22px; background:#F5F6F7; font-family:'Raleway',sans-serif; font-weight:600; font-size:12px; letter-spacing:0.05em; text-transform:uppercase; color:#5C676E;">
+          <div>Muestra</div><div>Desktop</div><div>Móvil</div><div>Familia</div>
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 0.7fr 0.7fr 1.1fr; gap:16px; padding:16px 22px; border-top:1px solid #E2E6EA; align-items:baseline;">
+          <div style="font-family:'Avenir Next','Avenir','Raleway',sans-serif; font-weight:300; font-size:34px; line-height:1;">Display L</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">56px</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">36px</div><div style="font-size:13px; color:#5C676E;">Avenir Light</div>
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 0.7fr 0.7fr 1.1fr; gap:16px; padding:16px 22px; border-top:1px solid #E2E6EA; align-items:baseline;">
+          <div style="font-family:'Avenir Next','Avenir','Raleway',sans-serif; font-weight:500; font-size:30px; line-height:1;">Heading 1</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">44px</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">32px</div><div style="font-size:13px; color:#5C676E;">Avenir Medium · Título de página</div>
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 0.7fr 0.7fr 1.1fr; gap:16px; padding:16px 22px; border-top:1px solid #E2E6EA; align-items:baseline;">
+          <div style="font-family:'Avenir Next','Avenir','Raleway',sans-serif; font-weight:500; font-size:26px; line-height:1;">Heading 2</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">34px</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">26px</div><div style="font-size:13px; color:#5C676E;">Avenir Medium · Secciones</div>
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 0.7fr 0.7fr 1.1fr; gap:16px; padding:16px 22px; border-top:1px solid #E2E6EA; align-items:baseline;">
+          <div style="font-family:'Avenir Next','Avenir','Raleway',sans-serif; font-weight:500; font-size:22px; line-height:1;">Heading 3</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">26px</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">22px</div><div style="font-size:13px; color:#5C676E;">Avenir Medium · Tarjetas</div>
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 0.7fr 0.7fr 1.1fr; gap:16px; padding:16px 22px; border-top:1px solid #E2E6EA; align-items:baseline;">
+          <div style="font-family:'Avenir Next','Avenir','Raleway',sans-serif; font-weight:500; font-size:20px; line-height:1;">Heading 4</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">20px</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">18px</div><div style="font-size:13px; color:#5C676E;">Avenir Medium</div>
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 0.7fr 0.7fr 1.1fr; gap:16px; padding:16px 22px; border-top:1px solid #E2E6EA; align-items:baseline;">
+          <div style="font-family:'Museo Sans','Mulish',sans-serif; font-weight:500; font-size:18px; line-height:1.2;">Body Text 1</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">18px</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">18px</div><div style="font-size:13px; color:#5C676E;">Museo Sans 300/500 · Cuerpo</div>
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 0.7fr 0.7fr 1.1fr; gap:16px; padding:16px 22px; border-top:1px solid #E2E6EA; align-items:baseline;">
+          <div style="font-family:'Museo Sans','Mulish',sans-serif; font-weight:300; font-size:16px; line-height:1.2;">Body Text 2</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">16px</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">16px</div><div style="font-size:13px; color:#5C676E;">Museo Sans 300 · Secundario</div>
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 0.7fr 0.7fr 1.1fr; gap:16px; padding:16px 22px; border-top:1px solid #E2E6EA; align-items:baseline;">
+          <div style="font-family:'Museo Sans','Mulish',sans-serif; font-weight:300; font-size:13px; line-height:1.2;">Caption</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">13px</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">13px</div><div style="font-size:13px; color:#5C676E;">Museo Sans · Pies</div>
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 0.7fr 0.7fr 1.1fr; gap:16px; padding:16px 22px; border-top:1px solid #E2E6EA; align-items:baseline;">
+          <div style="font-family:'Raleway',sans-serif; font-weight:500; font-size:14px; line-height:1.2;">Label</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">14px</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">14px</div><div style="font-size:13px; color:#5C676E;">Raleway</div>
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 0.7fr 0.7fr 1.1fr; gap:16px; padding:16px 22px; border-top:1px solid #E2E6EA; align-items:baseline;">
+          <div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:13px; line-height:1.2; letter-spacing:0.14em; text-transform:uppercase;">Overline</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">13px</div><div style="font-variant-numeric:tabular-nums; color:#3A4449;">13px</div><div style="font-size:13px; color:#5C676E;">Raleway · Eyebrows (MAYÚS)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESPACIADO -->
+    <section id="espaciado" class="ds-section" style="padding:56px 0; border-top:1px solid #E2E6EA;">
+      <div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7EA8AD; margin-bottom:10px;">04 · Fundamentos</div>
+      <h2 style="font-family:'Raleway',sans-serif; font-weight:400; font-size:34px; margin:0 0 12px;">Espaciado &amp; layout</h2>
+      <p style="font-size:16px; line-height:1.55; color:#3A4449; max-width:640px; margin:0 0 32px;">El espaciado se apoya en una base de 8px. Los valores más usados en el archivo: paddings de 16/20/24px en botones y tarjetas, y gaps de 16/24/32/40/56px entre bloques.</p>
+      <div style="display:flex; flex-direction:column; gap:14px; max-width:640px;">
+        <div style="display:flex; align-items:center; gap:20px;"><div style="width:8px; height:28px; background:#A5DBD9; border-radius:3px;"></div><span style="font-family:'Raleway',sans-serif; font-weight:600; width:56px;">8</span><span style="font-size:13.5px; color:#5C676E;">Base · gaps mínimos, iconos</span></div>
+        <div style="display:flex; align-items:center; gap:20px;"><div style="width:16px; height:28px; background:#A5DBD9; border-radius:3px;"></div><span style="font-family:'Raleway',sans-serif; font-weight:600; width:56px;">16</span><span style="font-size:13.5px; color:#5C676E;">Padding vertical de botones, gap de chips</span></div>
+        <div style="display:flex; align-items:center; gap:20px;"><div style="width:20px; height:28px; background:#7FC8C4; border-radius:3px;"></div><span style="font-family:'Raleway',sans-serif; font-weight:600; width:56px;">20</span><span style="font-size:13.5px; color:#5C676E;">Padding interno de tarjetas</span></div>
+        <div style="display:flex; align-items:center; gap:20px;"><div style="width:24px; height:28px; background:#7FC8C4; border-radius:3px;"></div><span style="font-family:'Raleway',sans-serif; font-weight:600; width:56px;">24</span><span style="font-size:13.5px; color:#5C676E;">Padding horizontal de botones, gap de columnas</span></div>
+        <div style="display:flex; align-items:center; gap:20px;"><div style="width:32px; height:28px; background:#54AEA9; border-radius:3px;"></div><span style="font-family:'Raleway',sans-serif; font-weight:600; width:56px;">32</span><span style="font-size:13.5px; color:#5C676E;">Separación entre grupos</span></div>
+        <div style="display:flex; align-items:center; gap:20px;"><div style="width:40px; height:28px; background:#54AEA9; border-radius:3px;"></div><span style="font-family:'Raleway',sans-serif; font-weight:600; width:56px;">40</span><span style="font-size:13.5px; color:#5C676E;">Espaciado de secciones internas</span></div>
+        <div style="display:flex; align-items:center; gap:20px;"><div style="width:56px; height:28px; background:#3A918C; border-radius:3px;"></div><span style="font-family:'Raleway',sans-serif; font-weight:600; width:56px;">56</span><span style="font-size:13.5px; color:#5C676E;">Columnas del footer, bloques mayores</span></div>
+      </div>
+    </section>
+
+    <!-- RADIOS -->
+    <section id="radios" class="ds-section" style="padding:56px 0; border-top:1px solid #E2E6EA;">
+      <div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7EA8AD; margin-bottom:10px;">05 · Fundamentos</div>
+      <h2 style="font-family:'Raleway',sans-serif; font-weight:400; font-size:34px; margin:0 0 12px;">Radios</h2>
+      <p style="font-size:16px; line-height:1.55; color:#3A4449; max-width:640px; margin:0 0 32px;">Cuatro radios cubren todo el sistema, de esquinas sutiles a elementos totalmente circulares.</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:16px;">
+        <div style="text-align:center;"><div style="height:96px; background:#A5DBD9; border-radius:5px; margin-bottom:12px;"></div><div style="font-family:'Raleway',sans-serif; font-weight:700;">5px</div><div style="font-size:12.5px; color:#5C676E;">xs · contenedores base, chips</div></div>
+        <div style="text-align:center;"><div style="height:96px; background:#A5DBD9; border-radius:10px; margin-bottom:12px;"></div><div style="font-family:'Raleway',sans-serif; font-weight:700;">10px</div><div style="font-size:12.5px; color:#5C676E;">sm · botones, inputs</div></div>
+        <div style="text-align:center;"><div style="height:96px; background:#A5DBD9; border-radius:20px; margin-bottom:12px;"></div><div style="font-family:'Raleway',sans-serif; font-weight:700;">20px</div><div style="font-size:12.5px; color:#5C676E;">md · tarjetas, banners</div></div>
+        <div style="text-align:center;"><div style="height:96px; width:96px; margin:0 auto 12px; background:#A5DBD9; border-radius:100px;"></div><div style="font-family:'Raleway',sans-serif; font-weight:700;">100px</div><div style="font-size:12.5px; color:#5C676E;">full · avatares, iconos, pills</div></div>
+      </div>
+    </section>
+
+    <!-- SUPERFICIE -->
+    <section id="superficie" class="ds-section" style="padding:56px 0; border-top:1px solid #E2E6EA;">
+      <div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7EA8AD; margin-bottom:10px;">06 · Fundamentos</div>
+      <h2 style="font-family:'Raleway',sans-serif; font-weight:400; font-size:34px; margin:0 0 12px;">Superficie &amp; bordes</h2>
+      <p style="font-size:16px; line-height:1.55; color:#3A4449; max-width:640px; margin:0 0 32px;">El sistema es <strong>plano</strong>: la jerarquía se logra con color y bordes finos de 1px, no con sombras pesadas. Los degradados aportan profundidad en héroes y tarjetas.</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px;">
+        <div style="border-radius:16px; background:#fff; box-shadow:inset 0 0 0 1px #D9D9D9; padding:24px; min-height:120px; display:flex; flex-direction:column; justify-content:flex-end;"><div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:14px;">Borde tarjeta</div><div style="font-size:12px; color:#5C676E; font-family:monospace; margin-top:4px;">inset 0 0 0 1px #D9D9D9</div></div>
+        <div style="border-radius:16px; background:#fff; box-shadow:inset 0 0 0 1px #EEF1F1; padding:24px; min-height:120px; display:flex; flex-direction:column; justify-content:flex-end;"><div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:14px;">Borde suave</div><div style="font-size:12px; color:#5C676E; font-family:monospace; margin-top:4px;">inset 0 0 0 1px #EEF1F1</div></div>
+        <div style="border-radius:16px; padding:24px; min-height:120px; display:flex; flex-direction:column; justify-content:flex-end; background:linear-gradient(238deg,#7EA8AD,rgba(238,241,241,0)); box-shadow:inset 0 0 0 1px #EEF1F1;"><div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:14px;">Degradado tarjeta</div><div style="font-size:12px; color:#3A4449; font-family:monospace; margin-top:4px;">linear-gradient(238°, Salvia → transp.)</div></div>
+        <div style="border-radius:16px; padding:24px; min-height:120px; display:flex; flex-direction:column; justify-content:flex-end; background:linear-gradient(235deg,rgba(13,31,38,0) 17%,#0D1F26 71%);"><div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:14px; color:#fff;">Overlay hero</div><div style="font-size:12px; color:#A5DBD9; font-family:monospace; margin-top:4px;">linear-gradient(235°, transp. → Verde)</div></div>
+      </div>
+    </section>
+
+    <!-- COMPONENTES -->
+    <section id="componentes" class="ds-section" style="padding:56px 0; border-top:1px solid #E2E6EA;">
+      <div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7EA8AD; margin-bottom:10px;">07 · Componentes</div>
+      <h2 style="font-family:'Raleway',sans-serif; font-weight:400; font-size:34px; margin:0 0 12px;">Componentes</h2>
+      <p style="font-size:16px; line-height:1.55; color:#3A4449; max-width:640px; margin:0 0 36px;">Recreados con los valores exactos del archivo: radios, paddings, tipografías y colores. El archivo define 11 familias de componentes con sus variantes.</p>
+
+      <!-- Botones -->
+      <h3 style="font-family:'Raleway',sans-serif; font-weight:600; font-size:20px; margin:0 0 8px;">Botones · CTA</h3>
+      <p style="font-size:14px; color:#5C676E; margin:0 0 20px;">Radio 10px · padding 16px 24px · Museo Sans 16px. Cuatro variantes según el contexto.</p>
+      <div style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:20px;">
+        <div style="display:inline-flex; align-items:center; justify-content:center; border-radius:10px; padding:16px 24px; background:#A5DBD9; color:#0D1F26; font-family:'Museo Sans','Mulish',sans-serif; font-size:16px;">Solicitar cotización</div>
+        <div style="display:inline-flex; align-items:center; justify-content:center; border-radius:10px; padding:16px 24px; background:#fff; color:#0D1F26; font-family:'Museo Sans','Mulish',sans-serif; font-size:16px; box-shadow:inset 0 0 0 1px #E2E6EA;">Solicitar cotización</div>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:16px; margin-bottom:16px; background:#0D1F26; padding:24px; border-radius:16px;">
+        <div style="display:inline-flex; align-items:center; justify-content:center; border-radius:10px; padding:16px 24px; background:transparent; color:#EEF1F1; font-family:'Museo Sans','Mulish',sans-serif; font-size:16px; box-shadow:inset 0 0 0 1px #EEF1F1;">Conoce más</div>
+        <div style="display:inline-flex; align-items:center; justify-content:center; border-radius:10px; padding:16px 24px; background:rgba(255,255,255,0.2); color:#EEF1F1; font-family:'Museo Sans','Mulish',sans-serif; font-size:16px; box-shadow:inset 0 0 0 1px #EEF1F1;">Conoce más</div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; font-size:12px; color:#5C676E; margin-bottom:40px;">
+        <div><strong style="color:#0D1F26; font-family:'Raleway',sans-serif;">Primary</strong><br>fondo Aqua, sobre claro</div>
+        <div><strong style="color:#0D1F26; font-family:'Raleway',sans-serif;">Type3</strong><br>fondo blanco, sobre color</div>
+        <div><strong style="color:#0D1F26; font-family:'Raleway',sans-serif;">Secondary</strong><br>outline, sobre oscuro</div>
+        <div><strong style="color:#0D1F26; font-family:'Raleway',sans-serif;">Type4</strong><br>vidrio 20%, sobre imagen</div>
+      </div>
+
+      <!-- Flecha -->
+      <h3 style="font-family:'Raleway',sans-serif; font-weight:600; font-size:20px; margin:0 0 8px;">Flecha · icono direccional</h3>
+      <p style="font-size:14px; color:#5C676E; margin:0 0 20px;">Botón circular 47px (radio 100). Dos estados: default (outline blanco) y hover (relleno aqua).</p>
+      <div style="display:flex; gap:24px; align-items:center; background:#004E59; padding:28px; border-radius:16px; margin-bottom:40px;">
+        <div style="width:47px; height:47px; border-radius:100px; box-shadow:inset 0 0 0 1px #fff; display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px;">→</div>
+        <div style="width:47px; height:47px; border-radius:100px; background:#A5DBD9; box-shadow:inset 0 0 0 1px #fff; display:flex; align-items:center; justify-content:center; color:#0D1F26; font-size:20px;">→</div>
+        <div style="font-size:13px; color:#A5DBD9; font-family:'Raleway',sans-serif;">default · hover</div>
+      </div>
+
+      <!-- Card beneficio -->
+      <h3 style="font-family:'Raleway',sans-serif; font-weight:600; font-size:20px; margin:0 0 8px;">Tarjeta de beneficio</h3>
+      <p style="font-size:14px; color:#5C676E; margin:0 0 20px;">Radio 20px, degradado diagonal, número en círculo (radio 100). Variante clara y variante destacada.</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; margin-bottom:40px;">
+        <div style="position:relative; border-radius:20px; height:199px; padding:22px; background:linear-gradient(238deg,#7EA8AD -3%,rgba(238,241,241,0) 100%); box-shadow:inset 0 0 0 1px #EEF1F1;">
+          <div style="width:50px; height:50px; border-radius:100px; background:#A5DBD9; display:flex; align-items:center; justify-content:center; font-family:'Raleway',sans-serif; font-size:24px; color:#0D1F26;">1</div>
+          <div style="position:absolute; left:28px; bottom:22px; font-family:'Museo Sans','Mulish',sans-serif; font-weight:300; font-size:18px; color:#0D1F26;">Optimiza tu flujo de caja</div>
+        </div>
+        <div style="position:relative; border-radius:20px; height:199px; padding:22px; background:linear-gradient(-66deg,#A5DBD9 5%,rgba(186,207,209,0.47) 56%,rgba(238,241,241,0) 102%); box-shadow:inset 0 0 0 1px #EEF1F1;">
+          <div style="width:50px; height:50px; border-radius:100px; background:#0D1F26; display:flex; align-items:center; justify-content:center; font-family:'Raleway',sans-serif; font-size:24px; color:#fff;">1</div>
+          <div style="position:absolute; left:28px; bottom:22px; font-family:'Museo Sans','Mulish',sans-serif; font-weight:300; font-size:18px; color:#0D1F26;">Optimiza tu flujo de caja</div>
+        </div>
+      </div>
+
+      <!-- Banner dudas -->
+      <h3 style="font-family:'Raleway',sans-serif; font-weight:600; font-size:20px; margin:0 0 8px;">Banner · ¿Tienes más dudas?</h3>
+      <p style="font-size:14px; color:#5C676E; margin:0 0 20px;">Radio 20px, con flecha a la derecha. Estado base (petróleo) y hover (salvia).</p>
+      <div style="display:flex; flex-direction:column; gap:16px; margin-bottom:40px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; border-radius:20px; background:#004E59; padding:20px; color:#fff;"><span style="font-family:'Museo Sans','Mulish',sans-serif; font-size:24px;">¿Tienes más dudas?</span><div style="width:47px; height:47px; border-radius:100px; box-shadow:inset 0 0 0 1px #fff; display:flex; align-items:center; justify-content:center; font-size:20px;">→</div></div>
+        <div style="display:flex; align-items:center; justify-content:space-between; border-radius:20px; background:#7EA8AD; padding:20px; color:#fff;"><span style="font-family:'Museo Sans','Mulish',sans-serif; font-size:24px;">¿Tienes más dudas?</span><div style="width:47px; height:47px; border-radius:100px; background:#A5DBD9; box-shadow:inset 0 0 0 1px #0D1F26; display:flex; align-items:center; justify-content:center; color:#0D1F26; font-size:20px;">→</div></div>
+      </div>
+
+      <!-- Hero -->
+      <h3 style="font-family:'Raleway',sans-serif; font-weight:600; font-size:20px; margin:0 0 8px;">Hero · carrusel</h3>
+      <p style="font-size:14px; color:#5C676E; margin:0 0 20px;">Imagen a sangre con overlay degradado hacia el verde, texto e indicadores de slide inferiores.</p>
+      <div style="position:relative; height:320px; border-radius:20px; overflow:hidden; margin-bottom:12px; background-image:url('assets/hero-sample.jpg'); background-size:cover; background-position:55% 60%;">
+        <div style="position:absolute; inset:0; background:linear-gradient(235deg,rgba(13,31,38,0) 17%,#0D1F26 71%);"></div>
+        <div style="position:absolute; left:40px; bottom:56px; right:40px;">
+          <div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#DEF698; margin-bottom:10px;">Patrocinio</div>
+          <div style="font-family:'Avenir Next','Avenir','Raleway',sans-serif; font-weight:300; font-size:30px; color:#fff; max-width:520px; line-height:1.15;">Título del hero sobre imagen con overlay</div>
+        </div>
+        <div style="position:absolute; left:40px; bottom:32px; display:flex; gap:12px;">
+          <div style="width:36px; height:6px; border-radius:100px; background:#DEF698;"></div>
+          <div style="width:16px; height:6px; border-radius:100px; background:rgba(255,255,255,0.5);"></div>
+          <div style="width:16px; height:6px; border-radius:100px; background:rgba(255,255,255,0.5);"></div>
+          <div style="width:16px; height:6px; border-radius:100px; background:rgba(255,255,255,0.5);"></div>
+        </div>
+      </div>
+      <p style="font-size:12.5px; color:#7EA8AD; margin:0 0 40px;">Imagen de muestra del archivo original.</p>
+
+      <!-- Footer -->
+      <h3 style="font-family:'Raleway',sans-serif; font-weight:600; font-size:20px; margin:0 0 8px;">Footer</h3>
+      <p style="font-size:14px; color:#5C676E; margin:0 0 20px;">Fondo Verde Value con blob petróleo, logo blanco, tres columnas de enlaces, contacto y redes.</p>
+      <div style="position:relative; border-radius:20px; overflow:hidden; background:#0D1F26; padding:36px 40px; color:#EEF1F1;">
+        <div style="position:absolute; left:-40px; bottom:-260px; width:900px; height:420px; border-radius:50%; background:#004E59;"></div>
+        <div style="position:relative; display:flex; flex-wrap:wrap; gap:48px; align-items:flex-start;">
+          <img src="assets/logo-blanco.png" alt="Value" style="height:56px; width:auto;">
+          <div style="display:flex; flex-direction:column; gap:14px; font-family:'Museo Sans','Mulish',sans-serif; font-size:15px;"><span>¿Quiénes somos?</span><span>¿Qué es arrendamiento?</span><span>¿Qué es crédito simple?</span></div>
+          <div style="display:flex; flex-direction:column; gap:14px; font-family:'Museo Sans','Mulish',sans-serif; font-size:15px;"><span>Analiza tu presupuesto</span><span>Cotiza tu crédito</span><span>Solicitud de crédito</span></div>
+          <div style="display:flex; flex-direction:column; gap:14px; font-family:'Museo Sans','Mulish',sans-serif; font-size:15px;"><span>Blog</span><span>Formato SOFOME</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIONES -->
+    <section id="secciones" class="ds-section" style="padding:56px 0; border-top:1px solid #E2E6EA;">
+      <div style="font-family:'Raleway',sans-serif; font-weight:600; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:#7EA8AD; margin-bottom:10px;">08 · Patrones</div>
+      <h2 style="font-family:'Raleway',sans-serif; font-weight:400; font-size:34px; margin:0 0 12px;">Mapa de secciones</h2>
+      <p style="font-size:16px; line-height:1.55; color:#3A4449; max-width:640px; margin:0 0 32px;">Las nueve secciones que componen el sitio, con su propósito y los componentes que reutilizan.</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px;">
+        <div style="border:1px solid #E2E6EA; border-radius:16px; padding:22px; background:#fff;"><div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;"><span style="font-family:'Raleway',sans-serif; font-weight:700; font-size:13px; color:#004E59;">01</span><span style="font-family:'Raleway',sans-serif; font-weight:600; font-size:17px;">Home</span></div><p style="margin:0 0 12px; font-size:14px; line-height:1.5; color:#3A4449;">Página principal: hero carrusel, plan Value, beneficios, paso a paso y CTA final.</p><div style="display:flex; flex-wrap:wrap; gap:6px;"><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Hero</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Beneficio</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">CTA</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Footer</span></div></div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; padding:22px; background:#fff;"><div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;"><span style="font-family:'Raleway',sans-serif; font-weight:700; font-size:13px; color:#004E59;">02</span><span style="font-family:'Raleway',sans-serif; font-weight:600; font-size:17px;">Quiénes somos</span></div><p style="margin:0 0 12px; font-size:14px; line-height:1.5; color:#3A4449;">Institucional: misión, historia y presencia. Refuerza confianza en la marca.</p><div style="display:flex; flex-wrap:wrap; gap:6px;"><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Hero</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Testimonial</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Footer</span></div></div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; padding:22px; background:#fff;"><div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;"><span style="font-family:'Raleway',sans-serif; font-weight:700; font-size:13px; color:#004E59;">03</span><span style="font-family:'Raleway',sans-serif; font-weight:600; font-size:17px;">Qué es arrendamiento</span></div><p style="margin:0 0 12px; font-size:14px; line-height:1.5; color:#3A4449;">Educativo del producto: explica el arrendamiento con tarjetas de beneficio y flip cards.</p><div style="display:flex; flex-wrap:wrap; gap:6px;"><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Beneficio</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Flip card</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Dudas</span></div></div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; padding:22px; background:#fff;"><div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;"><span style="font-family:'Raleway',sans-serif; font-weight:700; font-size:13px; color:#004E59;">04</span><span style="font-family:'Raleway',sans-serif; font-weight:600; font-size:17px;">Qué es crédito automotriz</span></div><p style="margin:0 0 12px; font-size:14px; line-height:1.5; color:#3A4449;">Educativo del producto de crédito automotriz, mismo patrón que arrendamiento.</p><div style="display:flex; flex-wrap:wrap; gap:6px;"><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Beneficio</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Flip card</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Dudas</span></div></div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; padding:22px; background:#fff;"><div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;"><span style="font-family:'Raleway',sans-serif; font-weight:700; font-size:13px; color:#004E59;">05</span><span style="font-family:'Raleway',sans-serif; font-weight:600; font-size:17px;">Analiza tu presupuesto</span></div><p style="margin:0 0 12px; font-size:14px; line-height:1.5; color:#3A4449;">Herramienta interactiva para estimar capacidad de pago antes de cotizar.</p><div style="display:flex; flex-wrap:wrap; gap:6px;"><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Inputs</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">CTA</span></div></div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; padding:22px; background:#fff;"><div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;"><span style="font-family:'Raleway',sans-serif; font-weight:700; font-size:13px; color:#004E59;">06</span><span style="font-family:'Raleway',sans-serif; font-weight:600; font-size:17px;">Cotiza tu crédito</span></div><p style="margin:0 0 12px; font-size:14px; line-height:1.5; color:#3A4449;">Cotizador con parámetros de monto, plazo y tasa. Devuelve una estimación.</p><div style="display:flex; flex-wrap:wrap; gap:6px;"><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Inputs</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Slider</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">CTA</span></div></div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; padding:22px; background:#fff;"><div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;"><span style="font-family:'Raleway',sans-serif; font-weight:700; font-size:13px; color:#004E59;">07</span><span style="font-family:'Raleway',sans-serif; font-weight:600; font-size:17px;">Solicitud de crédito</span></div><p style="margin:0 0 12px; font-size:14px; line-height:1.5; color:#3A4449;">Formulario de onboarding en pasos para iniciar el trámite de crédito.</p><div style="display:flex; flex-wrap:wrap; gap:6px;"><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Form</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Steps</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">CTA</span></div></div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; padding:22px; background:#fff;"><div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;"><span style="font-family:'Raleway',sans-serif; font-weight:700; font-size:13px; color:#004E59;">08</span><span style="font-family:'Raleway',sans-serif; font-weight:600; font-size:17px;">Blog</span></div><p style="margin:0 0 12px; font-size:14px; line-height:1.5; color:#3A4449;">Contenidos y novedades. Tarjetas de artículo con imagen, categoría y fecha.</p><div style="display:flex; flex-wrap:wrap; gap:6px;"><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Card</span><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Overline</span></div></div>
+        <div style="border:1px solid #E2E6EA; border-radius:16px; padding:22px; background:#fff;"><div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;"><span style="font-family:'Raleway',sans-serif; font-weight:700; font-size:13px; color:#004E59;">09</span><span style="font-family:'Raleway',sans-serif; font-weight:600; font-size:17px;">Global · Footer</span></div><p style="margin:0 0 12px; font-size:14px; line-height:1.5; color:#3A4449;">Pie de página compartido en todas las secciones: navegación, contacto y redes.</p><div style="display:flex; flex-wrap:wrap; gap:6px;"><span style="font-size:11px; background:#EEF1F1; border-radius:100px; padding:4px 10px; color:#5C676E;">Footer</span></div></div>
+      </div>
+    </section>
+
+    <div style="padding:40px 0 0; border-top:1px solid #E2E6EA; font-size:12.5px; color:#7EA8AD;">Design System VALUE Arrendadora · extraído de Figma · para diseño &amp; desarrollo</div>
+
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    const links = Array.from(document.querySelectorAll('.ds-nav a'));
+    const map = {};
+    links.forEach(a => { const id = a.getAttribute('href').slice(1); const el = document.getElementById(id); if (el) map[id] = a; });
+    const setActive = (id) => { links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id)); };
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    Object.keys(map).forEach(id => { const el = document.getElementById(id); if (el) obs.observe(el); });
+    this._obs = obs;
+  }
+  componentWillUnmount() { if (this._obs) this._obs.disconnect(); }
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
