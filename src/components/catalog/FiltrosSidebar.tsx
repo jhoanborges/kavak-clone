@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 import { X } from "lucide-react";
 
 import {
@@ -13,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { FiltrosRaw, FiltrosSeleccionados } from "@/lib/api/vehiculos";
+import { marcaLogo } from "@/lib/marcas";
 import { cn } from "@/lib/utils";
 
 /**
@@ -46,7 +48,7 @@ const RANGOS_KM = [
   { label: "Más de 100,000 km", min: "100000", max: "999999" },
 ];
 
-type Opcion = { valor: string; label: string; total: number };
+type Opcion = { valor: string; label: string; total: number; logo?: string | null };
 
 export default function FiltrosSidebar({
   facetas,
@@ -133,7 +135,20 @@ export default function FiltrosSidebar({
                         : "hover:bg-muted"
                     )}
                   >
-                    <span className="truncate">{o.label}</span>
+                    <span className="flex min-w-0 items-center gap-2.5">
+                      {/* Sólo tenemos logo de algunas marcas. Sin fallback
+                          textual, el resto quedaría invisible. */}
+                      {o.logo && (
+                        <Image
+                          src={o.logo}
+                          alt=""
+                          width={24}
+                          height={24}
+                          className="size-6 shrink-0 object-contain"
+                        />
+                      )}
+                      <span className="truncate">{o.label}</span>
+                    </span>
                     <span
                       className={cn(
                         "shrink-0 tabular-nums text-caption",
@@ -261,6 +276,7 @@ export default function FiltrosSidebar({
               valor: String(m.clave_marca),
               label: m.marca,
               total: m.total_clave_marca,
+              logo: marcaLogo(m.marca),
             }))}
           />
           <Grupo
