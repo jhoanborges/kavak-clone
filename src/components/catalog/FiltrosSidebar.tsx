@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { CircleX, X } from "lucide-react";
 
 import {
   Accordion,
@@ -11,21 +11,21 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Slider } from "@/components/ui/slider";
 import type { FiltrosRaw, FiltrosSeleccionados } from "@/lib/api/vehiculos";
 import { marcaLogo } from "@/lib/marcas";
+import { segmentoIcono } from "@/lib/segmentos";
 import { cn } from "@/lib/utils";
 
 /**
  * Sidebar de filtros del catálogo.
  *
- * Las facetas NO están hardcodeadas: la API las devuelve en cada respuesta,
- * con el conteo de unidades por opción, así que la lista siempre refleja el
- * inventario real.
+ * Las facetas y los contadores vienen de la API en cada respuesta: la lista
+ * refleja siempre el inventario real, no una lista fija.
  *
- * El estado vive en la URL, no en React: así el filtro se puede compartir, el
- * botón "atrás" funciona y recargar no lo pierde.
+ * El estado vive en la URL, no en React: los filtros se pueden compartir, el
+ * botón "atrás" funciona y recargar no los pierde.
  *
  * Selección ÚNICA por grupo — el endpoint sólo acepta un valor por parámetro.
  * Volver a pulsar la opción activa la quita.
@@ -34,37 +34,40 @@ import { cn } from "@/lib/utils";
  * 500 con cualquier valor. Ver docs/api-vehiculos.md.
  */
 
-const RANGOS_PRECIO = [
-  { label: "Hasta $250,000", min: "0", max: "250000" },
-  { label: "$250,000 – $400,000", min: "250000", max: "400000" },
-  { label: "$400,000 – $600,000", min: "400000", max: "600000" },
-  { label: "Más de $600,000", min: "600000", max: "9999999" },
-];
+const PRECIO_TOPE = 2_000_000;
+const KM_TOPE = 500_000;
 
-const RANGOS_KM = [
-  { label: "Hasta 20,000 km", min: "0", max: "20000" },
-  { label: "20,000 – 50,000 km", min: "20000", max: "50000" },
-  { label: "50,000 – 100,000 km", min: "50000", max: "100000" },
-  { label: "Más de 100,000 km", min: "100000", max: "999999" },
-];
+const FILTRO_PARAMS = [
+  "marca",
+  "anio",
+  "segmento",
+  "transmision",
+  "color",
+  "precio_min",
+  "precio_max",
+  "km_min",
+  "km_max",
+] as const;
 
-type Opcion = { valor: string; label: string; total: number; logo?: string | null };
+const mxn = (n: number) => `$${n.toLocaleString("es-MX")}`;
 
 export default function FiltrosSidebar({
   facetas,
   seleccion,
+  busqueda,
   isLoading,
 }: {
   facetas: FiltrosRaw | null;
   seleccion: FiltrosSeleccionados;
+  busqueda?: string;
   isLoading?: boolean;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  /** Escribe un parámetro en la URL. `null` lo borra. Siempre vuelve a página 1. */
-  const setParam = useCallback(
+  /** Escribe parámetros en la URL. `null` los borra. */
+  const setParams = useCallback(
     (cambios: Record<string, string | null>) => {
       const params = new URLSearchParams(searchParams.toString());
       for (const [key, value] of Object.entries(cambios)) {
@@ -77,154 +80,25 @@ export default function FiltrosSidebar({
     [pathname, router, searchParams]
   );
 
-  const toggle = (key: string, valor: string) =>
-    setParam({ [key]: seleccion[key as keyof FiltrosSeleccionados] === valor ? null : valor });
+  const toggle = (key: keyof FiltrosSeleccionados, valor: string) =>
+    setParams({ [key]: seleccion[key] === valor ? null : valor });
 
-  const activos = Object.entries(seleccion).filter(([, v]) => Boolean(v));
-
-  const limpiarTodo = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    for (const key of [
-      "marca",
-      "anio",
-      "segmento",
-      "transmision",
-      "color",
-      "precio_min",
-      "precio_max",
-      "km_min",
-      "km_max",
-    ]) {
-      params.delete(key);
-    }
-    const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
-  };
-
-  function Grupo({
-    titulo,
-    param,
-    opciones,
-  }: {
-    titulo: string;
-    param: keyof FiltrosSeleccionados;
-    opciones: Opcion[];
-  }) {
-    if (opciones.length === 0) return null;
-
-    return (
-      <AccordionItem value={param}>
-        <AccordionTrigger className="font-label text-label">
-          {titulo}
-        </AccordionTrigger>
-        <AccordionContent>
-          <ul className="flex flex-col gap-1 pb-2">
-            {opciones.map((o) => {
-              const activo = seleccion[param] === o.valor;
-              return (
-                <li key={o.valor}>
-                  <button
-                    type="button"
-                    onClick={() => toggle(param, o.valor)}
-                    aria-pressed={activo}
-                    className={cn(
-                      "flex min-h-11 w-full cursor-pointer items-center justify-between gap-3 rounded-sm px-3 text-left text-body-2 transition-colors",
-                      "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
-                      activo
-                        ? "bg-brand-aqua font-medium text-brand-ink"
-                        : "hover:bg-muted"
-                    )}
-                  >
-                    <span className="flex min-w-0 items-center gap-2.5">
-                      {/* Sólo tenemos logo de algunas marcas. Sin fallback
-                          textual, el resto quedaría invisible. */}
-                      {o.logo && (
-                        <Image
-                          src={o.logo}
-                          alt=""
-                          width={24}
-                          height={24}
-                          className="size-6 shrink-0 object-contain"
-                        />
-                      )}
-                      <span className="truncate">{o.label}</span>
-                    </span>
-                    <span
-                      className={cn(
-                        "shrink-0 tabular-nums text-caption",
-                        activo ? "text-brand-ink/70" : "text-ink-500"
-                      )}
-                    >
-                      {o.total}
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </AccordionContent>
-      </AccordionItem>
+  const limpiarTodo = () =>
+    setParams(
+      Object.fromEntries([
+        ...FILTRO_PARAMS.map((k) => [k, null]),
+        ["busqueda", null],
+      ])
     );
-  }
 
-  /** Los rangos no vienen de las facetas: la API no expone histograma de precio. */
-  function GrupoRango({
-    titulo,
-    param,
-    rangos,
-  }: {
-    titulo: string;
-    param: "precio" | "km";
-    rangos: typeof RANGOS_PRECIO;
-  }) {
-    const minKey = `${param}_min` as keyof FiltrosSeleccionados;
-    const maxKey = `${param}_max` as keyof FiltrosSeleccionados;
-
-    return (
-      <AccordionItem value={param}>
-        <AccordionTrigger className="font-label text-label">
-          {titulo}
-        </AccordionTrigger>
-        <AccordionContent>
-          <ul className="flex flex-col gap-1 pb-2">
-            {rangos.map((r) => {
-              const activo =
-                seleccion[minKey] === r.min && seleccion[maxKey] === r.max;
-              return (
-                <li key={r.label}>
-                  <button
-                    type="button"
-                    aria-pressed={activo}
-                    onClick={() =>
-                      setParam(
-                        activo
-                          ? { [minKey]: null, [maxKey]: null }
-                          : { [minKey]: r.min, [maxKey]: r.max }
-                      )
-                    }
-                    className={cn(
-                      "flex min-h-11 w-full cursor-pointer items-center rounded-sm px-3 text-left text-body-2 transition-colors",
-                      "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
-                      activo
-                        ? "bg-brand-aqua font-medium text-brand-ink"
-                        : "hover:bg-muted"
-                    )}
-                  >
-                    {r.label}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </AccordionContent>
-      </AccordionItem>
-    );
-  }
+  const hayFiltros =
+    Boolean(busqueda) || FILTRO_PARAMS.some((k) => Boolean(seleccion[k]));
 
   if (isLoading && !facetas) {
     return (
-      <div className="flex flex-col gap-3" aria-busy="true">
-        {Array.from({ length: 6 }, (_, i) => (
+      <div className="flex flex-col gap-2" aria-busy="true">
+        <Skeleton className="h-10 w-full" />
+        {Array.from({ length: 7 }, (_, i) => (
           <Skeleton key={`f-${i}`} className="h-12 w-full" />
         ))}
       </div>
@@ -234,98 +108,319 @@ export default function FiltrosSidebar({
   if (!facetas) return null;
 
   return (
-    <div className="flex flex-col gap-4">
-      {activos.length > 0 && (
-        <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4">
-          <div className="flex items-center justify-between gap-2">
-            <span className="font-label text-overline uppercase text-ink-600">
-              Filtros activos
-            </span>
-            <button
-              type="button"
-              onClick={limpiarTodo}
-              className="cursor-pointer text-caption text-brand-petrol underline-offset-4 hover:underline"
-            >
-              Limpiar
-            </button>
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {activos.map(([key, value]) => (
-              <Badge key={key} variant="secondary" className="gap-1">
-                {etiquetaFiltro(key, value, facetas)}
-                <button
-                  type="button"
-                  onClick={() => setParam({ [key]: null })}
-                  aria-label={`Quitar filtro ${key}`}
-                  className="cursor-pointer"
-                >
-                  <X aria-hidden className="size-3" />
-                </button>
-              </Badge>
-            ))}
-          </div>
-        </div>
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <div className="flex items-center justify-between gap-3 px-4 py-3.5">
+        <h2 className="font-heading text-h4 font-medium">Filtros</h2>
+        {hayFiltros && (
+          <button
+            type="button"
+            onClick={limpiarTodo}
+            className="inline-flex cursor-pointer items-center gap-1.5 text-body-2 text-ink-600 transition-colors hover:text-brand-petrol focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            <CircleX aria-hidden className="size-4" />
+            Limpiar
+          </button>
+        )}
+      </div>
+
+      {hayFiltros && (
+        <ul className="flex flex-wrap gap-1.5 px-4 pb-3.5">
+          {busqueda && (
+            <ChipActivo
+              label={`Búsqueda: ${busqueda}`}
+              onRemove={() => setParams({ busqueda: null })}
+            />
+          )}
+          {FILTRO_PARAMS.filter((k) => seleccion[k]).map((k) => (
+            <ChipActivo
+              key={k}
+              label={etiquetaFiltro(k, seleccion[k] as string, facetas)}
+              onRemove={() => setParams({ [k]: null })}
+            />
+          ))}
+        </ul>
       )}
 
-      <div className="rounded-xl border border-border bg-card px-4">
-        <Accordion type="multiple" defaultValue={["marca", "segmento"]}>
-          <Grupo
-            titulo="Marca"
-            param="marca"
-            opciones={facetas.marcas.map((m) => ({
-              valor: String(m.clave_marca),
-              label: m.marca,
-              total: m.total_clave_marca,
-              logo: marcaLogo(m.marca),
-            }))}
+      <Accordion type="single" collapsible defaultValue="segmento">
+        <Grupo titulo="Tipo" value="segmento">
+          <Opciones>
+            {facetas.segmentos.map((s) => (
+              <Opcion
+                key={s.clave_segmento}
+                label={s.segmento}
+                total={s.total_clave_segmento}
+                icono={segmentoIcono(s.segmento)}
+                activo={seleccion.segmento === String(s.clave_segmento)}
+                onClick={() => toggle("segmento", String(s.clave_segmento))}
+              />
+            ))}
+          </Opciones>
+        </Grupo>
+
+        <Grupo titulo="Transmisión" value="transmision">
+          <Opciones>
+            {facetas.transmisiones.map((t) => (
+              <Opcion
+                key={t.clave_transmision}
+                label={t.transmision}
+                total={t.total_clave_transmision}
+                activo={seleccion.transmision === String(t.clave_transmision)}
+                onClick={() => toggle("transmision", String(t.clave_transmision))}
+              />
+            ))}
+          </Opciones>
+        </Grupo>
+
+        {/* "Marca" a secas, no "Marca y modelo": el parámetro `modelo` rompe la
+            API, así que prometer el modelo sería mentir. */}
+        <Grupo titulo="Marca" value="marca">
+          <Opciones>
+            {facetas.marcas.map((m) => (
+              <Opcion
+                key={m.clave_marca}
+                label={m.marca}
+                total={m.total_clave_marca}
+                icono={marcaLogo(m.marca)}
+                activo={seleccion.marca === String(m.clave_marca)}
+                onClick={() => toggle("marca", String(m.clave_marca))}
+              />
+            ))}
+          </Opciones>
+        </Grupo>
+
+        <Grupo titulo="Precio" value="precio">
+          <RangoSlider
+            min={0}
+            max={PRECIO_TOPE}
+            step={10_000}
+            format={mxn}
+            desde={seleccion.precio_min}
+            hasta={seleccion.precio_max}
+            onCommit={(min, max) =>
+              setParams({ precio_min: String(min), precio_max: String(max) })
+            }
           />
-          <Grupo
-            titulo="Carrocería"
-            param="segmento"
-            opciones={facetas.segmentos.map((s) => ({
-              valor: String(s.clave_segmento),
-              label: s.segmento,
-              total: s.total_clave_segmento,
-            }))}
+        </Grupo>
+
+        <Grupo titulo="Año" value="anio">
+          <Opciones>
+            {[...facetas.anios]
+              .sort((a, b) => Number(a.anio) - Number(b.anio))
+              .map((a) => (
+                <Opcion
+                  key={a.anio}
+                  label={a.anio}
+                  total={a.total_anio}
+                  activo={seleccion.anio === a.anio}
+                  onClick={() => toggle("anio", a.anio)}
+                />
+              ))}
+          </Opciones>
+        </Grupo>
+
+        <Grupo titulo="Kilometraje" value="km">
+          <RangoSlider
+            min={0}
+            max={KM_TOPE}
+            step={5_000}
+            format={(n) => n.toLocaleString("es-MX")}
+            desde={seleccion.km_min}
+            hasta={seleccion.km_max}
+            onCommit={(min, max) =>
+              setParams({ km_min: String(min), km_max: String(max) })
+            }
           />
-          <Grupo
-            titulo="Año"
-            param="anio"
-            opciones={[...facetas.anios]
-              .sort((a, b) => Number(b.anio) - Number(a.anio))
-              .map((a) => ({
-                valor: a.anio,
-                label: a.anio,
-                total: a.total_anio,
-              }))}
-          />
-          <Grupo
-            titulo="Transmisión"
-            param="transmision"
-            opciones={facetas.transmisiones.map((t) => ({
-              valor: String(t.clave_transmision),
-              label: t.transmision,
-              total: t.total_clave_transmision,
-            }))}
-          />
-          <Grupo
-            titulo="Color"
-            param="color"
-            opciones={facetas.colores.map((c) => ({
-              valor: String(c.clave_color),
-              label: c.color,
-              total: c.total_clave_color,
-            }))}
-          />
-          <GrupoRango titulo="Precio" param="precio" rangos={RANGOS_PRECIO} />
-          <GrupoRango titulo="Kilometraje" param="km" rangos={RANGOS_KM} />
-        </Accordion>
+        </Grupo>
+
+        <Grupo titulo="Color" value="color">
+          <Opciones>
+            {facetas.colores.map((c) => (
+              <Opcion
+                key={c.clave_color}
+                label={c.color}
+                total={c.total_clave_color}
+                activo={seleccion.color === String(c.clave_color)}
+                onClick={() => toggle("color", String(c.clave_color))}
+              />
+            ))}
+          </Opciones>
+        </Grupo>
+      </Accordion>
+    </div>
+  );
+}
+
+/* ─────────────────────────────── piezas ─────────────────────────────────── */
+
+function ChipActivo({
+  label,
+  onRemove,
+}: {
+  label: string;
+  onRemove: () => void;
+}) {
+  return (
+    <li>
+      <span className="inline-flex items-center gap-1.5 rounded-sm bg-ink-600 py-1 pr-1.5 pl-2.5 text-caption text-white">
+        {label}
+        <button
+          type="button"
+          onClick={onRemove}
+          aria-label={`Quitar ${label}`}
+          className="cursor-pointer rounded-sm transition-colors hover:text-brand-neon focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-brand-neon"
+        >
+          <X aria-hidden className="size-3.5" />
+        </button>
+      </span>
+    </li>
+  );
+}
+
+/** Cabecera que se rellena de petróleo al abrirse, como el diseño original. */
+function Grupo({
+  titulo,
+  value,
+  children,
+}: {
+  titulo: string;
+  value: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <AccordionItem value={value} className="border-border">
+      <AccordionTrigger className="px-4 font-sans text-body-2 hover:no-underline data-open:bg-brand-petrol data-open:text-white">
+        {titulo}
+      </AccordionTrigger>
+      <AccordionContent className="bg-background px-3 pt-3 pb-4">
+        {children}
+      </AccordionContent>
+    </AccordionItem>
+  );
+}
+
+function Opciones({ children }: { children: React.ReactNode }) {
+  return (
+    // Altura acotada: con 18 marcas la lista empujaría el resto de grupos fuera
+    // de la pantalla.
+    <ul className="flex max-h-[320px] flex-col gap-2 overflow-y-auto scrollbar-minimal">
+      {children}
+    </ul>
+  );
+}
+
+function Opcion({
+  label,
+  total,
+  icono,
+  activo,
+  onClick,
+}: {
+  label: string;
+  total: number;
+  icono?: string | null;
+  activo: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={onClick}
+        aria-pressed={activo}
+        className={cn(
+          "flex min-h-11 w-full cursor-pointer items-center justify-between gap-3 rounded-lg px-3.5 py-2.5 text-left transition-colors",
+          "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
+          activo
+            ? "bg-brand-aqua font-medium text-brand-ink"
+            : "bg-card hover:bg-brand-aqua/25"
+        )}
+      >
+        <span className="flex min-w-0 items-center gap-3">
+          {/* Sin icono para esta opción, sólo se pinta el texto: nunca un hueco
+              ni una imagen rota. */}
+          {icono && (
+            <Image
+              src={icono}
+              alt=""
+              width={32}
+              height={24}
+              className="h-6 w-8 shrink-0 object-contain"
+            />
+          )}
+          <span className="truncate text-body-2">{label}</span>
+        </span>
+        <span
+          className={cn(
+            "shrink-0 tabular-nums text-caption",
+            activo ? "text-brand-ink/70" : "text-ink-600"
+          )}
+        >
+          {total}
+        </span>
+      </button>
+    </li>
+  );
+}
+
+/**
+ * Rango con dos pulgares + los dos valores en texto.
+ *
+ * El estado es local mientras se arrastra y sólo se escribe en la URL al
+ * soltar (`onValueCommit`): navegar en cada píxel dispararía una petición por
+ * movimiento.
+ */
+function RangoSlider({
+  min,
+  max,
+  step,
+  format,
+  desde,
+  hasta,
+  onCommit,
+}: {
+  min: number;
+  max: number;
+  step: number;
+  format: (n: number) => string;
+  desde?: string;
+  hasta?: string;
+  onCommit: (min: number, max: number) => void;
+}) {
+  const valorInicial: [number, number] = [
+    desde ? Number(desde) : min,
+    hasta ? Number(hasta) : max,
+  ];
+  const [valor, setValor] = useState<[number, number]>(valorInicial);
+
+  // Resincroniza si la URL cambia por fuera (chip eliminado, "Limpiar", atrás).
+  useEffect(() => {
+    setValor([desde ? Number(desde) : min, hasta ? Number(hasta) : max]);
+  }, [desde, hasta, min, max]);
+
+  return (
+    <div className="flex flex-col gap-4 px-1.5 py-2">
+      <Slider
+        min={min}
+        max={max}
+        step={step}
+        value={valor}
+        onValueChange={(v) => setValor([v[0] ?? min, v[1] ?? max])}
+        onValueCommit={(v) => onCommit(v[0] ?? min, v[1] ?? max)}
+        aria-label="Rango"
+      />
+      <div className="flex items-center gap-3">
+        <output className="flex-1 rounded-lg bg-card px-3 py-2.5 text-body-2 tabular-nums">
+          {format(valor[0])}
+        </output>
+        <output className="flex-1 rounded-lg bg-card px-3 py-2.5 text-body-2 tabular-nums">
+          {format(valor[1])}
+        </output>
       </div>
     </div>
   );
 }
 
-/** Traduce la clave numérica guardada en la URL al nombre que ve la persona. */
+/** Traduce la clave numérica de la URL al nombre que ve la persona. */
 function etiquetaFiltro(
   key: string,
   value: string,
@@ -348,9 +443,9 @@ function etiquetaFiltro(
     case "anio":
       return value;
     case "precio_min":
-      return `Desde $${Number(value).toLocaleString("es-MX")}`;
+      return `Desde ${mxn(Number(value))}`;
     case "precio_max":
-      return `Hasta $${Number(value).toLocaleString("es-MX")}`;
+      return `Hasta ${mxn(Number(value))}`;
     case "km_min":
       return `Desde ${Number(value).toLocaleString("es-MX")} km`;
     case "km_max":

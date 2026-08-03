@@ -96,6 +96,7 @@ export default function CatalogoInfinito({
           <FiltrosSidebar
             facetas={facetas}
             seleccion={filtros ?? {}}
+            busqueda={busqueda}
             isLoading={isLoading}
           />
         </aside>
