@@ -52,7 +52,7 @@ export default function OfertasDestacadas({ cantidad = 4 }: { cantidad?: number 
       ) : (
         <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {vehiculos.map((v, i) => (
-            <li key={v.id || `${v.marca}-${v.modelo}-${i}`}>
+            <li key={v.id || `${v.marca}-${v.modelo}-${i}`} className="flex">
               <VehiculoCard vehiculo={v} priority={i < 2} />
             </li>
           ))}

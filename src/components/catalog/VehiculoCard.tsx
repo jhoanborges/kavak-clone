@@ -58,7 +58,7 @@ export default function VehiculoCard({
 
   return (
     // `relative` es necesario para el enlace estirado del título (after:inset-0).
-    <article className="group/card relative flex flex-col overflow-hidden rounded-xl border border-border bg-card">
+    <article className="group/card relative flex h-full w-full flex-col overflow-hidden rounded-xl border border-border bg-card">
       <div className="relative aspect-[4/3] bg-muted">
         {imagenes.length === 0 ? (
           <div className="flex size-full flex-col items-center justify-center gap-2 text-ink-500">
@@ -160,23 +160,42 @@ export default function VehiculoCard({
         <p className="font-label text-caption uppercase tracking-wide text-ink-600">
           {[vehiculo.anio, vehiculo.segmento].filter(Boolean).join(" · ")}
         </p>
-        {/* El enlace envuelve el título y se estira sobre la tarjeta: un solo
-            destino accesible en vez de duplicar el link en imagen y texto. */}
-        <h3 className="font-heading text-h4 font-medium">
+
+        {/*
+          Combinación de las dos familias del DS: la marca en Raleway pequeña y
+          espaciada, el modelo en Avenir. Antes iban juntos en un solo bloque de
+          texto grande y el conjunto pesaba demasiado.
+
+          `line-clamp-2` es la red de seguridad: aunque el dato venga sucio, el
+          título nunca pasa de dos líneas y todas las tarjetas conservan la misma
+          altura.
+
+          El enlace envuelve marca y modelo: un solo destino accesible, con el
+          nombre completo, en vez de duplicar el link en imagen y texto.
+        */}
+        <h3 className="leading-snug">
           <Link
             href={vehiculo.href}
             className="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
-            {titulo}
+            <span className="block font-label text-caption font-semibold uppercase tracking-[0.12em] text-ink-600">
+              {vehiculo.marca}
+            </span>
+            <span className="line-clamp-2 font-heading text-h4 font-medium">
+              {vehiculo.modelo}
+            </span>
           </Link>
         </h3>
+
         {vehiculo.version && (
           <p className="line-clamp-1 text-caption text-ink-600">
             {vehiculo.version}
           </p>
         )}
 
-        <p className="mt-3 font-label text-h3 font-bold tabular-nums text-brand-petrol">
+        {/* mt-auto empuja el bloque de precio al fondo: con títulos de una o dos
+            líneas, los precios de la fila quedan igualmente alineados. */}
+        <p className="mt-auto pt-3 font-label text-h3 font-bold tabular-nums text-brand-petrol">
           {mxn(vehiculo.precio)}
         </p>
         {vehiculo.mensualidad != null && (

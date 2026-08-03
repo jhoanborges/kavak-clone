@@ -347,7 +347,12 @@ export function normalizeVehiculo(raw: AutoRaw): Vehiculo {
   return {
     id: String(raw.id_partida),
     marca: raw.marca ?? "",
-    modelo: raw.modelo_string || raw.modelo || "",
+    // `modelo` antes que `modelo_string`: el segundo NO es fiable. A veces trae
+    // la descripción comercial completa, con la marca repetida dentro
+    // ("VOLKSWAGEN TERAMONT HIGHLINE 3.6 L V6 280 HP … NEGRO PROFUNDO PERLADO"),
+    // lo que producía títulos de 89 caracteres y duplicados como
+    // "VOLKSWAGEN VOLKSWAGEN TERAMONT…". `modelo` siempre viene limpio.
+    modelo: raw.modelo || raw.modelo_string || "",
     version: raw.tipo ?? "",
     anio: Number.isFinite(anio) ? anio : null,
     precio: typeof raw.precio_estimado_venta === "number" ? raw.precio_estimado_venta : null,
@@ -360,7 +365,7 @@ export function normalizeVehiculo(raw: AutoRaw): Vehiculo {
     mensualidad: typeof raw.monto_mes === "number" ? Math.round(raw.monto_mes) : null,
     meses: typeof raw.meses === "number" ? raw.meses : null,
     imagenes: (raw.imagenes ?? []).filter(Boolean).map(imagenUrl),
-    href: `/vehiculos/${slugify(`${raw.marca}-${raw.modelo_string || raw.modelo}-${raw.id_partida}`)}`,
+    href: `/vehiculos/${slugify(`${raw.marca}-${raw.modelo || raw.modelo_string}-${raw.id_partida}`)}`,
   };
 }
 

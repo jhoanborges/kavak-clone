@@ -110,7 +110,7 @@ export default function CatalogoInfinito({
         <>
           <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {vehiculos.map((v, i) => (
-              <li key={v.id || `${v.marca}-${v.modelo}-${i}`}>
+              <li key={v.id || `${v.marca}-${v.modelo}-${i}`} className="flex">
                 <VehiculoCard vehiculo={v} priority={i < 4} />
               </li>
             ))}
