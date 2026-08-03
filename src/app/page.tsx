@@ -12,7 +12,7 @@ import HowItWorks from "@/components/sections/HowItWorks";
 import Reviews from "@/components/sections/Reviews";
 import CarTypes from "@/components/sections/CarTypes";
 import BlogSection from "@/components/sections/BlogSection";
-import SearchFilters from "@/components/sections/SearchFilters";
+import BusquedasRecientes from "@/components/sections/BusquedasRecientes";
 import Footer from "@/components/sections/Footer";
 
 /**
@@ -43,7 +43,7 @@ export default function HomePage() {
         <Reviews />
         <CarTypes />
         <BlogSection />
-        <SearchFilters />
+        <BusquedasRecientes />
       </main>
       <Footer />
     </div>

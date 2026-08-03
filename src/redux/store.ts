@@ -6,15 +6,18 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import carsReducer from "./slices/carsSlice";
+import searchesReducer from "./slices/searchesSlice";
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["cars"],
+  // Ambos se persisten: filtros/favoritos y las búsquedas recientes.
+  whitelist: ["cars", "searches"],
 };
 
 const rootReducer = combineReducers({
   cars: carsReducer,
+  searches: searchesReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

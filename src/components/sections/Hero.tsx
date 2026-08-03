@@ -1,15 +1,8 @@
-import { Search } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { HeroSearchForm } from "@/components/sections/HeroSearchForm";
 
 /**
- * Server component a propósito.
- *
- * Antes era cliente sólo por los badges Compra/Vende/Cotiza, cuyo `activeTab`
- * no hacía absolutamente nada: estado decorativo que obligaba a hidratar todo
- * el hero. Sin ellos no queda estado, y el buscador funciona como un <form>
- * GET normal — sirve incluso sin JavaScript.
+ * Server component: el vídeo, el texto y el overlay no necesitan JavaScript.
+ * Sólo el buscador se hidrata, y vive aparte en <HeroSearchForm>.
  */
 export default function Hero() {
   return (
@@ -46,34 +39,7 @@ export default function Hero() {
             financia a tu medida.
           </p>
 
-          {/*
-            <form> GET a /compra: el buscador navega de verdad, y funciona sin
-            JavaScript. Antes el botón no hacía nada.
-
-            NOTA: /compra todavía no lee el parámetro `busqueda`; llegar con él
-            muestra el catálogo completo. Falta conectarlo al filtro.
-          */}
-          <form
-            action="/compra"
-            method="get"
-            role="search"
-            className="mt-10 flex w-full max-w-[640px] items-center gap-2 rounded-lg bg-card p-2 pl-4"
-          >
-            <Search aria-hidden className="size-5 shrink-0 text-ink-600" />
-            <label htmlFor="hero-search" className="sr-only">
-              Busca por año, marca o modelo
-            </label>
-            <Input
-              id="hero-search"
-              name="busqueda"
-              type="search"
-              placeholder="Busca por año, marca o modelo…"
-              className="h-11 flex-1 border-0 bg-transparent text-body-2 shadow-none focus-visible:ring-0"
-            />
-            <Button type="submit" size="cta" className="shrink-0 py-3">
-              Buscar
-            </Button>
-          </form>
+          <HeroSearchForm />
         </div>
       </div>
     </section>
