@@ -546,7 +546,7 @@ export default function CarDetailClient({ car, allCars }: Props) {
                 </div>
 
                 <div className="flex flex-col gap-2 pt-1">
-                  <Button asChild className="w-full bg-primary hover:bg-blue-700 text-white font-semibold cursor-pointer" size="lg">
+                  <Button asChild className="w-full bg-primary hover:bg-primary/80 text-primary-foreground font-semibold cursor-pointer" size="lg">
                     <Link href="/registro">Apartar o Agendar visita</Link>
                   </Button>
                   <Button asChild variant="outline" className="w-full cursor-pointer" size="lg">
@@ -631,7 +631,7 @@ export default function CarDetailClient({ car, allCars }: Props) {
                   Con Crédito obtén la mejor opción de financiamiento para tu auto
                 </p>
                 <div>
-                  <Button asChild className="bg-primary text-white font-semibold cursor-pointer gap-2">
+                  <Button asChild className="bg-primary text-primary-foreground font-semibold cursor-pointer gap-2">
                     <Link href="/cotizar">
                       <CreditCard className="size-4" />
                       Simular plan de pagos

@@ -31,13 +31,13 @@ const videos = [
 
 export default function TipsVideos() {
   return (
-    <section className="max-w-7xl mx-auto px-4 py-8">
-      <h2 className="text-xl font-bold text-foreground mb-5">Tips y Videos</h2>
+    <section className="mx-auto max-w-7xl px-6 md:px-14 py-10">
+      <h2 className="font-heading text-h2 font-normal text-foreground mb-5">Tips y Videos</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {videos.map((v) => (
           <div
             key={v.id}
-            className="relative rounded-2xl overflow-hidden aspect-[9/16] md:aspect-[3/4] cursor-pointer group"
+            className="relative rounded-xl overflow-hidden aspect-[9/16] md:aspect-[3/4] cursor-pointer group"
           >
             <Image
               src={v.img}
@@ -47,16 +47,16 @@ export default function TipsVideos() {
               sizes="(max-width: 768px) 50vw, 25vw"
             />
             {/* Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
+            <div className="absolute inset-0 bg-gradient-to-b from-brand-ink/20 via-transparent to-brand-ink/75" />
             <div className="absolute inset-0 flex flex-col justify-between p-3">
-              <span className="text-white font-black text-sm tracking-widest opacity-90 self-start drop-shadow">
+              <span className="self-start font-label text-overline uppercase text-brand-neon">
                 {v.label}
               </span>
               <div>
-                <p className="text-white font-bold text-sm leading-tight drop-shadow mb-2">
+                <p className="mb-2 font-sans text-body-2 font-medium leading-snug text-white">
                   {v.title}
                 </p>
-                <div className="size-8 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/40 transition-colors">
+                <div className="flex size-11 items-center justify-center rounded-4xl border border-white/70 bg-white/10 group-hover:bg-brand-aqua group-hover:text-brand-ink transition-colors">
                   <Play className="size-4 text-white fill-white" />
                 </div>
               </div>

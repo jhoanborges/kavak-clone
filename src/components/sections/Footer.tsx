@@ -1,100 +1,205 @@
-import { Separator } from "@/components/ui/separator";
-import { Share2, Camera, Play, Briefcase } from "lucide-react";
-import { APP_NAME } from "@/lib/config";
+import Link from "next/link";
+import { Mail, MapPin, Phone } from "lucide-react";
 
-const links = {
-  "": ["Compra un auto", "Obtén un crédito", "Vende tu auto", "Cuida tu auto", "Sedes"],
-  Recursos: ["Preguntas frecuentes", "Testimonios", "Blog", "Trabaja con nosotros", "Contacto"],
-  País: ["México"],
+import { BrandLogo } from "@/components/ds";
+import { BrandIcon } from "@/components/ui/brand-icon";
+import { Separator } from "@/components/ui/separator";
+import { OFICINAS, SEDE, mapsHref } from "@/data/ubicaciones";
+import { APP_NAME } from "@/lib/config";
+import { CONTACT, LEGAL, SOCIALS, telHref } from "@/lib/site";
+
+const NAV = {
+  Explora: [
+    { label: "Compra un auto", href: "/compra" },
+    { label: "Vende tu auto", href: "/cotizar" },
+    { label: "Ubicaciones", href: "/ubicaciones" },
+    { label: "Blog", href: "/blog" },
+  ],
+  Nosotros: [
+    { label: "Quiénes somos", href: "/nosotros" },
+    { label: "Contacto", href: "/contacto" },
+  ],
 };
 
-const socials = [
-  { icon: Share2, label: "Facebook" },
-  { icon: Camera, label: "Instagram" },
-  { icon: Play, label: "YouTube" },
-  { icon: Briefcase, label: "LinkedIn" },
-];
-
 export default function Footer() {
+  const oficinas = [SEDE, ...OFICINAS];
+
   return (
-    <footer className="bg-[#0f172a] text-slate-300 mt-8">
-      <div className="max-w-7xl mx-auto px-4 pt-12 pb-6">
-        {/* Top grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
-          {/* Logo col */}
+    <footer className="relative isolate mt-8 overflow-hidden bg-brand-ink text-brand-mist">
+      {/* Blob petróleo del Figma */}
+      <div
+        aria-hidden
+        className="absolute -bottom-[260px] -left-10 -z-10 h-[420px] w-[900px] rounded-[50%] bg-brand-petrol"
+      />
+
+      <div className="mx-auto max-w-7xl px-6 pt-14 pb-6 md:px-14">
+        <div className="mb-10 grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
-            <span
-              className="text-white font-black text-2xl tracking-wider"
-              style={{ fontFamily: "Arial Black, Arial, sans-serif" }}
-            >
-              {APP_NAME}
-            </span>
-            <p className="text-xs text-slate-400 mt-3 leading-relaxed max-w-xs">
-              La plataforma de compra y venta de autos usados certificados más grande de América Latina.
+            <BrandLogo tone="white" height={48} />
+            <p className="mt-4 max-w-xs text-caption leading-relaxed text-brand-sage">
+              Seminuevos certificados con revisión de 240 puntos, garantía
+              incluida y financiamiento a tu medida.
             </p>
           </div>
 
-          {/* Link columns */}
-          {Object.entries(links).map(([heading, items]) => (
-            <div key={heading}>
-              {heading && (
-                <p className="text-white font-semibold text-sm mb-3">{heading}</p>
-              )}
+          {Object.entries(NAV).map(([heading, items]) => (
+            <nav key={heading} aria-labelledby={`footer-${heading}`}>
+              <p
+                id={`footer-${heading}`}
+                className="mb-3 font-label text-overline uppercase text-white"
+              >
+                {heading}
+              </p>
               <ul className="flex flex-col gap-2">
                 {items.map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="text-sm text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="text-body-2 text-brand-sage transition-colors hover:text-brand-neon"
                     >
-                      {item}
-                    </a>
+                      {item.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
-            </div>
+            </nav>
           ))}
+
+          <div>
+            <p className="mb-3 font-label text-overline uppercase text-white">
+              Contacto
+            </p>
+            <ul className="flex flex-col gap-2 text-body-2">
+              {CONTACT.phone && (
+                <li className="flex items-center gap-2">
+                  <Phone aria-hidden className="size-4 shrink-0 text-brand-aqua" />
+                  <a
+                    href={telHref(CONTACT.phone)}
+                    className="text-brand-sage transition-colors hover:text-brand-neon"
+                  >
+                    {CONTACT.phone}
+                  </a>
+                </li>
+              )}
+              {CONTACT.email && (
+                <li className="flex items-center gap-2">
+                  <Mail aria-hidden className="size-4 shrink-0 text-brand-aqua" />
+                  <a
+                    href={`mailto:${CONTACT.email}`}
+                    className="text-brand-sage transition-colors hover:text-brand-neon"
+                  >
+                    {CONTACT.email}
+                  </a>
+                </li>
+              )}
+              <li>
+                <Link
+                  href="/ubicaciones"
+                  className="text-brand-sage transition-colors hover:text-brand-neon"
+                >
+                  Ver todas las oficinas
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <Separator className="bg-slate-700 mb-6" />
+        <Separator className="mb-8 bg-sidebar-border" />
 
-        {/* Social + App Stores */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
-          <div className="flex gap-3">
-            {socials.map(({ icon: Icon, label }) => (
-              <a
-                key={label}
-                href="#"
-                aria-label={label}
-                className="size-9 rounded-full bg-slate-700 hover:bg-slate-600 flex items-center justify-center transition-colors cursor-pointer"
-              >
-                <Icon className="size-4 text-slate-300" />
-              </a>
+        {/* Ubicaciones — enlace directo a Maps por oficina. Aquí abajo son un
+            dato de contacto, no navegación: por eso van compactas. */}
+        <div className="mb-8">
+          <p className="mb-4 font-label text-overline uppercase text-white">
+            Nuestras oficinas
+          </p>
+          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {oficinas.map((o) => (
+              <li key={o.id} className="flex gap-2">
+                <MapPin aria-hidden className="mt-0.5 size-4 shrink-0 text-brand-aqua" />
+                <div>
+                  <a
+                    href={mapsHref(o)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-label text-label text-white transition-colors hover:text-brand-neon"
+                  >
+                    {o.ciudad}
+                  </a>
+                  <p className="text-caption leading-snug text-brand-sage">
+                    {o.estado}
+                  </p>
+                  {o.telefonos[0] && (
+                    <a
+                      href={telHref(o.telefonos[0])}
+                      className="text-caption text-brand-sage transition-colors hover:text-brand-neon"
+                    >
+                      {o.telefonos[0]}
+                    </a>
+                  )}
+                </div>
+              </li>
             ))}
-          </div>
-          {/* App badges */}
-          <div className="flex gap-3">
+          </ul>
+        </div>
+
+        <Separator className="mb-6 bg-sidebar-border" />
+
+        <div className="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+          {SOCIALS.length > 0 && (
+            <ul className="flex gap-3">
+              {SOCIALS.map(({ key, label, href }) => (
+                <li key={key}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="flex size-11 items-center justify-center rounded-4xl bg-brand-petrol text-brand-mist transition-colors hover:bg-brand-aqua hover:text-brand-ink"
+                  >
+                    <BrandIcon name={key} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <ul className="flex gap-3">
             {["App Store", "Google Play", "AppGallery"].map((store) => (
-              <a
-                key={store}
-                href="#"
-                className="px-3 py-1.5 rounded-lg border border-slate-600 text-xs text-slate-300 hover:border-slate-400 hover:text-white transition-colors cursor-pointer"
-              >
-                {store}
-              </a>
+              <li key={store}>
+                <a
+                  href="#"
+                  className="inline-flex min-h-11 items-center rounded-lg border border-brand-sage/50 px-3 text-caption text-brand-mist transition-colors hover:border-brand-neon hover:text-brand-neon"
+                >
+                  {store}
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
 
-        <Separator className="bg-slate-700 mb-4" />
+        <Separator className="mb-4 bg-sidebar-border" />
 
-        {/* Legal */}
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-          <span>Copyright © 2026 {APP_NAME}. Todos los derechos reservados.</span>
-          <a href="#" className="hover:text-slate-300 cursor-pointer">Aviso de Privacidad</a>
-          <a href="#" className="hover:text-slate-300 cursor-pointer">Términos y Condiciones</a>
-          <a href="#" className="hover:text-slate-300 cursor-pointer">Transparencia</a>
-          <a href="#" className="hover:text-slate-300 cursor-pointer">Sitemap</a>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-caption text-brand-sage">
+          <span>
+            Copyright © {new Date().getFullYear()} {APP_NAME}. Todos los derechos
+            reservados.
+          </span>
+          {/* Legales: viven en el sitio corporativo de Value (URLs por .env).
+              Se abren en pestaña nueva para no romper el flujo de compra. */}
+          {LEGAL.map(({ label, href }) => (
+            <a
+              key={href}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-brand-neon"
+            >
+              {label}
+            </a>
+          ))}
+          <Link href="/sitemap.xml" className="transition-colors hover:text-brand-neon">
+            Sitemap
+          </Link>
         </div>
       </div>
     </footer>

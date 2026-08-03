@@ -28,7 +28,7 @@ export default function LoginPage() {
             type="button"
             className="w-full h-12 flex items-center justify-center gap-3 rounded-lg border border-border bg-white text-sm font-medium text-foreground hover:bg-muted active:scale-[0.99] transition-all cursor-pointer shadow-sm"
           >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path d="M17.64 9.20455C17.64 8.56636 17.5827 7.95273 17.4764 7.36364H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8195H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.20455Z" fill="#4285F4"/>
               <path d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5614C11.2418 14.1014 10.2109 14.4205 9 14.4205C6.65591 14.4205 4.67182 12.8373 3.96409 10.71H0.957275V13.0418C2.43818 15.9832 5.48182 18 9 18Z" fill="#34A853"/>
               <path d="M3.96409 10.71C3.78409 10.17 3.68182 9.59318 3.68182 9C3.68182 8.40682 3.78409 7.83 3.96409 7.29V4.95818H0.957275C0.347727 6.17318 0 7.54773 0 9C0 10.4523 0.347727 11.8268 0.957275 13.0418L3.96409 10.71Z" fill="#FBBC05"/>
@@ -41,7 +41,7 @@ export default function LoginPage() {
             type="button"
             className="w-full h-12 flex items-center justify-center gap-3 rounded-lg border border-border bg-white text-sm font-medium text-foreground hover:bg-muted active:scale-[0.99] transition-all cursor-pointer shadow-sm"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2">
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="#1877F2">
               <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.268h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
             </svg>
             Continuar con Facebook
@@ -119,7 +119,7 @@ export default function LoginPage() {
             disabled={!isValid}
             className="w-full h-12 mt-1 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer disabled:cursor-not-allowed"
             style={{
-              backgroundColor: isValid ? "var(--brand-primary)" : "oklch(0.75 0 0)",
+              backgroundColor: isValid ? "var(--color-brand-petrol)" : "var(--color-ink-500)",
               color: "white",
             }}
           >

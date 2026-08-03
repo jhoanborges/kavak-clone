@@ -30,7 +30,7 @@ function ExitoContent() {
             <span className={`absolute rounded-full bg-emerald-500/10 transition-all duration-700 ease-out ${checkVisible ? "w-36 h-36 opacity-100" : "w-0 h-0 opacity-0"}`} />
             <span className={`absolute rounded-full bg-emerald-500/15 transition-all duration-500 ease-out delay-100 ${checkVisible ? "w-28 h-28 opacity-100" : "w-0 h-0 opacity-0"}`} />
             <div className={`relative z-10 flex items-center justify-center w-20 h-20 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/30 transition-all duration-500 ease-out ${checkVisible ? "scale-100 opacity-100" : "scale-50 opacity-0"}`}>
-              <svg className="w-10 h-10 text-white" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg aria-hidden="true" className="w-10 h-10 text-white" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline
                   points="8,20 16,29 32,12"
                   style={{
@@ -108,7 +108,7 @@ function ExitoContent() {
 
         {/* Actions */}
         <div className={`flex flex-col gap-3 transition-all duration-500 ease-out delay-300 ${contentVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
-          <Link href="/compra" className="w-full h-12 flex items-center justify-center gap-1.5 rounded-lg text-sm font-semibold text-white" style={{ backgroundColor: "var(--brand-primary)" }}>
+          <Link href="/compra" className="w-full h-12 flex items-center justify-center gap-1.5 rounded-lg text-sm font-semibold text-white" style={{ backgroundColor: "var(--color-brand-petrol)" }}>
             Seguir explorando autos <ChevronRight className="size-4" />
           </Link>
           <Link href="/" className="w-full h-12 flex items-center justify-center rounded-lg text-sm font-medium text-foreground border border-border bg-white hover:bg-muted transition-colors">

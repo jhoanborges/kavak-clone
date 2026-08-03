@@ -1,0 +1,114 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
+import { SectionHeading } from "@/components/ds";
+import VehiculoCard from "@/components/catalog/VehiculoCard";
+import VehiculoCardSkeleton from "@/components/catalog/VehiculoCardSkeleton";
+import {
+  VehiculosError,
+  VehiculosVacio,
+} from "@/components/catalog/VehiculosEstado";
+import { Button } from "@/components/ui/button";
+import { useVehiculosInfinito } from "@/hooks/useVehiculos";
+
+/**
+ * Listado completo con scroll infinito.
+ *
+ * El centinela con IntersectionObserver carga la página siguiente al
+ * aproximarse, pero el botón "Cargar más" se renderiza SIEMPRE, no como
+ * fallback oculto: el scroll infinito puro deja sin acceso a quien navega con
+ * teclado y hace inalcanzable cualquier cosa que vaya debajo. El observer es
+ * la comodidad; el botón es el mecanismo accesible.
+ */
+export default function CatalogoInfinito({
+  busqueda = "",
+  cantidad = 12,
+  titulo = "Todo nuestro inventario",
+}: {
+  busqueda?: string;
+  cantidad?: number;
+  titulo?: string;
+}) {
+  const { vehiculos, hasMore, isLoading, isLoadingMore, loadMore, error } =
+    useVehiculosInfinito({ busqueda, cantidad });
+
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node || !hasMore || isLoadingMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) loadMore();
+      },
+      // Se adelanta media pantalla para que la carga no se note.
+      { rootMargin: "50% 0px" }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasMore, isLoadingMore, loadMore]);
+
+  return (
+    <section className="mx-auto max-w-7xl px-6 py-14 md:px-14">
+      <SectionHeading
+        overline="Catálogo"
+        title={busqueda ? `Resultados para “${busqueda}”` : titulo}
+        className="mb-8"
+      />
+
+      {error && vehiculos.length === 0 ? (
+        <VehiculosError error={error} />
+      ) : !isLoading && vehiculos.length === 0 ? (
+        <VehiculosVacio busqueda={busqueda} />
+      ) : (
+        <>
+          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {vehiculos.map((v, i) => (
+              <li key={v.id || `${v.marca}-${v.modelo}-${i}`}>
+                <VehiculoCard vehiculo={v} priority={i < 4} />
+              </li>
+            ))}
+
+            {(isLoading || isLoadingMore) &&
+              Array.from({ length: cantidad }, (_, i) => (
+                <li key={`sk-${i}`}>
+                  <VehiculoCardSkeleton />
+                </li>
+              ))}
+          </ul>
+
+          {/* Anuncia el progreso a lectores de pantalla, que no ven el spinner. */}
+          <p aria-live="polite" className="sr-only">
+            {isLoadingMore
+              ? "Cargando más vehículos"
+              : `${vehiculos.length} vehículos cargados`}
+          </p>
+
+          <div ref={sentinelRef} aria-hidden className="h-px" />
+
+          {hasMore && (
+            <div className="mt-10 flex justify-center">
+              <Button
+                variant="petrol"
+                size="cta"
+                onClick={loadMore}
+                disabled={isLoadingMore}
+              >
+                {isLoadingMore ? "Cargando…" : "Cargar más autos"}
+              </Button>
+            </div>
+          )}
+
+          {error && vehiculos.length > 0 && (
+            <p role="alert" className="mt-6 text-center text-body-2 text-ink-800">
+              No pudimos cargar más resultados. Inténtalo de nuevo.
+            </p>
+          )}
+        </>
+      )}
+    </section>
+  );
+}

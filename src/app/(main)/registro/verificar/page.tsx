@@ -1,12 +1,14 @@
 "use client";
 
-import { useRef, useState, useEffect, KeyboardEvent, ClipboardEvent } from "react";
+import { useRef, useState, useEffect, type KeyboardEvent, type ClipboardEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const CODE_LENGTH = 6;
+
+const OTP_IDS = ["otp-1", "otp-2", "otp-3", "otp-4", "otp-5", "otp-6"];
 
 export default function VerificarPage() {
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(""));
@@ -89,7 +91,7 @@ export default function VerificarPage() {
         <div className="flex gap-3 justify-between">
           {digits.map((digit, i) => (
             <input
-              key={i}
+              key={OTP_IDS[i]}
               ref={(el) => { inputRefs.current[i] = el; }}
               type="text"
               inputMode="numeric"
@@ -119,6 +121,7 @@ export default function VerificarPage() {
             </span>
           ) : (
             <button
+              type="button"
               onClick={handleResend}
               className="text-primary hover:underline cursor-pointer font-medium"
             >
@@ -128,10 +131,11 @@ export default function VerificarPage() {
         </p>
 
         <button
+          type="button"
           disabled={!isComplete}
           onClick={() => isComplete && router.push("/registro/continuar")}
           className="w-full h-12 flex items-center justify-center rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer disabled:cursor-not-allowed"
-          style={{ backgroundColor: isComplete ? "var(--brand-primary)" : "oklch(0.75 0 0)" }}
+          style={{ backgroundColor: isComplete ? "var(--color-brand-petrol)" : "var(--color-ink-500)" }}
         >
           Confirmar código
         </button>

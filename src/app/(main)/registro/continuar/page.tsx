@@ -38,7 +38,7 @@ export default function ContinuarPage() {
           </p>
         </div>
 
-        <button className="w-full bg-white border border-border rounded-xl px-5 py-5 flex items-start justify-between gap-4 hover:border-primary hover:shadow-sm transition-all cursor-pointer text-left group">
+        <button type="button" className="w-full bg-white border border-border rounded-xl px-5 py-5 flex items-start justify-between gap-4 hover:border-primary hover:shadow-sm transition-all cursor-pointer text-left group">
           <div className="flex flex-col gap-1.5">
             <p className="font-bold text-foreground text-base">Apartar auto</p>
             <p className="text-sm text-muted-foreground leading-relaxed">
@@ -49,6 +49,7 @@ export default function ContinuarPage() {
         </button>
 
         <button
+          type="button"
           onClick={() => router.push("/registro/agendar")}
           className="w-full bg-white border border-border rounded-xl px-5 py-5 flex items-start justify-between gap-4 hover:border-primary hover:shadow-sm transition-all cursor-pointer text-left group"
         >

@@ -23,11 +23,11 @@ interface Props {
 
 function CarCardItem({ car }: { car: CarCard }) {
   return (
-    <div className="shrink-0 w-52 md:w-56 bg-white rounded-2xl border border-border shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
+    <div className="shrink-0 w-52 md:w-56 bg-card rounded-xl border border-border shadow-sm overflow-hidden hover:shadow-md transition-shadow cursor-pointer group">
       {/* Car image area */}
-      <div className="relative h-32 bg-slate-100 overflow-hidden">
+      <div className="relative h-32 bg-muted overflow-hidden">
         {car.badge && (
-          <Badge className="absolute top-2 left-2 z-10 text-[10px] px-2 py-0.5 bg-primary text-white">
+          <Badge className="absolute top-2 left-2 z-10 text-[10px] px-2 py-0.5 bg-primary text-primary-foreground">
             {car.badge}
           </Badge>
         )}
@@ -40,7 +40,7 @@ function CarCardItem({ car }: { car: CarCard }) {
             sizes="224px"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-ink-300 to-ink-400">
             <svg viewBox="0 0 140 70" className="w-32 opacity-75 group-hover:scale-105 transition-transform duration-300" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="8" y="36" width="124" height="24" rx="7" fill="#94a3b8"/>
               <rect x="22" y="18" width="96" height="24" rx="5" fill="#cbd5e1"/>
@@ -56,14 +56,14 @@ function CarCardItem({ car }: { car: CarCard }) {
       </div>
       {/* Info */}
       <div className="p-3">
-        <p className="text-xs text-muted-foreground">{car.name}</p>
+        <p className="text-caption text-ink-600">{car.name}</p>
         <p className="text-sm font-semibold text-foreground truncate leading-tight">
           {car.variant}
         </p>
         <p className="text-base font-bold text-foreground mt-1">
           ${car.price.toLocaleString("es-MX")}
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-caption text-ink-600">
           Desde ${car.monthly.toLocaleString("es-MX")}/mes
         </p>
       </div>
@@ -80,19 +80,19 @@ export default function CarCarousel({ title, cars }: Props) {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-8">
+    <section className="mx-auto max-w-7xl px-6 md:px-14 py-10">
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-xl font-bold text-foreground">{title}</h2>
+        <h2 className="font-heading text-h2 font-normal text-foreground">{title}</h2>
         <div className="flex gap-2">
           <button
             onClick={() => scroll("left")}
-            className="size-8 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors cursor-pointer"
+            className="flex size-11 cursor-pointer items-center justify-center rounded-4xl border border-border transition-colors hover:bg-brand-aqua hover:text-brand-ink"
           >
             <ChevronLeft className="size-4" />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="size-8 rounded-full border border-border flex items-center justify-center hover:bg-muted transition-colors cursor-pointer"
+            className="flex size-11 cursor-pointer items-center justify-center rounded-4xl border border-border transition-colors hover:bg-brand-aqua hover:text-brand-ink"
           >
             <ChevronRight className="size-4" />
           </button>

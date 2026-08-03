@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
                 disabled={!isValid}
                 className="w-full h-12 rounded-lg text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer disabled:cursor-not-allowed"
                 style={{
-                  backgroundColor: isValid ? "var(--brand-primary)" : "oklch(0.75 0 0)",
+                  backgroundColor: isValid ? "var(--color-brand-petrol)" : "var(--color-ink-500)",
                 }}
               >
                 Enviar enlace
@@ -115,6 +115,7 @@ export default function ForgotPasswordPage() {
                 ¿No llegó el correo?
               </p>
               <button
+                type="button"
                 onClick={() => setStep("email")}
                 className="w-full h-11 rounded-lg border border-border bg-white text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
               >

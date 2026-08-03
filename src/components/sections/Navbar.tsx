@@ -4,18 +4,21 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Heart, User, ChevronDown, Menu, X, Trash2 } from "lucide-react";
+import { Heart, User, Menu, X, Trash2 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/redux/store";
 import { toggleFavorite } from "@/redux/slices/carsSlice";
 import { CARS } from "@/data/cars";
 import { APP_NAME } from "@/lib/config";
 
+// Todos apuntan a rutas reales: un "#" en la nav principal es un callejón sin
+// salida que el usuario no puede distinguir de un enlace roto.
 const navLinks = [
-  { label: "Obtén un crédito", href: "#" },
   { label: "Compra un auto", href: "/compra" },
-  { label: "Vende tu auto", href: "#" },
-  { label: "Nosotros", href: "#", hasDropdown: true },
+  { label: "Vende tu auto", href: "/cotizar" },
+  { label: "Ubicaciones", href: "/ubicaciones" },
+  { label: "Blog", href: "/blog" },
+  { label: "Nosotros", href: "/nosotros" },
   { label: "Contacto", href: "/contacto" },
 ];
 
@@ -69,7 +72,7 @@ export default function Navbar() {
               className="flex items-center gap-0.5 text-sm text-foreground/80 hover:text-foreground px-3 py-1.5 rounded-md hover:bg-muted transition-colors cursor-pointer whitespace-nowrap"
             >
               {link.label}
-              {link.hasDropdown && <ChevronDown className="size-3.5 opacity-60" />}
+              
             </Link>
           ))}
         </nav>
@@ -191,7 +194,7 @@ export default function Navbar() {
               className="flex items-center justify-between text-sm text-foreground/80 hover:text-foreground px-3 py-2.5 rounded-md hover:bg-muted transition-colors cursor-pointer"
             >
               {link.label}
-              {link.hasDropdown && <ChevronDown className="size-4 opacity-50" />}
+              
             </Link>
           ))}
           <div className="pt-2 border-t border-border mt-1 flex flex-col gap-2">

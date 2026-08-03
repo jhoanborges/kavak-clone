@@ -2,8 +2,8 @@ import { ShieldCheck, CreditCard, Wrench, RefreshCw } from "lucide-react";
 
 const stats = [
   { value: "+300K", label: "Clientes satisfechos" },
-  { value: "240", label: "Puntos de servicio" },
-  { value: "4.8★", label: "Calificación promedio" },
+  { value: "240", label: "Puntos de revisión" },
+  { value: "4.8", label: "Calificación promedio" },
   { value: "72", label: "Meses de financiamiento" },
 ];
 
@@ -11,7 +11,7 @@ const benefits = [
   {
     icon: ShieldCheck,
     title: "Autos certificados",
-    desc: "Cada vehículo pasa por una revisión de 240 puntos antes de ponerse en venta.",
+    desc: "Cada vehículo pasa una revisión de 240 puntos antes de ponerse en venta.",
   },
   {
     icon: CreditCard,
@@ -32,49 +32,44 @@ const benefits = [
 
 export default function WhyUs() {
   return (
-    <section className="max-w-7xl mx-auto px-4 py-4">
-      <div className="rounded-2xl border border-border overflow-hidden shadow-sm">
-
-        {/* Stats bar */}
-        <div
-          className="grid grid-cols-2 md:grid-cols-4"
-          style={{ backgroundColor: "var(--brand-primary)" }}
-        >
+    <section className="mx-auto max-w-7xl px-6 py-8 md:px-14">
+      <div className="overflow-hidden rounded-xl border border-border">
+        {/* Barra de stats — petróleo del DS. Antes usaba un inline style con
+            var(--brand-primary), variable que ya no existe: renderizaba
+            transparente y el texto blanco quedaba invisible. */}
+        <dl className="grid grid-cols-2 bg-brand-petrol md:grid-cols-4">
           {stats.map((s, i) => (
             <div
               key={s.label}
-              className={`flex flex-col items-center justify-center py-6 px-4 gap-1 ${
-                i < stats.length - 1 ? "border-r border-white/20" : ""
+              className={`flex flex-col items-center justify-center gap-1 px-4 py-6 ${
+                i < stats.length - 1 ? "border-r border-brand-aqua/25" : ""
               }`}
             >
-              <span className="text-3xl font-black text-white tracking-tight leading-none">
+              <dt className="font-label text-[2rem] font-bold leading-none tabular-nums text-brand-neon">
                 {s.value}
-              </span>
-              <span className="text-xs text-white/70 font-medium text-center">
+              </dt>
+              <dd className="text-center text-caption text-brand-aqua">
                 {s.label}
-              </span>
+              </dd>
             </div>
           ))}
-        </div>
+        </dl>
 
-        {/* Benefits grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 bg-white divide-y sm:divide-y-0 sm:divide-x divide-border">
+        <ul className="grid grid-cols-1 divide-y divide-border bg-card sm:grid-cols-2 sm:divide-y-0 sm:divide-x md:grid-cols-4">
           {benefits.map(({ icon: Icon, title, desc }) => (
-            <div key={title} className="flex flex-col gap-3 p-6">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                style={{ backgroundColor: "var(--brand-primary)", opacity: 1 }}
-              >
-                <Icon className="size-5 text-white" />
-              </div>
+            <li key={title} className="flex flex-col gap-4 p-6">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-sm bg-brand-aqua">
+                <Icon aria-hidden className="size-5 text-brand-ink" />
+              </span>
               <div>
-                <p className="font-bold text-sm text-foreground mb-1">{title}</p>
-                <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+                <h3 className="font-heading text-h4 font-medium">{title}</h3>
+                <p className="mt-1.5 text-caption leading-relaxed text-ink-800">
+                  {desc}
+                </p>
               </div>
-            </div>
+            </li>
           ))}
-        </div>
-
+        </ul>
       </div>
     </section>
   );

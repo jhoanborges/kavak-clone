@@ -1,5 +1,6 @@
 "use client";
 
+import { cloneElement, isValidElement, useId } from "react";
 import { useFormik } from "formik";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -59,6 +60,12 @@ const infoItems = [
 ];
 
 // ── Field wrapper ────────────────────────────────────────────────────────────
+/**
+ * Etiqueta el control con `htmlFor` + `id` inyectado al hijo. Asociación
+ * EXPLÍCITA, no implícita: además de anunciar la etiqueta, hace que pulsar
+ * sobre ella enfoque el campo, y enlaza el mensaje de error vía
+ * `aria-describedby` para que el lector de pantalla lo lea al entrar al campo.
+ */
 function Field({
   label,
   required,
@@ -70,18 +77,31 @@ function Field({
   required?: boolean;
   error?: string;
   touched?: boolean;
-  children: React.ReactNode;
+  children: React.ReactElement<React.InputHTMLAttributes<HTMLInputElement>>;
 }) {
-  const showError = touched && error;
+  const id = useId();
+  const errorId = `${id}-error`;
+  const showError = Boolean(touched && error);
+
+  const control = isValidElement(children)
+    ? cloneElement(children, {
+        id,
+        "aria-invalid": showError || undefined,
+        "aria-describedby": showError ? errorId : undefined,
+      } as React.InputHTMLAttributes<HTMLInputElement>)
+    : children;
+
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-medium text-foreground">
+      <label htmlFor={id} className="text-sm font-medium text-foreground">
         {label}
         {required && <span className="text-destructive ml-0.5">*</span>}
       </label>
-      {children}
+      {control}
       {showError && (
-        <p className="text-xs text-destructive leading-tight">{error}</p>
+        <p id={errorId} className="text-xs text-destructive leading-tight">
+          {error}
+        </p>
       )}
     </div>
   );
@@ -147,8 +167,8 @@ export default function ContactoPage() {
           <span
             className="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4"
             style={{
-              backgroundColor: "color-mix(in oklch, var(--brand-primary) 12%, transparent)",
-              color: "var(--brand-primary)",
+              backgroundColor: "color-mix(in oklch, var(--color-brand-petrol) 12%, transparent)",
+              color: "var(--color-brand-petrol)",
             }}
           >
             Contáctanos
@@ -168,7 +188,7 @@ export default function ContactoPage() {
           <div className="md:col-span-2 flex flex-col gap-4">
             <div
               className="rounded-2xl p-6 flex flex-col gap-6 text-white h-full"
-              style={{ backgroundColor: "var(--brand-primary)" }}
+              style={{ backgroundColor: "var(--color-brand-petrol)" }}
             >
               <div>
                 <h2 className="text-xl font-bold mb-1">Información de contacto</h2>
@@ -346,7 +366,7 @@ export default function ContactoPage() {
                   type="submit"
                   disabled={isSubmitting}
                   className="cursor-pointer self-stretch sm:self-auto gap-2 min-w-36"
-                  style={{ backgroundColor: "var(--brand-primary)" }}
+                  style={{ backgroundColor: "var(--color-brand-petrol)" }}
                 >
                   {isSubmitting ? (
                     <>

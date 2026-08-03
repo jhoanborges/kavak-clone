@@ -21,9 +21,9 @@ const filters = [
 
 export default function SearchFilters() {
   return (
-    <section className="max-w-7xl mx-auto px-4 py-10">
-      <h2 className="text-xl font-bold text-foreground mb-4">Continúa tu búsqueda</h2>
-      <div className="bg-white rounded-2xl border border-border overflow-hidden">
+    <section className="mx-auto max-w-7xl px-6 md:px-14 py-14">
+      <h2 className="font-heading text-h2 font-normal text-foreground mb-4">Continúa tu búsqueda</h2>
+      <div className="bg-card rounded-xl border border-border overflow-hidden">
         <Accordion type="single" collapsible>
           {filters.map((filter, i) => (
             <AccordionItem key={filter} value={`item-${i}`} className="border-border">

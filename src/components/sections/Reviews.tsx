@@ -40,24 +40,24 @@ function Stars() {
 
 export default function Reviews() {
   return (
-    <section className="max-w-7xl mx-auto px-4 py-10">
-      <h2 className="text-xl font-bold text-foreground mb-6">Lo que opinan nuestros clientes</h2>
+    <section className="mx-auto max-w-7xl px-6 md:px-14 py-14">
+      <h2 className="font-heading text-h2 font-normal text-foreground mb-6">Lo que opinan nuestros clientes</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {reviews.map((r) => (
-          <div key={r.name} className="bg-white rounded-2xl border border-border p-5 flex flex-col gap-3">
+          <div key={r.name} className="bg-card rounded-xl border border-border p-5 flex flex-col gap-3">
             <div className="flex items-center gap-3">
               <Avatar className="size-9">
-                <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
+                <AvatarFallback className="bg-brand-aqua text-brand-ink font-label text-caption font-semibold">
                   {r.initials}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <p className="text-sm font-semibold text-foreground">{r.name}</p>
-                <p className="text-xs text-muted-foreground">{r.date}</p>
+                <p className="text-caption text-ink-600">{r.date}</p>
               </div>
               <Stars />
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">{r.text}</p>
+            <p className="text-body-2 text-ink-800">{r.text}</p>
           </div>
         ))}
       </div>

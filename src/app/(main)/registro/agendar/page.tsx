@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, MapPin, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { APP_NAME } from "@/lib/config";
 
 const DAYS_ES = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const MONTHS_ES = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
@@ -82,7 +83,8 @@ export default function AgendarPage() {
           <div className="flex gap-2.5 overflow-x-auto pb-1 scrollbar-none">
             {days.map((day, i) => (
               <button
-                key={i}
+                type="button"
+                key={day.date.toISOString()}
                 onClick={() => setSelectedDay(i)}
                 className={cn(
                   "flex flex-col items-center gap-1 px-4 py-3 rounded-xl border-2 bg-white shrink-0 min-w-[72px] transition-all cursor-pointer",
@@ -139,6 +141,7 @@ export default function AgendarPage() {
         </div>
 
         <button
+          type="button"
           disabled={selectedDay === null}
           onClick={() => {
             if (selectedDay === null) return;
@@ -149,7 +152,7 @@ export default function AgendarPage() {
             router.push(`/registro/agendar/exito?${params.toString()}`);
           }}
           className="w-full h-12 flex items-center justify-center rounded-lg text-sm font-semibold text-white transition-colors cursor-pointer disabled:cursor-not-allowed"
-          style={{ backgroundColor: selectedDay !== null ? "var(--brand-primary)" : "oklch(0.75 0 0)" }}
+          style={{ backgroundColor: selectedDay !== null ? "var(--color-brand-petrol)" : "var(--color-ink-500)" }}
         >
           Agendar visita
           {selectedDay !== null && (

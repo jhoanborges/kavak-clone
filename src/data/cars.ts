@@ -63,7 +63,7 @@ const pool = {
   ],
 };
 
-let _counters: Record<string, number> = {};
+const _counters: Record<string, number> = {};
 function img(type: keyof typeof pool): string {
   _counters[type] = (_counters[type] ?? 0) % pool[type].length;
   const id = pool[type][_counters[type]++];
@@ -291,3 +291,15 @@ export const CARS: Car[] = [
   { id: 114, brand:"Volvo",        model:"XC60",        variant:"2.0 T5 INSCRIPTION AWD AT",     year:2022, price:899900,  monthly:15199, km:21600,  transmission:"Automático", fuel:"Gasolina", bodyType:"SUV",      color:"#1A1A1A",  image:img("suv"),     badge:"Destacado",    certified:true,  doors:4, seats:5 },
   { id: 115, brand:"Volvo",        model:"XC40",        variant:"2.0 T4 MOMENTUM FWD AT",        year:2021, price:699900,  monthly:11899, km:34800,  transmission:"Automático", fuel:"Gasolina", bodyType:"SUV",      color:"#2C3E50",  image:img("suv"),                           certified:true,  doors:4, seats:5 },
 ];
+
+/**
+ * Slug canónico de una ficha de auto. Lo consumen la ruta /compra/[slug],
+ * el sitemap y el JSON-LD, así que vive aquí para que no se dupliquen
+ * implementaciones que puedan divergir.
+ */
+export function carSlug(car: Pick<Car, "brand" | "model" | "id">): string {
+  return `${car.brand}-${car.model}-${car.id}`
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+}

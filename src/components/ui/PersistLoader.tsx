@@ -15,7 +15,7 @@ export default function PersistLoader() {
           style={{
             width: 128,
             height: 128,
-            backgroundColor: "var(--brand-primary)",
+            backgroundColor: "var(--color-brand-petrol)",
             opacity: 0,
             animation: "brandRipple 2s ease-out infinite",
           }}
@@ -26,7 +26,7 @@ export default function PersistLoader() {
           style={{
             width: 128,
             height: 128,
-            backgroundColor: "var(--brand-primary)",
+            backgroundColor: "var(--color-brand-petrol)",
             opacity: 0,
             animation: "brandRipple 2s ease-out 0.65s infinite",
           }}
@@ -36,9 +36,9 @@ export default function PersistLoader() {
         <div
           className="relative z-10 flex items-center justify-center w-20 h-20 rounded-full"
           style={{
-            backgroundColor: "var(--brand-primary)",
+            backgroundColor: "var(--color-brand-petrol)",
             animation: "brandPulse 2s ease-in-out infinite",
-            boxShadow: "0 0 0 0 var(--brand-primary)",
+            boxShadow: "0 0 0 0 var(--color-brand-petrol)",
           }}
         >
           {/* vercel.svg triangle — white fill */}
@@ -58,14 +58,14 @@ export default function PersistLoader() {
         className="text-2xl font-black tracking-wider select-none"
         style={{
           fontFamily: "Arial Black, Arial, sans-serif",
-          color: "var(--brand-primary)",
+          color: "var(--color-brand-petrol)",
         }}
       >
         {APP_NAME.toUpperCase()}
       </span>
 
       {/* Subtitle */}
-      <p className="mt-2 text-sm tracking-wide" style={{ color: "var(--brand-primary)", opacity: 0.6 }}>
+      <p className="mt-2 text-sm tracking-wide" style={{ color: "var(--color-brand-petrol)", opacity: 0.6 }}>
         Cargando tu experiencia…
       </p>
 
