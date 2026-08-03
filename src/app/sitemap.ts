@@ -16,7 +16,7 @@ const STATIC_ROUTES: Array<{
   priority: number;
 }> = [
   { path: "/", changeFrequency: "daily", priority: 1 },
-  { path: "/compra", changeFrequency: "daily", priority: 0.9 },
+  { path: "/vehiculos", changeFrequency: "daily", priority: 0.9 },
   { path: "/cotizar", changeFrequency: "monthly", priority: 0.8 },
   { path: "/nosotros", changeFrequency: "monthly", priority: 0.7 },
   { path: "/ubicaciones", changeFrequency: "monthly", priority: 0.7 },
@@ -43,7 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     })),
     ...CARS.map((car) => ({
-      url: absoluteUrl(`/compra/${carSlug(car)}`),
+      url: absoluteUrl(`/vehiculos/${carSlug(car)}`),
       lastModified,
       changeFrequency: "weekly" as const,
       priority: 0.7,

@@ -21,7 +21,7 @@ export async function generateMetadata({
   return buildMetadata({
     title: `${car.brand} ${car.model} ${car.year} — Seminuevo certificado`,
     description: `${car.brand} ${car.model} ${car.variant} ${car.year} con ${car.km.toLocaleString("es-MX")} km, ${car.transmission.toLowerCase()} y ${car.fuel.toLowerCase()}. $${car.price.toLocaleString("es-MX")} MXN o ${car.monthly.toLocaleString("es-MX")} al mes.`,
-    path: `/compra/${slug}`,
+    path: `/vehiculos/${slug}`,
     images: [car.image],
   });
 }
@@ -54,7 +54,7 @@ function productJsonLd(car: Car, slug: string) {
       priceCurrency: "MXN",
       availability: "https://schema.org/InStock",
       itemCondition: "https://schema.org/UsedCondition",
-      url: absoluteUrl(`/compra/${slug}`),
+      url: absoluteUrl(`/vehiculos/${slug}`),
       seller: { "@type": "Organization", name: APP_NAME },
     },
   };
@@ -71,13 +71,13 @@ function breadcrumbJsonLd(car: Car, slug: string) {
         "@type": "ListItem",
         position: 2,
         name: "Compra un auto",
-        item: absoluteUrl("/compra"),
+        item: absoluteUrl("/vehiculos"),
       },
       {
         "@type": "ListItem",
         position: 3,
         name: `${car.brand} ${car.model} ${car.year}`,
-        item: absoluteUrl(`/compra/${slug}`),
+        item: absoluteUrl(`/vehiculos/${slug}`),
       },
     ],
   };

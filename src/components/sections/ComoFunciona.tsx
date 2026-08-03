@@ -9,7 +9,7 @@ const PASOS = [
     icon: Car,
     title: "Encuentra tu auto",
     desc: "Explora nuestro catálogo y encuentra tu próximo auto.",
-    href: "/compra",
+    href: "/vehiculos",
   },
   {
     icon: FileText,

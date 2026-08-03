@@ -108,7 +108,7 @@ function ExitoContent() {
 
         {/* Actions */}
         <div className={`flex flex-col gap-3 transition-all duration-500 ease-out delay-300 ${contentVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
-          <Link href="/compra" className="w-full h-12 flex items-center justify-center gap-1.5 rounded-lg text-sm font-semibold text-white" style={{ backgroundColor: "var(--color-brand-petrol)" }}>
+          <Link href="/vehiculos" className="w-full h-12 flex items-center justify-center gap-1.5 rounded-lg text-sm font-semibold text-white" style={{ backgroundColor: "var(--color-brand-petrol)" }}>
             Seguir explorando autos <ChevronRight className="size-4" />
           </Link>
           <Link href="/" className="w-full h-12 flex items-center justify-center rounded-lg text-sm font-medium text-foreground border border-border bg-white hover:bg-muted transition-colors">

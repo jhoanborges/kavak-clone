@@ -22,7 +22,7 @@ export function absoluteUrl(path = "/"): string {
 type BuildMetadataArgs = {
   title: string;
   description?: string;
-  /** Ruta interna, p. ej. "/compra". Genera el canonical y la URL OG. */
+  /** Ruta interna, p. ej. "/vehiculos". Genera el canonical y la URL OG. */
   path: string;
   images?: string[];
   /** Páginas transaccionales o internas que no deben indexarse. */

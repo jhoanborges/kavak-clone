@@ -1,4 +1,4 @@
-import { HeroSearchForm } from "@/components/sections/HeroSearchForm";
+import { SearchForm } from "@/components/sections/SearchForm";
 
 /**
  * Server component: el vídeo, el texto y el overlay no necesitan JavaScript.
@@ -39,7 +39,7 @@ export default function Hero() {
             financia a tu medida.
           </p>
 
-          <HeroSearchForm />
+          <SearchForm className="mt-10" />
         </div>
       </div>
     </section>

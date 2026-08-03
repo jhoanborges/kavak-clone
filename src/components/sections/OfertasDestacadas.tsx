@@ -33,7 +33,7 @@ export default function OfertasDestacadas({ cantidad = 4 }: { cantidad?: number 
           className="mb-0"
         />
         <Button variant="petrol" size="cta" asChild>
-          <Link href="/compra">Ver autos</Link>
+          <Link href="/vehiculos">Ver autos</Link>
         </Button>
       </div>
 

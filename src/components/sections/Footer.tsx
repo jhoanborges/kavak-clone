@@ -10,7 +10,7 @@ import { CONTACT, LEGAL, SOCIALS, telHref } from "@/lib/site";
 
 const NAV = {
   Explora: [
-    { label: "Compra un auto", href: "/compra" },
+    { label: "Compra un auto", href: "/vehiculos" },
     { label: "Vende tu auto", href: "/cotizar" },
     { label: "Ubicaciones", href: "/ubicaciones" },
     { label: "Blog", href: "/blog" },

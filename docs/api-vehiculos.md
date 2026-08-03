@@ -202,6 +202,31 @@ Y listo — vuelve a llamada directa sin tocar un solo componente.
 > con el aviso correspondiente. Es la razón principal para preferir CORS: en ese
 > modo quien llama es el navegador del usuario final, que nunca está bloqueado.
 
+## Formato de los filtros — VERIFICADO
+
+Probado contra el endpoint real. **No son intuitivos**: casi todos van por
+clave numérica, no por el nombre que muestra la faceta.
+
+| Parámetro | Formato | Ejemplo | Comprobación |
+|---|---|---|---|
+| `busqueda` | texto | `audi` | 3 resultados |
+| `marca` | **clave numérica** | `11` | 3 · con `AUDI` → **0** |
+| `segmento` | **clave numérica** | `1` | 18 · con `SUVs` → **0** |
+| `transmision` | **clave numérica** | `1` | 27 · con `Automático` → **0** |
+| `color` | **clave numérica** | `2` | 4 resultados |
+| `anio` | año literal | `2023` | 5 resultados |
+| `precio_min`+`precio_max` | número, **los dos** | `0` + `400000` | 18 resultados |
+| `km_min`+`km_max` | número, **los dos** | `0` + `20000` | 5 resultados |
+| `modelo` | — | cualquiera | **500 del origen** |
+
+Dos trampas:
+
+1. **Los rangos necesitan ambos límites.** Mandar sólo `precio_max` deja el
+   filtro sin efecto. `catalogoQuery()` rellena el que falte (0 o el tope).
+2. **`modelo` rompe la API.** Con cualquier valor, solo o combinado con
+   `marca`, el origen devuelve 500. Por eso el sidebar no ofrece filtro de
+   modelo, aunque las facetas anidan los modelos dentro de cada marca.
+
 ## Pendiente de confirmar
 
 - **Ruta base real de las imágenes** (bloquea que se vean las fotos). Nuestra

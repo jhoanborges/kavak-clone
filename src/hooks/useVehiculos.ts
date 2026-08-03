@@ -6,9 +6,11 @@ import useSWRInfinite from "swr/infinite";
 
 import {
   buildVehiculosUrl,
+  catalogoQuery,
   normalizeRespuesta,
   VEHICULOS_PRESETS,
   type FiltrosRaw,
+  type FiltrosSeleccionados,
   type Vehiculo,
   type VehiculosQuery,
 } from "@/lib/api/vehiculos";
@@ -44,8 +46,16 @@ export function useVehiculosDestacados(cantidad = 4) {
  */
 export function useVehiculosInfinito({
   busqueda = "",
+  filtros,
   cantidad = 12,
-}: { busqueda?: string; cantidad?: number } = {}) {
+}: {
+  busqueda?: string;
+  filtros?: FiltrosSeleccionados;
+  cantidad?: number;
+} = {}) {
+  // Serializado para que sirva de dependencia estable: un objeto nuevo en cada
+  // render invalidaría getKey y recargaría el listado sin motivo.
+  const filtrosKey = JSON.stringify(filtros ?? {});
   const getKey = useCallback(
     (index: number, previous: unknown) => {
       const pagina = index + 1;
@@ -57,12 +67,15 @@ export function useVehiculosInfinito({
       }
 
       return buildVehiculosUrl(
-        busqueda
-          ? VEHICULOS_PRESETS.busqueda(busqueda, pagina, cantidad)
-          : VEHICULOS_PRESETS.listado(pagina, cantidad)
+        catalogoQuery({
+          busqueda,
+          filtros: JSON.parse(filtrosKey) as FiltrosSeleccionados,
+          pagina,
+          cantidad,
+        })
       );
     },
-    [busqueda, cantidad]
+    [busqueda, filtrosKey, cantidad]
   );
 
   const { data, error, size, setSize, isLoading, isValidating } =
@@ -81,12 +94,15 @@ export function useVehiculosInfinito({
   const primera = paginasData[0];
   const total = primera?.total ?? 0;
   const totalPaginas = primera?.paginas ?? 0;
-  const filtros: FiltrosRaw | null = primera?.filtros ?? null;
+  // Facetas que devuelve la API (marcas, años, colores…) con sus conteos.
+  // Se llama `facetas` para no chocar con los filtros SELECCIONADOS que entran
+  // por parámetro.
+  const facetas: FiltrosRaw | null = primera?.filtros ?? null;
 
   return {
     vehiculos,
     total,
-    filtros,
+    filtros: facetas,
     hasMore: size < totalPaginas && !error,
     isLoading,
     // `isValidating` con datos ya cargados = está trayendo la página siguiente.

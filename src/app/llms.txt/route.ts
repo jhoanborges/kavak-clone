@@ -46,7 +46,7 @@ operación es 100% en México y los precios se expresan en pesos mexicanos (MXN)
 
 ## Cómo funciona
 
-- **Comprar:** se navega el catálogo en ${absoluteUrl("/compra")}, se filtra por
+- **Comprar:** se navega el catálogo en ${absoluteUrl("/vehiculos")}, se filtra por
   marca, carrocería, año, precio, transmisión y combustible, y se aparta la
   unidad en línea o se agenda una visita presencial.
 - **Vender:** en ${absoluteUrl("/cotizar")} se obtiene una cotización sin costo
@@ -57,7 +57,7 @@ operación es 100% en México y los precios se expresan en pesos mexicanos (MXN)
 ## Páginas principales
 
 - [Inicio](${absoluteUrl("/")}): resumen de la propuesta, autos destacados y simulador de crédito.
-- [Catálogo de seminuevos](${absoluteUrl("/compra")}): ${CARS.length} unidades certificadas de ${brands.length} marcas, con filtros.
+- [Catálogo de seminuevos](${absoluteUrl("/vehiculos")}): ${CARS.length} unidades certificadas de ${brands.length} marcas, con filtros.
 - [Cotiza y vende tu auto](${absoluteUrl("/cotizar")}): valuación en línea paso a paso.
 - [Contacto](${absoluteUrl("/contacto")}): formulario, teléfono y ubicación.
 
@@ -70,7 +70,7 @@ ${brands.map(([brand, count]) => `- ${brand} (${count} ${count === 1 ? "unidad" 
 ${sample
   .map(
     (car) =>
-      `- [${car.brand} ${car.model} ${car.year} — ${car.variant}](${absoluteUrl(`/compra/${carSlug(car)}`)}): $${car.price.toLocaleString("es-MX")} MXN, ${car.km.toLocaleString("es-MX")} km, ${car.transmission}, ${car.fuel}.`
+      `- [${car.brand} ${car.model} ${car.year} — ${car.variant}](${absoluteUrl(`/vehiculos/${carSlug(car)}`)}): $${car.price.toLocaleString("es-MX")} MXN, ${car.km.toLocaleString("es-MX")} km, ${car.transmission}, ${car.fuel}.`
   )
   .join("\n")}
 

@@ -111,6 +111,81 @@ export function buildVehiculosUrl(query: VehiculosQuery = {}): string {
   return `${API_BASE}/api/vehiculos?${params.toString()}`;
 }
 
+/**
+ * Filtros del catálogo, ya en el formato que espera la API.
+ *
+ * VERIFICADO CONTRA EL ENDPOINT REAL:
+ *  - `marca`, `segmento`, `transmision` y `color` van por CLAVE NUMÉRICA, no
+ *    por nombre. `marca=AUDI` devuelve 0 resultados; `marca=11` devuelve 3.
+ *  - `anio` sí va como el año literal ("2023").
+ *  - `precio_*` y `km_*` necesitan AMBOS límites; con uno solo se ignora el
+ *    filtro entero.
+ *  - `modelo` NO SE USA: con cualquier valor, y con o sin `marca`, el origen
+ *    responde 500. Por eso no hay filtro de modelo en la interfaz.
+ */
+export type FiltrosSeleccionados = {
+  marca?: string;
+  anio?: string;
+  segmento?: string;
+  transmision?: string;
+  color?: string;
+  precio_min?: string;
+  precio_max?: string;
+  km_min?: string;
+  km_max?: string;
+};
+
+/** Claves de filtro que se reflejan en la URL. */
+export const FILTRO_KEYS = [
+  "marca",
+  "anio",
+  "segmento",
+  "transmision",
+  "color",
+  "precio_min",
+  "precio_max",
+  "km_min",
+  "km_max",
+] as const;
+
+const PRECIO_TOPE = 9999999;
+const KM_TOPE = 999999;
+
+/**
+ * Consulta del catálogo: búsqueda opcional + filtros + paginación.
+ * Rellena el límite que falte en los rangos, porque la API los ignora si sólo
+ * viene uno.
+ */
+export function catalogoQuery({
+  busqueda = "",
+  filtros = {},
+  pagina = 1,
+  cantidad = 12,
+}: {
+  busqueda?: string;
+  filtros?: FiltrosSeleccionados;
+  pagina?: number;
+  cantidad?: number;
+}): VehiculosQuery {
+  const tienePrecio = Boolean(filtros.precio_min || filtros.precio_max);
+  const tieneKm = Boolean(filtros.km_min || filtros.km_max);
+
+  return {
+    busqueda,
+    segmento: filtros.segmento ?? "",
+    transmision: filtros.transmision ?? "",
+    marca: filtros.marca ?? "",
+    anio: filtros.anio ?? "",
+    color: filtros.color ?? "",
+    precio_min: tienePrecio ? (filtros.precio_min || 0) : "",
+    precio_max: tienePrecio ? (filtros.precio_max || PRECIO_TOPE) : "",
+    km_min: tieneKm ? (filtros.km_min || 0) : "",
+    km_max: tieneKm ? (filtros.km_max || KM_TOPE) : "",
+    pagina,
+    cantidad,
+  };
+}
+
 export const VEHICULOS_PRESETS = {
   /** Home · "Ofertas destacadas" — en realidad una búsqueda sin filtros. */
   destacados: (cantidad = 4): VehiculosQuery => ({
@@ -285,7 +360,7 @@ export function normalizeVehiculo(raw: AutoRaw): Vehiculo {
     mensualidad: typeof raw.monto_mes === "number" ? Math.round(raw.monto_mes) : null,
     meses: typeof raw.meses === "number" ? raw.meses : null,
     imagenes: (raw.imagenes ?? []).filter(Boolean).map(imagenUrl),
-    href: `/compra/${slugify(`${raw.marca}-${raw.modelo_string || raw.modelo}-${raw.id_partida}`)}`,
+    href: `/vehiculos/${slugify(`${raw.marca}-${raw.modelo_string || raw.modelo}-${raw.id_partida}`)}`,
   };
 }
 

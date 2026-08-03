@@ -128,7 +128,7 @@ export default function NosotrosPage() {
                 empresas en México.
               </p>
               <Button variant="petrol" size="cta" className="mt-8" asChild>
-                <Link href="/compra">Ver nuestro inventario</Link>
+                <Link href="/vehiculos">Ver nuestro inventario</Link>
               </Button>
             </div>
 

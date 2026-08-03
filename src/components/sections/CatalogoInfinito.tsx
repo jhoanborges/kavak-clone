@@ -10,7 +10,10 @@ import {
   VehiculosVacio,
 } from "@/components/catalog/VehiculosEstado";
 import { Button } from "@/components/ui/button";
+import FiltrosSidebar from "@/components/catalog/FiltrosSidebar";
+import { SearchForm } from "@/components/sections/SearchForm";
 import { useVehiculosInfinito } from "@/hooks/useVehiculos";
+import type { FiltrosSeleccionados } from "@/lib/api/vehiculos";
 
 /**
  * Listado completo con scroll infinito.
@@ -23,15 +26,25 @@ import { useVehiculosInfinito } from "@/hooks/useVehiculos";
  */
 export default function CatalogoInfinito({
   busqueda = "",
+  filtros,
   cantidad = 12,
   titulo = "Todo nuestro inventario",
 }: {
   busqueda?: string;
+  filtros?: FiltrosSeleccionados;
   cantidad?: number;
   titulo?: string;
 }) {
-  const { vehiculos, hasMore, isLoading, isLoadingMore, loadMore, error } =
-    useVehiculosInfinito({ busqueda, cantidad });
+  const {
+    vehiculos,
+    total,
+    filtros: facetas,
+    hasMore,
+    isLoading,
+    isLoadingMore,
+    loadMore,
+    error,
+  } = useVehiculosInfinito({ busqueda, filtros, cantidad });
 
   const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -53,19 +66,48 @@ export default function CatalogoInfinito({
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-14 md:px-14">
-      <SectionHeading
-        overline="Catálogo"
-        title={busqueda ? `Resultados para “${busqueda}”` : titulo}
-        className="mb-8"
-      />
+      <div className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <SectionHeading
+          overline="Catálogo"
+          title={busqueda ? `Resultados para “${busqueda}”` : titulo}
+          lead={
+            total > 0
+              ? `${total.toLocaleString("es-MX")} ${total === 1 ? "unidad disponible" : "unidades disponibles"}.`
+              : undefined
+          }
+          className="mb-0"
+        />
+        {/* Sin buscador aquí, llegar a /vehiculos?busqueda=… sería un callejón
+            sin salida: no habría forma de cambiar el término sin volver al home. */}
+        <SearchForm
+          size="compact"
+          defaultValue={busqueda}
+          className="lg:max-w-[420px]"
+        />
+      </div>
 
+      <div className="grid gap-8 lg:grid-cols-[280px_1fr] lg:items-start">
+        {/* El sidebar se pega al hacer scroll: con scroll infinito, tener que
+            volver arriba para cambiar un filtro es una fricción absurda. */}
+        <aside
+          aria-label="Filtros"
+          className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto scrollbar-minimal"
+        >
+          <FiltrosSidebar
+            facetas={facetas}
+            seleccion={filtros ?? {}}
+            isLoading={isLoading}
+          />
+        </aside>
+
+        <div>
       {error && vehiculos.length === 0 ? (
         <VehiculosError error={error} />
       ) : !isLoading && vehiculos.length === 0 ? (
         <VehiculosVacio busqueda={busqueda} />
       ) : (
         <>
-          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {vehiculos.map((v, i) => (
               <li key={v.id || `${v.marca}-${v.modelo}-${i}`}>
                 <VehiculoCard vehiculo={v} priority={i < 4} />
@@ -109,6 +151,8 @@ export default function CatalogoInfinito({
           )}
         </>
       )}
+        </div>
+      </div>
     </section>
   );
 }

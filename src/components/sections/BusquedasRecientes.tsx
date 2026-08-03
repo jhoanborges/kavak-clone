@@ -55,7 +55,7 @@ export default function BusquedasRecientes() {
                 navegación por teclado. */}
             <div className="group/chip flex items-center overflow-hidden rounded-4xl border border-border bg-card transition-colors hover:border-brand-petrol">
               <Link
-                href={`/compra?busqueda=${encodeURIComponent(term)}`}
+                href={`/vehiculos?busqueda=${encodeURIComponent(term)}`}
                 className="flex min-h-11 items-center gap-2 py-2 pr-3 pl-4 text-body-2 transition-colors group-hover/chip:text-brand-petrol focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
               >
                 <Search aria-hidden className="size-4 text-ink-500" />

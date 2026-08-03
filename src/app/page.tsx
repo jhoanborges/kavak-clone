@@ -20,7 +20,7 @@ import Footer from "@/components/sections/Footer";
  * quedaron fuera: el inventario del home sale ahora de la API real, vía
  * <OfertasDestacadas>. Ver docs/api-vehiculos.md.
  *
- * <CatalogoInfinito> existe pero NO va aquí: es para /compra.
+ * <CatalogoInfinito> existe pero NO va aquí: es para /vehiculos.
  */
 export default function HomePage() {
   return (

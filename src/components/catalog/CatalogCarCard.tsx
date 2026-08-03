@@ -44,7 +44,7 @@ export default function CatalogCarCard({ car, priority = false }: CatalogCarCard
     <article className="relative bg-white rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow flex flex-col cursor-pointer">
       {/* Full-card link overlay */}
       <Link
-        href={`/compra/${slug}`}
+        href={`/vehiculos/${slug}`}
         className="absolute inset-0 z-10"
         aria-label={`Ver detalles de ${car.brand} ${car.model} ${car.year}`}
       />

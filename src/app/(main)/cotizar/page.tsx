@@ -344,7 +344,7 @@ function Step4({ data }: { data: Record<string, string> }) {
       {/* Next step */}
       <div className="flex flex-col gap-3">
         <Link
-          href="/compra"
+          href="/vehiculos"
           className="w-full h-12 flex items-center justify-center rounded-xl text-sm font-bold text-white transition-all active:scale-[0.99]"
           style={{ backgroundColor: "var(--color-brand-petrol)" }}
         >

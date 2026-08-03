@@ -322,7 +322,7 @@ export default function CarDetailClient({ car, allCars }: Props) {
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* ── Breadcrumb ──────────────────────────────────────── */}
         <nav className="flex items-center gap-1.5 text-xs text-muted-foreground mb-4 flex-wrap">
-          <Link href="/compra" className="hover:text-foreground transition-colors">
+          <Link href="/vehiculos" className="hover:text-foreground transition-colors">
             Seminuevos
           </Link>
           <ChevronRight className="size-3 shrink-0" />
@@ -712,7 +712,7 @@ export default function CarDetailClient({ car, allCars }: Props) {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-foreground">También te podría interesar</h2>
               <Link
-                href="/compra"
+                href="/vehiculos"
                 className="text-sm text-primary hover:text-[#033e48] flex items-center gap-1 transition-colors"
               >
                 Ver todos
@@ -770,7 +770,7 @@ function CarFaq({ car, similarCars }: { car: CarType; similarCars: CarType[] }) 
             const s = toSlug(c);
             return (
               <span key={c.id}>
-                <Link href={`/compra/${s}`} className="text-primary hover:underline">
+                <Link href={`/vehiculos/${s}`} className="text-primary hover:underline">
                   {c.brand} {c.model} {c.year}
                 </Link>
                 {i < Math.min(similarCars.length, 3) - 1 ? ", " : ""}

@@ -293,7 +293,7 @@ export const CARS: Car[] = [
 ];
 
 /**
- * Slug canónico de una ficha de auto. Lo consumen la ruta /compra/[slug],
+ * Slug canónico de una ficha de auto. Lo consumen la ruta /vehiculos/[slug],
  * el sitemap y el JSON-LD, así que vive aquí para que no se dupliquen
  * implementaciones que puedan divergir.
  */

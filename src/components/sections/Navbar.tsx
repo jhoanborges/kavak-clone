@@ -14,7 +14,7 @@ import { APP_NAME } from "@/lib/config";
 // Todos apuntan a rutas reales: un "#" en la nav principal es un callejón sin
 // salida que el usuario no puede distinguir de un enlace roto.
 const navLinks = [
-  { label: "Compra un auto", href: "/compra" },
+  { label: "Compra un auto", href: "/vehiculos" },
   { label: "Vende tu auto", href: "/cotizar" },
   { label: "Ubicaciones", href: "/ubicaciones" },
   { label: "Blog", href: "/blog" },
@@ -107,7 +107,7 @@ export default function Navbar() {
                     Favoritos {favoriteCars.length > 0 && <span className="text-muted-foreground font-normal">({favoriteCars.length})</span>}
                   </span>
                   {favoriteCars.length > 0 && (
-                    <Link href="/compra" onClick={() => setFavOpen(false)} className="text-xs text-primary hover:underline">
+                    <Link href="/vehiculos" onClick={() => setFavOpen(false)} className="text-xs text-primary hover:underline">
                       Ver todos
                     </Link>
                   )}
@@ -119,7 +119,7 @@ export default function Navbar() {
                     <p className="text-sm font-medium text-foreground">Sin favoritos aún</p>
                     <p className="text-xs text-muted-foreground">Dale al corazón en cualquier auto para guardarlo aquí.</p>
                     <Link
-                      href="/compra"
+                      href="/vehiculos"
                       onClick={() => setFavOpen(false)}
                       className="mt-1 text-xs text-primary hover:underline font-medium"
                     >
@@ -131,7 +131,7 @@ export default function Navbar() {
                     {favoriteCars.map((car) => (
                       <li key={car.id} className="flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors group">
                         <Link
-                          href={`/compra/${toSlug(car)}`}
+                          href={`/vehiculos/${toSlug(car)}`}
                           onClick={() => setFavOpen(false)}
                           className="flex items-center gap-3 flex-1 min-w-0"
                         >
@@ -199,7 +199,7 @@ export default function Navbar() {
           ))}
           <div className="pt-2 border-t border-border mt-1 flex flex-col gap-2">
             <Link
-              href="/compra"
+              href="/vehiculos"
               className="flex items-center gap-2 px-3 py-2.5 rounded-md text-sm text-foreground/80 hover:text-foreground hover:bg-muted transition-colors"
               onClick={() => setMobileOpen(false)}
             >
