@@ -24,12 +24,17 @@ const benefits = [
 export default function TrustSection() {
   return (
     <section className="mx-auto max-w-7xl px-6 py-14 md:px-14">
+      {/*
+        Aquí decía «Más de 300,000 clientes ya confiaron en …»: una cifra
+        inventada, heredada del clon de Kavak, atribuida a una empresa real.
+        Sustituida por el eslogan de marca, que además es verificable.
+      */}
       <SectionHeading
         overline="Por qué elegirnos"
         title={
           <>
-            Más de <span className="text-brand-petrol">300,000 clientes</span> ya
-            confiaron en {APP_NAME}
+            ¡Tu seminuevo de confianza en{" "}
+            <span className="text-brand-petrol">Monterrey</span>!
           </>
         }
         className="mb-10 max-w-[720px]"

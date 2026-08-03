@@ -1,17 +1,17 @@
-"use client";
-
-import { useState } from "react";
 import { Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 
-const tabs = ["Compra", "Vende", "Cotiza"];
-
+/**
+ * Server component a propósito.
+ *
+ * Antes era cliente sólo por los badges Compra/Vende/Cotiza, cuyo `activeTab`
+ * no hacía absolutamente nada: estado decorativo que obligaba a hidratar todo
+ * el hero. Sin ellos no queda estado, y el buscador funciona como un <form>
+ * GET normal — sirve incluso sin JavaScript.
+ */
 export default function Hero() {
-  const [activeTab, setActiveTab] = useState("Compra");
-
   return (
     <section className="relative w-full min-h-[520px] md:min-h-[600px] overflow-hidden">
       <video
@@ -36,55 +36,44 @@ export default function Hero() {
           <p className="mb-2.5 font-label text-overline uppercase text-brand-neon">
             Seminuevos certificados
           </p>
-          <h1 className="max-w-[720px] font-heading text-display-l font-light text-white">
-            Transforma tu camino
+          <h1 className="max-w-[820px] font-heading text-display-l font-light text-white">
+            Kilómetros con historia,
+            <br />
+            autos con futuro.
           </h1>
           <p className="mt-5 max-w-[520px] text-body-1 text-white/85">
-            Compra o vende tu auto con revisión de 240 puntos, garantía incluida
-            y financiamiento a tu medida.
+            Cada unidad pasa una revisión de 240 puntos, incluye garantía y se
+            financia a tu medida.
           </p>
 
-          {/* Buscador — radio 10px (inputs del DS), no pill */}
-          <div className="mt-10 flex w-full max-w-[640px] items-center gap-2 rounded-lg bg-card p-2 pl-4">
+          {/*
+            <form> GET a /compra: el buscador navega de verdad, y funciona sin
+            JavaScript. Antes el botón no hacía nada.
+
+            NOTA: /compra todavía no lee el parámetro `busqueda`; llegar con él
+            muestra el catálogo completo. Falta conectarlo al filtro.
+          */}
+          <form
+            action="/compra"
+            method="get"
+            role="search"
+            className="mt-10 flex w-full max-w-[640px] items-center gap-2 rounded-lg bg-card p-2 pl-4"
+          >
             <Search aria-hidden className="size-5 shrink-0 text-ink-600" />
             <label htmlFor="hero-search" className="sr-only">
               Busca por año, marca o modelo
             </label>
             <Input
               id="hero-search"
+              name="busqueda"
+              type="search"
               placeholder="Busca por año, marca o modelo…"
               className="h-11 flex-1 border-0 bg-transparent text-body-2 shadow-none focus-visible:ring-0"
             />
-            <Button size="cta" className="shrink-0 py-3">
+            <Button type="submit" size="cta" className="shrink-0 py-3">
               Buscar
             </Button>
-          </div>
-
-          <div
-            className="mt-6 flex flex-wrap items-center gap-3"
-            role="tablist"
-            aria-label="Tipo de operación"
-          >
-            {tabs.map((tab) => (
-              <button
-                key={tab}
-                type="button"
-                role="tab"
-                aria-selected={activeTab === tab}
-                onClick={() => setActiveTab(tab)}
-                className={cn(
-                  // min-h-11 = 44px, objetivo táctil accesible
-                  "min-h-11 cursor-pointer rounded-4xl border px-6 font-label text-label transition-colors",
-                  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-neon",
-                  activeTab === tab
-                    ? "border-brand-aqua bg-brand-aqua text-brand-ink"
-                    : "border-white/70 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
-                )}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
+          </form>
         </div>
       </div>
     </section>
