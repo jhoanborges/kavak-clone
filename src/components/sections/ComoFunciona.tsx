@@ -1,15 +1,8 @@
 import Link from "next/link";
-import {
-  CalendarCheck,
-  Car,
-  FileText,
-  Handshake,
-  Play,
-  Sparkles,
-} from "lucide-react";
+import { CalendarCheck, Car, FileText, Handshake, Sparkles } from "lucide-react";
 
 import { SectionHeading } from "@/components/ds";
-import { Button } from "@/components/ui/button";
+import { VerVideoDialog } from "@/components/sections/VerVideoDialog";
 
 const PASOS = [
   {
@@ -54,12 +47,7 @@ export default function ComoFunciona() {
             lead="Adquirir un auto con nosotros es sencillo. Te lo explicamos en cinco pasos."
             className="mb-0"
           />
-          <Button variant="petrol" size="cta" asChild>
-            <Link href="/contacto">
-              <Play aria-hidden />
-              Ver video
-            </Link>
-          </Button>
+          <VerVideoDialog />
         </div>
 
         {/*
