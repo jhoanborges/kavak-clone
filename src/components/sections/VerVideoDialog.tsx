@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import { Play } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -15,24 +12,27 @@ import {
 /**
  * Modal del vídeo "¿Cómo funciona?".
  *
- * Vive en su propio componente cliente para que <ComoFunciona> siga siendo
- * server component: sólo este botón necesita estado en el navegador.
+ * Sin "use client" ni estado: Radix ya monta y desmonta el contenido del
+ * diálogo por su cuenta, así que el <video> sólo existe en el DOM mientras el
+ * modal está abierto. Antes había un `useState` + `{open && …}` que duplicaba
+ * ese comportamiento sin aportar nada.
  *
- * El <video> se monta SÓLO cuando el diálogo está abierto. Si estuviera siempre
- * en el árbol, el navegador pediría metadatos (y con `preload` la primera parte
- * del archivo) en cada carga del home — 9 MB que casi nadie va a reproducir.
+ * Que el <video> no aparezca en el HTML inicial es intencionado, no un fallo:
+ * si estuviera siempre en el árbol, el navegador pediría metadatos del archivo
+ * de 8.8 MB en cada carga del home, lo reproduzca alguien o no.
  */
 export function VerVideoDialog({
   src = "/videos/video.mp4",
+  poster,
   titulo = "Cómo funciona",
 }: {
   src?: string;
+  /** Primer fotograma. Sin él, el modal muestra un rectángulo negro mientras carga. */
+  poster?: string;
   titulo?: string;
 }) {
-  const [open, setOpen] = useState(false);
-
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog>
       <DialogTrigger asChild>
         <Button variant="petrol" size="cta">
           <Play data-icon="inline-start" />
@@ -41,24 +41,30 @@ export function VerVideoDialog({
       </DialogTrigger>
 
       <DialogContent className="max-w-[min(92vw,960px)] overflow-hidden p-0 sm:max-w-[min(92vw,960px)]">
-        {/* Radix exige un título accesible. Es visualmente redundante junto al
-            vídeo, así que va oculto para lectores de pantalla. */}
+        {/* Radix exige un título accesible. Junto al vídeo sería redundante a la
+            vista, así que sólo lo anuncian los lectores de pantalla. */}
         <DialogTitle className="sr-only">{titulo}</DialogTitle>
         <DialogDescription className="sr-only">
           Vídeo que explica el proceso para adquirir un auto con nosotros.
         </DialogDescription>
 
-        {open && (
-          <video
-            // biome-ignore lint/a11y/useMediaCaption: el vídeo no tiene pista de
-            // subtítulos disponible todavía; pendiente de que la entregue diseño.
-            src={src}
-            controls
-            autoPlay
-            playsInline
-            className="aspect-video w-full bg-brand-ink"
-          />
-        )}
+        <video
+          // biome-ignore lint/a11y/useMediaCaption: falta la pista de subtítulos;
+          // pendiente de que la entregue diseño.
+          src={src}
+          poster={poster}
+          controls
+          autoPlay
+          playsInline
+          // Sólo se descarga al abrir el modal, así que aquí sí interesa el
+          // archivo completo cuanto antes.
+          preload="auto"
+          className="aspect-video w-full bg-brand-ink"
+        >
+          <a href={src} download>
+            Descargar el vídeo
+          </a>
+        </video>
       </DialogContent>
     </Dialog>
   );
