@@ -1,8 +1,17 @@
 /**
  * Logos de marca en public/marcas.
  *
- * El mapa es explícito porque las extensiones son mixtas (.svg y .webp) y
- * porque el nombre del archivo no siempre coincide con lo que devuelve la API.
+ * El mapa es explícito porque las extensiones son mixtas y porque el nombre del
+ * archivo no siempre coincide con lo que devuelve la API.
+ *
+ * FORMATO: SVG por defecto — es vectorial, nítido en cualquier densidad de
+ * pantalla y más ligero que un ráster para formas planas. Convertirlo todo a
+ * WebP sería un retroceso.
+ *
+ * La excepción son GMC y Peugeot: sus logos son cromados con 82 y 81 gradientes
+ * (224 y 41 paths), o sea vectores imitando un degradado fotográfico. A 32x24px
+ * ese detalle no se ve, y pesaban 84 KB y 44 KB YA optimizados. Rasterizados a
+ * 192px de ancho quedan en 4.1 KB y 1.7 KB. Ahí el ráster sí gana.
  *
  * Para añadir una marca: deja el archivo en public/marcas con el slug como
  * nombre y añade la entrada aquí. Si la API la nombra distinto, añade también
@@ -15,18 +24,18 @@ const ARCHIVOS: Record<string, string> = {
   chevrolet: "chevrolet.webp",
   fiat: "fiat.svg",
   ford: "ford.svg",
-  gmc: "gmc.svg",
+  gmc: "gmc.webp",
   honda: "honda.webp",
   hyundai: "hyundai.svg",
   jeep: "jeep.svg",
-  kia: "kia.webp",
+  kia: "kia.svg",
   "land-rover": "land-rover.svg",
   mazda: "mazda.webp",
   "mercedes-benz": "mercedes-benz.svg",
   mg: "mg.svg",
   mitsubishi: "mitsubishi.svg",
-  nissan: "nissan.webp",
-  peugeot: "peugeot.svg",
+  nissan: "nissan.svg",
+  peugeot: "peugeot.webp",
   toyota: "toyota.svg",
   volkswagen: "volkswagen.webp",
 };
