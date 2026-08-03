@@ -56,8 +56,12 @@ export default function TipsVideos() {
                 <p className="mb-2 font-sans text-body-2 font-medium leading-snug text-white">
                   {v.title}
                 </p>
-                <div className="flex size-11 items-center justify-center rounded-4xl border border-white/70 bg-white/10 group-hover:bg-brand-aqua group-hover:text-brand-ink transition-colors">
-                  <Play className="size-4 text-white fill-white" />
+                {/* Hover en tinta, no en aqua: sobre una miniatura clara el
+                    aqua se lavaba y el botón perdía definición. Oscurecer
+                    funciona con cualquier imagen de fondo, y el icono en neón
+                    da el acento sin aclarar el círculo. */}
+                <div className="flex size-11 items-center justify-center rounded-4xl border border-white/80 bg-brand-ink/40 backdrop-blur-sm transition-all duration-200 group-hover:scale-105 group-hover:border-brand-neon group-hover:bg-brand-ink">
+                  <Play className="size-4 fill-white text-white transition-colors group-hover:fill-brand-neon group-hover:text-brand-neon" />
                 </div>
               </div>
             </div>

@@ -1,3 +1,5 @@
+"use client";
+
 import { Play } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -12,10 +14,14 @@ import {
 /**
  * Modal del vídeo "¿Cómo funciona?".
  *
- * Sin "use client" ni estado: Radix ya monta y desmonta el contenido del
- * diálogo por su cuenta, así que el <video> sólo existe en el DOM mientras el
- * modal está abierto. Antes había un `useState` + `{open && …}` que duplicaba
- * ese comportamiento sin aportar nada.
+ * "use client" ES OBLIGATORIO aquí, aunque el componente no tenga estado:
+ * `DialogTrigger asChild` necesita clonar el <Button> y fusionarle props
+ * (aria-controls, data-state, onClick). Eso no funciona cruzando la frontera
+ * RSC — el servidor no renderizaba el botón, el cliente sí, y saltaba un error
+ * de hidratación. No quitar esta directiva.
+ *
+ * No hace falta estado propio: Radix ya monta y desmonta el contenido del
+ * diálogo, así que el <video> sólo existe en el DOM mientras está abierto.
  *
  * Que el <video> no aparezca en el HTML inicial es intencionado, no un fallo:
  * si estuviera siempre en el árbol, el navegador pediría metadatos del archivo
