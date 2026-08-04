@@ -394,3 +394,97 @@ export async function fetchVehiculos(url: string): Promise<unknown> {
 
   return res.json();
 }
+
+/* ─────────────────────────── ficha de detalle ───────────────────────────── */
+
+/** Galería agrupada por categoría, tal como la devuelve el origen. */
+export type ImagenesRaw = Record<string, { fotos: string[] } | undefined>;
+
+export type GrupoFotos = { categoria: string; fotos: string[] };
+
+const ORDEN_CATEGORIAS = ["exterior", "interior", "detalles", "otros"];
+
+const TITULO_CATEGORIA: Record<string, string> = {
+  exterior: "Exterior",
+  interior: "Interior",
+  detalles: "Detalles",
+  otros: "Otros",
+};
+
+/** Aplana la galería a grupos con URL absoluta, descartando los vacíos. */
+export function normalizeImagenes(data: unknown): GrupoFotos[] {
+  const raw = (data ?? {}) as ImagenesRaw;
+  const claves = Object.keys(raw).sort(
+    (a, b) => ORDEN_CATEGORIAS.indexOf(a) - ORDEN_CATEGORIAS.indexOf(b)
+  );
+
+  return claves
+    .map((clave) => ({
+      categoria: TITULO_CATEGORIA[clave] ?? clave,
+      fotos: (raw[clave]?.fotos ?? []).filter(Boolean).map(imagenUrl),
+    }))
+    .filter((g) => g.fotos.length > 0);
+}
+
+/**
+ * Extrae el id de un slug "marca-modelo-12577".
+ * El id siempre es el último segmento numérico.
+ */
+export function idDesdeSlug(slug: string): string | null {
+  const m = slug.match(/(\d+)$/);
+  return m ? m[1] : null;
+}
+
+/**
+ * Busca un vehículo por id, en SERVIDOR.
+ *
+ * Todavía no hay endpoint de detalle — el equipo lo pasará más adelante — así
+ * que se pide el listado completo y se filtra. Funciona porque la API devuelve
+ * las 29 unidades en una sola respuesta; con un catálogo grande esto no se
+ * sostiene y habrá que sustituirlo por el endpoint real.
+ *
+ * Va servidor-a-servidor: sin CORS, y además permite renderizar la ficha en el
+ * HTML para que Google la indexe.
+ */
+export async function fetchVehiculoPorId(
+  id: string
+): Promise<{ vehiculo: Vehiculo | null; similares: Vehiculo[] }> {
+  const url = `${UPSTREAM_ORIGIN}/api/vehiculos?${new URLSearchParams({
+    busqueda: "",
+    precio_min: "",
+    precio_max: "",
+    km_min: "",
+    km_max: "",
+    pagina: "1",
+    cantidad: "500",
+  })}`;
+
+  const res = await fetch(url, {
+    headers: { Accept: "application/json" },
+    next: { revalidate: 300 },
+  });
+  if (!res.ok) return { vehiculo: null, similares: [] };
+
+  const { vehiculos } = normalizeRespuesta(await res.json());
+  const vehiculo = vehiculos.find((v) => v.id === id) ?? null;
+
+  // Similares: mismo segmento, distinta unidad. Es la afinidad más útil que
+  // permiten los datos disponibles.
+  const similares = vehiculo
+    ? vehiculos
+        .filter((v) => v.id !== id && v.segmento === vehiculo.segmento)
+        .slice(0, 4)
+    : [];
+
+  return { vehiculo, similares };
+}
+
+/** Galería de un vehículo, en SERVIDOR. */
+export async function fetchImagenes(id: string): Promise<GrupoFotos[]> {
+  const res = await fetch(`${UPSTREAM_ORIGIN}/api/vehiculos/${id}/imagenes`, {
+    headers: { Accept: "application/json" },
+    next: { revalidate: 3600 },
+  });
+  if (!res.ok) return [];
+  return normalizeImagenes(await res.json());
+}

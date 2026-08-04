@@ -34,10 +34,14 @@ export async function GET(request: Request) {
 
   const incoming = new URL(request.url).searchParams;
 
-  // Allowlist estricta: sólo los parámetros que el endpoint conoce.
+  // Allowlist estricta: sólo los parámetros que el endpoint conoce. Se
+  // reenvían TODOS los valores de cada uno, y también la variante `clave[]`
+  // que el sitio original usa para selección múltiple.
   const forwarded = new URLSearchParams();
   for (const key of VEHICULOS_PARAMS) {
-    if (incoming.has(key)) forwarded.set(key, incoming.get(key) ?? "");
+    for (const value of incoming.getAll(key)) forwarded.append(key, value);
+    for (const value of incoming.getAll(`${key}[]`))
+      forwarded.append(`${key}[]`, value);
   }
 
   const upstream = `${UPSTREAM_ORIGIN}/api/vehiculos?${forwarded.toString()}`;
