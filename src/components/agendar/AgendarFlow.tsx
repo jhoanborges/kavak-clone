@@ -55,6 +55,13 @@ const PASOS = ["Tus datos", "Contacto", "Verificación"] as const;
 const LARGO_CODIGO = 6;
 const IDS_OTP = ["otp-1", "otp-2", "otp-3", "otp-4", "otp-5", "otp-6"];
 
+/** Cuenta atrás en m:ss — "45s" se lee peor que "0:45" cuando pasa del minuto. */
+function formatearCuentaAtras(total: number): string {
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
 const PREFERENCIAS: Array<{
   valor: PreferenciaContacto;
   label: string;
@@ -586,21 +593,45 @@ export function AgendarFlow({
                 </div>
               </fieldset>
 
-              <div className="flex items-center justify-between gap-3 text-caption">
-                <span className="text-ink-600">
-                  {segundos > 0
-                    ? `Puedes reenviarlo en ${segundos}s`
-                    : "¿No te llegó?"}
-                </span>
-                <button
-                  type="button"
-                  disabled={segundos > 0 || enviando}
-                  onClick={pedirCodigo}
-                  className="cursor-pointer text-brand-petrol underline underline-offset-4 disabled:cursor-not-allowed disabled:text-ink-500 disabled:no-underline"
-                >
-                  Reenviar código
-                </button>
-              </div>
+              {/*
+                Mientras corre la cuenta atrás no se ofrece nada pulsable: un
+                control desactivado invita a intentarlo y no explica por qué no
+                responde. Al llegar a cero aparece el enlace.
+
+                `aria-live="polite"`, no "assertive": el cambio importa, pero
+                interrumpir a alguien que está tecleando el código sería peor.
+                Y el contador NO se anuncia cada segundo — sólo el cambio de
+                estado — porque un lector repitiendo el número cada segundo
+                haría la pantalla inusable.
+              */}
+              <p aria-live="polite" className="text-center text-caption">
+                {segundos > 0 ? (
+                  <span className="text-ink-600">
+                    Podrás reenviar un nuevo código en{" "}
+                    <span className="font-medium tabular-nums text-foreground">
+                      {formatearCuentaAtras(segundos)}
+                    </span>
+                  </span>
+                ) : (
+                  <>
+                    <span className="text-ink-600">¿No te llegó el código? </span>
+                    {/*
+                      Es un <button> con aspecto de enlace, no un <a>: reenviar
+                      ejecuta una acción, no navega. Un enlace prometería una
+                      URL que no existe y rompería el clic con rueda o el
+                      "abrir en pestaña nueva".
+                    */}
+                    <button
+                      type="button"
+                      disabled={enviando}
+                      onClick={pedirCodigo}
+                      className="cursor-pointer font-medium text-brand-petrol underline underline-offset-4 hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:text-ink-500"
+                    >
+                      Reenviar código
+                    </button>
+                  </>
+                )}
+              </p>
             </>
           )}
 
