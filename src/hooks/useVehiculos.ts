@@ -111,3 +111,48 @@ export function useVehiculosInfinito({
     error: error as Error | undefined,
   };
 }
+
+/**
+ * Valores de un campo numérico en todo el inventario que casa con los filtros
+ * ACTUALES, salvo el propio rango que se está editando.
+ *
+ * Sirve para dibujar el histograma del filtro de precio/kilometraje: las barras
+ * deben mostrar la distribución del contexto (por ejemplo, sólo Audis) pero NO
+ * encogerse mientras se arrastra el control — si se aplicase el propio rango,
+ * las barras desaparecerían bajo el cursor.
+ *
+ * OJO CON LA ESCALA: pide todo el inventario de una vez. Hoy son 29 unidades y
+ * la API las devuelve en una sola respuesta. Si el catálogo creciera a miles,
+ * esto habría que sustituirlo por un endpoint que devuelva el histograma ya
+ * agregado.
+ */
+export function useDistribucion({
+  busqueda = "",
+  filtros = {},
+  campo,
+  max = 500,
+}: {
+  busqueda?: string;
+  filtros?: FiltrosSeleccionados;
+  campo: "precio" | "km";
+  max?: number;
+}) {
+  const sinRangoPropio: FiltrosSeleccionados = { ...filtros };
+  delete sinRangoPropio[`${campo}_min` as keyof FiltrosSeleccionados];
+  delete sinRangoPropio[`${campo}_max` as keyof FiltrosSeleccionados];
+
+  const url = buildVehiculosUrl(
+    catalogoQuery({ busqueda, filtros: sinRangoPropio, pagina: 1, cantidad: max })
+  );
+  const { data, isLoading } = useSWR(url);
+
+  const valores = useMemo(() => {
+    const { vehiculos } = normalizeRespuesta(data);
+    return vehiculos
+      .map((v) => (campo === "precio" ? v.precio : v.km))
+      .filter((n): n is number => typeof n === "number" && n > 0)
+      .sort((a, b) => a - b);
+  }, [data, campo]);
+
+  return { valores, isLoading };
+}

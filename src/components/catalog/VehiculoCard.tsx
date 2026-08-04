@@ -8,7 +8,6 @@ import { ChevronLeft, ChevronRight, Fuel, Gauge, ImageOff, Settings2 } from "luc
 
 import { Badge } from "@/components/ui/badge";
 import type { Vehiculo } from "@/lib/api/vehiculos";
-import { segmentoIcono } from "@/lib/segmentos";
 import { cn } from "@/lib/utils";
 
 const mxn = (n: number | null) =>
@@ -65,7 +64,6 @@ export default function VehiculoCard({
   }, [emblaApi, onSelect]);
 
   const titulo = [vehiculo.marca, vehiculo.modelo].filter(Boolean).join(" ");
-  const silueta = segmentoIcono(vehiculo.segmento);
 
   return (
     // `relative` es necesario para el enlace estirado del título (after:inset-0).
@@ -205,42 +203,41 @@ export default function VehiculoCard({
           </p>
         )}
 
-        <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+        {/*
+          Dos columnas, no tres. La silueta genérica de carrocería iba en medio
+          y robaba el ancho: en una tarjeta estrecha partía "$4,773 / mes*" en
+          dos líneas. Además era redundante — arriba está la foto real del auto,
+          y la carrocería ya se lee en el overline.
+
+          `whitespace-nowrap` en la cifra: el importe y su sufijo son una sola
+          unidad de lectura y nunca deben separarse.
+        */}
+        <div className="mt-auto flex items-end justify-between gap-4 pt-4">
           <div className="min-w-0">
             {vehiculo.mensualidad != null ? (
               <>
                 <p className="text-caption text-ink-600">Desde:</p>
-                <p className="font-label text-h3 font-bold tabular-nums text-brand-petrol">
+                <p className="whitespace-nowrap font-label text-h3 font-bold tabular-nums text-brand-petrol">
                   {mxn(vehiculo.mensualidad)}
                   <span className="ml-1 text-caption font-normal text-ink-600">
-                    / mes*
+                    /mes*
                   </span>
                 </p>
               </>
             ) : (
               <>
                 <p className="text-caption text-ink-600">Contado:</p>
-                <p className="font-label text-h3 font-bold tabular-nums text-brand-petrol">
+                <p className="whitespace-nowrap font-label text-h3 font-bold tabular-nums text-brand-petrol">
                   {mxn(vehiculo.precio)}
                 </p>
               </>
             )}
           </div>
 
-          {silueta && (
-            <Image
-              src={silueta}
-              alt=""
-              width={56}
-              height={32}
-              className="h-8 w-14 shrink-0 self-center object-contain opacity-80"
-            />
-          )}
-
           {vehiculo.mensualidad != null && vehiculo.precio != null && (
             <div className="shrink-0 text-right">
               <p className="text-caption text-ink-600">Contado:</p>
-              <p className="font-label text-body-2 font-semibold tabular-nums">
+              <p className="whitespace-nowrap font-label text-body-2 font-semibold tabular-nums">
                 {mxn(vehiculo.precio)}
               </p>
             </div>

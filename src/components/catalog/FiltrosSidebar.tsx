@@ -12,7 +12,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Slider } from "@/components/ui/slider";
+import { RangoHistograma } from "@/components/catalog/RangoHistograma";
+import { useDistribucion } from "@/hooks/useVehiculos";
 import type { FiltrosRaw, FiltrosSeleccionados } from "@/lib/api/vehiculos";
 import { marcaLogo } from "@/lib/marcas";
 import { segmentoIcono } from "@/lib/segmentos";
@@ -65,6 +66,19 @@ export default function FiltrosSidebar({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  // Distribución para los histogramas. Se pide sin el propio rango aplicado,
+  // para que las barras no se desvanezcan mientras se arrastra el control.
+  const { valores: precios } = useDistribucion({
+    busqueda,
+    filtros: seleccion,
+    campo: "precio",
+  });
+  const { valores: kms } = useDistribucion({
+    busqueda,
+    filtros: seleccion,
+    campo: "km",
+  });
 
   /** Escribe parámetros en la URL. `null` los borra. */
   const setParams = useCallback(
@@ -189,11 +203,13 @@ export default function FiltrosSidebar({
         </Grupo>
 
         <Grupo titulo="Precio" value="precio">
-          <RangoSlider
+          <RangoHistograma
+            valores={precios}
             min={0}
             max={PRECIO_TOPE}
             step={10_000}
             format={mxn}
+            parse={(t) => Number(t.replace(/[^\d]/g, ""))}
             desde={seleccion.precio_min}
             hasta={seleccion.precio_max}
             onCommit={(min, max) =>
@@ -219,11 +235,13 @@ export default function FiltrosSidebar({
         </Grupo>
 
         <Grupo titulo="Kilometraje" value="km">
-          <RangoSlider
+          <RangoHistograma
+            valores={kms}
             min={0}
             max={KM_TOPE}
             step={5_000}
-            format={(n) => n.toLocaleString("es-MX")}
+            format={(n) => `${n.toLocaleString("es-MX")} km`}
+            parse={(t) => Number(t.replace(/[^\d]/g, ""))}
             desde={seleccion.km_min}
             hasta={seleccion.km_max}
             onCommit={(min, max) =>
@@ -359,64 +377,6 @@ function Opcion({
         </span>
       </button>
     </li>
-  );
-}
-
-/**
- * Rango con dos pulgares + los dos valores en texto.
- *
- * El estado es local mientras se arrastra y sólo se escribe en la URL al
- * soltar (`onValueCommit`): navegar en cada píxel dispararía una petición por
- * movimiento.
- */
-function RangoSlider({
-  min,
-  max,
-  step,
-  format,
-  desde,
-  hasta,
-  onCommit,
-}: {
-  min: number;
-  max: number;
-  step: number;
-  format: (n: number) => string;
-  desde?: string;
-  hasta?: string;
-  onCommit: (min: number, max: number) => void;
-}) {
-  const valorInicial: [number, number] = [
-    desde ? Number(desde) : min,
-    hasta ? Number(hasta) : max,
-  ];
-  const [valor, setValor] = useState<[number, number]>(valorInicial);
-
-  // Resincroniza si la URL cambia por fuera (chip eliminado, "Limpiar", atrás).
-  useEffect(() => {
-    setValor([desde ? Number(desde) : min, hasta ? Number(hasta) : max]);
-  }, [desde, hasta, min, max]);
-
-  return (
-    <div className="flex flex-col gap-4 px-1.5 py-2">
-      <Slider
-        min={min}
-        max={max}
-        step={step}
-        value={valor}
-        onValueChange={(v) => setValor([v[0] ?? min, v[1] ?? max])}
-        onValueCommit={(v) => onCommit(v[0] ?? min, v[1] ?? max)}
-        aria-label="Rango"
-      />
-      <div className="flex items-center gap-3">
-        <output className="flex-1 rounded-lg bg-card px-3 py-2.5 text-body-2 tabular-nums">
-          {format(valor[0])}
-        </output>
-        <output className="flex-1 rounded-lg bg-card px-3 py-2.5 text-body-2 tabular-nums">
-          {format(valor[1])}
-        </output>
-      </div>
-    </div>
   );
 }
 
