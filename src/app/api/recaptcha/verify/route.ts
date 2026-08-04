@@ -23,7 +23,7 @@ export const dynamic = "force-dynamic";
 const ACCIONES_VALIDAS = new Set<string>(Object.values(RECAPTCHA_ACCIONES));
 
 export async function POST(request: Request) {
-  const habilitado = process.env.RECAPTCHA_ENABLED === "true";
+  const habilitado = process.env.NEXT_PUBLIC_RECAPTCHA_ENABLED === "true";
   const secreto = process.env.RECAPTCHA_SECRET_KEY ?? "";
 
   let body: { token?: unknown; accion?: unknown };
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     // Encendido pero sin clave: se rechaza. Dejar pasar aquí convertiría un
     // error de configuración en un agujero silencioso.
     console.error(
-      "[recaptcha] RECAPTCHA_ENABLED=true pero falta RECAPTCHA_SECRET_KEY."
+      "[recaptcha] NEXT_PUBLIC_RECAPTCHA_ENABLED=true pero falta RECAPTCHA_SECRET_KEY."
     );
     return NextResponse.json<VerificacionRecaptcha>(
       { ok: false, error: "La verificación no está disponible." },

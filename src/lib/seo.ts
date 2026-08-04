@@ -80,6 +80,6 @@ export function buildMetadata({
 export const NOINDEX_ROUTES = [
   "/login",
   "/forgot-password",
-  "/registro",
+  "/agendar",
   "/design-system",
 ] as const;

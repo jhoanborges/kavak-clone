@@ -12,7 +12,7 @@ const DISALLOW = [
   "/design-system",
   "/login",
   "/forgot-password",
-  "/registro",
+  "/agendar",
 ];
 
 export default function robots(): MetadataRoute.Robots {

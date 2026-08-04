@@ -128,10 +128,15 @@ export default function LoginPage() {
           </button>
         </form>
 
+        {/* Antes enlazaba a /registro, que era el embudo del clon de Kavak y
+            ya no existe. La captura de leads vive ahora en /agendar. */}
         <p className="text-center text-sm text-muted-foreground">
-          ¿No tienes cuenta?{" "}
-          <Link href="/registro" className="text-primary font-semibold hover:underline">
-            Regístrate gratis
+          ¿Buscas un auto?{" "}
+          <Link
+            href="/agendar"
+            className="font-semibold text-primary hover:underline"
+          >
+            Agenda una cita
           </Link>
         </p>
 
