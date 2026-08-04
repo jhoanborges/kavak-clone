@@ -9,6 +9,7 @@ import {
   type KeyboardEvent,
 } from "react";
 import Link from "next/link";
+import { useDispatch, useSelector } from "react-redux";
 import {
   ArrowLeft,
   ArrowRight,
@@ -22,6 +23,8 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useHydrated } from "@/hooks/useHydrated";
 import {
   destinoLegible,
   emailValido,
@@ -30,7 +33,6 @@ import {
   registrarLead,
   telefonoValido,
   verificarCodigo,
-  type Canal,
   type LeadIdentidad,
   type PreferenciaContacto,
 } from "@/lib/agendar";
@@ -41,8 +43,15 @@ import {
 } from "@/lib/recaptcha";
 import { CONTACT, whatsappHref } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import {
+  limpiarAgendar,
+  setCampo,
+  setCanal,
+  togglePreferencia,
+} from "@/redux/slices/agendarSlice";
+import type { RootState } from "@/redux/store";
 
-const PASOS = ["Contacto", "Verificación", "Tus datos", "Listo"] as const;
+const PASOS = ["Tus datos", "Contacto", "Verificación"] as const;
 const LARGO_CODIGO = 6;
 const IDS_OTP = ["otp-1", "otp-2", "otp-3", "otp-4", "otp-5", "otp-6"];
 
@@ -59,14 +68,18 @@ const PREFERENCIAS: Array<{
 /**
  * Captura de lead de "Agendar una cita".
  *
- * Cuatro pasos en un solo componente, con el estado en memoria y no en la URL.
- * Es deliberado: si cada paso fuera una ruta, recargar en el paso 3 dejaría a
- * la persona en un formulario sin identidad verificada, y habría que reconstruir
- * o abortar. Un embudo corto se sostiene mejor en un único contenedor.
+ * ORDEN: datos personales → contacto → código → confirmación. Los datos van
+ * primero porque nombre y apellido son triviales de dar; pedir el teléfono de
+ * entrada levanta la guardia antes de que la persona haya invertido nada. Al
+ * llegar al número ya empezó, y abandonar cuesta más.
  *
- * Se pide UN dato para empezar — teléfono o correo, no ambos. Cada campo extra
- * antes del primer "Continuar" cuesta conversión, y el resto se puede pedir
- * cuando la persona ya invirtió algo en el proceso.
+ * Lo escrito se persiste en redux (ver agendarSlice), así que cambiar de canal
+ * o retroceder no borra nada. El código NO se persiste: es un secreto de un
+ * solo uso y vive únicamente aquí.
+ *
+ * Anterior/Siguiente existen en los tres pasos editables. En la confirmación
+ * desaparecen: el lead ya se envió y "atrás" no puede deshacerlo — ofrecerlo
+ * sería mentir sobre lo que hace.
  */
 export function AgendarFlow({
   vehiculoId,
@@ -75,37 +88,27 @@ export function AgendarFlow({
   vehiculoId?: string;
   resumen?: string;
 }) {
+  const hydrated = useHydrated();
+  const dispatch = useDispatch();
+  const datos = useSelector((s: RootState) => s.agendar);
+
   const [paso, setPaso] = useState(0);
-  const [canal, setCanal] = useState<Canal>("telefono");
-  const [valor, setValor] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // El código vive aquí, nunca en redux ni en localStorage.
   const [digitos, setDigitos] = useState<string[]>(
     Array(LARGO_CODIGO).fill("")
   );
   const refsOtp = useRef<(HTMLInputElement | null)[]>([]);
   const [segundos, setSegundos] = useState(0);
 
-  const [nombre, setNombre] = useState("");
-  const [apellido, setApellido] = useState("");
-  const [email, setEmail] = useState("");
-  const [preferencias, setPreferencias] = useState<PreferenciaContacto[]>([
-    "whatsapp",
-  ]);
-
   const tituloRef = useRef<HTMLHeadingElement>(null);
   const nombreRef = useRef<HTMLInputElement>(null);
   const baseId = useId();
 
-  const identidad: LeadIdentidad = { canal, valor };
-
-  // Al cambiar de paso, el foco va al título. Sin esto, quien navega con
-  // teclado o lector de pantalla se queda donde estaba y no se entera de que
-  // la pantalla cambió.
-  useEffect(() => {
-    tituloRef.current?.focus();
-  }, []);
+  const valorCanal = datos.canal === "telefono" ? datos.telefono : datos.email;
+  const identidad: LeadIdentidad = { canal: datos.canal, valor: valorCanal };
 
   useEffect(() => {
     if (segundos <= 0) return;
@@ -117,23 +120,23 @@ export function AgendarFlow({
     setPaso(n);
     setError(null);
     requestAnimationFrame(() => {
-      // En el paso de datos el foco va al primer campo, no al título: la
-      // persona ya sabe dónde está y lo único que falta es escribir. El cambio
-      // de paso se sigue anunciando por el aria-live del progreso.
-      if (n === 2) nombreRef.current?.focus();
+      if (n === 0) nombreRef.current?.focus();
       else tituloRef.current?.focus();
     });
   };
 
-  const identidadValida =
-    canal === "telefono" ? telefonoValido(valor) : emailValido(valor);
+  const datosValidos =
+    datos.nombre.trim().length > 1 &&
+    datos.apellido.trim().length > 1 &&
+    datos.preferencias.length > 0;
+
+  const contactoValido =
+    datos.canal === "telefono"
+      ? telefonoValido(datos.telefono)
+      : emailValido(datos.email);
+
   const codigo = digitos.join("");
   const codigoCompleto = codigo.length === LARGO_CODIGO;
-  const datosValidos =
-    nombre.trim().length > 1 &&
-    apellido.trim().length > 1 &&
-    preferencias.length > 0 &&
-    (email === "" || emailValido(email));
 
   async function pedirCodigo() {
     setEnviando(true);
@@ -143,25 +146,22 @@ export function AgendarFlow({
     if (!r.ok) return setError(r.error);
     setDigitos(Array(LARGO_CODIGO).fill(""));
     setSegundos(60);
-    irA(1);
+    irA(2);
     requestAnimationFrame(() => refsOtp.current[0]?.focus());
   }
 
-  async function confirmarCodigo() {
+  async function confirmarYEnviar() {
     setEnviando(true);
     setError(null);
-    const r = await verificarCodigo(identidad, codigo);
-    setEnviando(false);
-    if (!r.ok) return setError(r.error);
-    irA(2);
-  }
 
-  async function enviarDatos() {
-    setEnviando(true);
-    setError(null);
+    const v = await verificarCodigo(identidad, codigo);
+    if (!v.ok) {
+      setEnviando(false);
+      return setError(v.error);
+    }
 
     // reCAPTCHA antes de crear el lead. Con el interruptor apagado devuelve
-    // null y el servidor responde `omitido`, así que el flujo no se bloquea.
+    // null y el servidor responde `omitido`, así que no bloquea.
     try {
       const token = await obtenerTokenRecaptcha(RECAPTCHA_ACCIONES.agendar);
       const check = await verificarRecaptcha(token, RECAPTCHA_ACCIONES.agendar);
@@ -177,14 +177,16 @@ export function AgendarFlow({
     }
 
     const r = await registrarLead(identidad, {
-      nombre,
-      apellido,
-      email,
-      preferencias,
+      nombre: datos.nombre,
+      apellido: datos.apellido,
+      email: datos.email,
+      preferencias: datos.preferencias,
       vehiculoId,
     });
     setEnviando(false);
     if (!r.ok) return setError(r.error);
+
+    setDigitos(Array(LARGO_CODIGO).fill(""));
     irA(3);
   }
 
@@ -223,23 +225,51 @@ export function AgendarFlow({
     refsOtp.current[Math.min(texto.length, LARGO_CODIGO - 1)]?.focus();
   }
 
-  /* ───────────────────────── presentación ───────────────────── */
+  /* ──────────────────────────── carga ─────────────────────────── */
+
+  // El servidor no puede leer localStorage, así que los campos rehidratados
+  // llegarían distintos y React marcaría un desajuste. Se espera al cliente.
+  if (!hydrated) {
+    return (
+      <div className="flex flex-col gap-4" aria-busy="true">
+        <Skeleton className="h-1 w-full" />
+        <Skeleton className="h-9 w-2/3" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
+        <Skeleton className="h-12 w-full" />
+      </div>
+    );
+  }
 
   const titulos = [
-    "¿Cómo te contactamos?",
-    canal === "telefono" ? "Valida tu celular" : "Valida tu correo",
     "Cuéntanos quién eres",
+    "¿Cómo te contactamos?",
+    datos.canal === "telefono" ? "Valida tu celular" : "Valida tu correo",
     "¡Listo! Te contactamos pronto",
   ];
 
+  const puedeAvanzar =
+    paso === 0 ? datosValidos : paso === 1 ? contactoValido : codigoCompleto;
+
+  const avanzar = () => {
+    if (paso === 0) return irA(1);
+    if (paso === 1) return pedirCodigo();
+    return confirmarYEnviar();
+  };
+
+  const etiquetaAvanzar =
+    paso === 0
+      ? "Continuar"
+      : paso === 1
+        ? "Enviar código"
+        : "Validar y agendar";
+
   return (
-    <div className="mx-auto w-full max-w-[520px]">
-      {/* Progreso. `aria-live` anuncia el cambio de paso a quien no ve la
-          barra avanzar. */}
+    <div className="w-full">
       {paso < 3 && (
         <div className="mb-8">
           <ol className="flex gap-2">
-            {PASOS.slice(0, 3).map((nombrePaso, i) => (
+            {PASOS.map((nombrePaso, i) => (
               <li key={nombrePaso} className="flex-1">
                 <span
                   className={cn(
@@ -279,365 +309,323 @@ export function AgendarFlow({
         </p>
       )}
 
-      {/* ── Paso 1: identidad ── */}
-      {paso === 0 && (
+      {paso < 3 && (
         <form
           className="mt-6 flex flex-col gap-5"
           onSubmit={(e) => {
             e.preventDefault();
-            if (identidadValida) pedirCodigo();
+            if (puedeAvanzar && !enviando) avanzar();
           }}
         >
-          <p className="text-body-2 text-ink-800">
-            Te enviamos un código para confirmar que eres tú. Sólo pedimos un
-            dato para empezar.
-          </p>
+          {/* ── Paso 1: datos personales ── */}
+          {paso === 0 && (
+            <>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-1.5">
+                  <label
+                    htmlFor={`${baseId}-nombre`}
+                    className="font-label text-label"
+                  >
+                    Nombre
+                  </label>
+                  <Input
+                    id={`${baseId}-nombre`}
+                    ref={nombreRef}
+                    autoComplete="given-name"
+                    value={datos.nombre}
+                    onChange={(e) =>
+                      dispatch(
+                        setCampo({ campo: "nombre", valor: e.target.value })
+                      )
+                    }
+                    className="h-12 text-body-2"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label
+                    htmlFor={`${baseId}-apellido`}
+                    className="font-label text-label"
+                  >
+                    Apellido
+                  </label>
+                  <Input
+                    id={`${baseId}-apellido`}
+                    autoComplete="family-name"
+                    value={datos.apellido}
+                    onChange={(e) =>
+                      dispatch(
+                        setCampo({ campo: "apellido", valor: e.target.value })
+                      )
+                    }
+                    className="h-12 text-body-2"
+                  />
+                </div>
+              </div>
 
-          <div
-            role="radiogroup"
-            aria-label="Medio de contacto"
-            className="flex gap-2"
-          >
-            {(
-              [
-                { v: "telefono" as const, label: "Celular", icon: Phone },
-                { v: "email" as const, label: "Correo", icon: Mail },
-              ]
-            ).map(({ v, label, icon: Icon }) => (
-              <button
-                key={v}
-                type="button"
-                role="radio"
-                aria-checked={canal === v}
-                onClick={() => {
-                  setCanal(v);
-                  setValor("");
-                  setError(null);
-                }}
-                className={cn(
-                  "flex min-h-11 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border text-body-2 transition-colors",
-                  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-                  canal === v
-                    ? "border-brand-petrol bg-brand-aqua/30 font-medium text-brand-petrol"
-                    : "border-border bg-card hover:bg-muted"
+              <fieldset className="flex flex-col gap-3">
+                <legend className="font-label text-label">
+                  ¿Por dónde prefieres que te contactemos?
+                </legend>
+                <div className="grid gap-2 sm:grid-cols-3">
+                  {PREFERENCIAS.map(({ valor: v, label, icon: Icon }) => {
+                    const activo = datos.preferencias.includes(v);
+                    return (
+                      <label
+                        key={v}
+                        className={cn(
+                          "flex min-h-11 cursor-pointer items-center gap-2.5 rounded-lg border px-3 py-2.5 text-body-2 transition-colors",
+                          "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring",
+                          activo
+                            ? "border-brand-petrol bg-brand-aqua/30 font-medium text-brand-petrol"
+                            : "border-border bg-card hover:bg-muted"
+                        )}
+                      >
+                        {/* Checkbox real oculto, no un div con onClick:
+                            navegable por teclado y anunciado como casilla. */}
+                        <input
+                          type="checkbox"
+                          checked={activo}
+                          onChange={() => dispatch(togglePreferencia(v))}
+                          className="sr-only"
+                        />
+                        <span
+                          aria-hidden
+                          className={cn(
+                            "flex size-5 shrink-0 items-center justify-center rounded-sm border-2",
+                            activo
+                              ? "border-brand-petrol bg-brand-petrol text-white"
+                              : "border-border"
+                          )}
+                        >
+                          {activo && (
+                            <Check className="size-3" strokeWidth={3} />
+                          )}
+                        </span>
+                        <Icon aria-hidden className="size-4" />
+                        {label}
+                      </label>
+                    );
+                  })}
+                </div>
+                {datos.preferencias.length === 0 && (
+                  <p className="text-caption text-destructive">
+                    Elige al menos una forma de contacto.
+                  </p>
                 )}
-              >
-                <Icon aria-hidden className="size-4" />
-                {label}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor={`${baseId}-valor`}
-              className="font-label text-label"
-            >
-              {canal === "telefono" ? "Número de celular" : "Correo electrónico"}
-            </label>
-            <div className="flex items-center gap-2">
-              {canal === "telefono" && (
-                <span className="flex h-12 shrink-0 items-center rounded-lg border border-border bg-muted px-3 text-body-2 tabular-nums text-ink-600">
-                  +52
-                </span>
-              )}
-              <Input
-                id={`${baseId}-valor`}
-                type={canal === "telefono" ? "tel" : "email"}
-                inputMode={canal === "telefono" ? "numeric" : "email"}
-                autoComplete={canal === "telefono" ? "tel-national" : "email"}
-                placeholder={
-                  canal === "telefono" ? "81 1234 5678" : "tucorreo@ejemplo.com"
-                }
-                value={
-                  canal === "telefono" ? formatearTelefono(valor) : valor
-                }
-                onChange={(e) => setValor(e.target.value)}
-                className="h-12 flex-1 text-body-2"
-              />
-            </div>
-            <p className="text-caption text-ink-600">
-              {canal === "telefono"
-                ? "Te llegará un SMS con un código de 6 dígitos."
-                : "Te llegará un correo con un código de 6 dígitos."}
-            </p>
-          </div>
-
-          <Button
-            type="submit"
-            variant="petrol"
-            size="cta"
-            disabled={!identidadValida || enviando}
-            className="w-full"
-          >
-            {enviando ? (
-              <>
-                <Loader2 data-icon="inline-start" className="animate-spin" />
-                Enviando código…
-              </>
-            ) : (
-              <>
-                Continuar
-                <ArrowRight data-icon="inline-end" />
-              </>
-            )}
-          </Button>
-        </form>
-      )}
-
-      {/* ── Paso 2: código ── */}
-      {paso === 1 && (
-        <form
-          className="mt-6 flex flex-col gap-5"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (codigoCompleto) confirmarCodigo();
-          }}
-        >
-          <p className="text-body-2 text-ink-800">
-            Ingresa el código que te enviamos{" "}
-            {canal === "telefono" ? "por SMS al" : "al correo"}{" "}
-            <span className="font-medium text-foreground">
-              {destinoLegible(identidad)}
-            </span>{" "}
-            <button
-              type="button"
-              onClick={() => irA(0)}
-              className="cursor-pointer text-brand-petrol underline underline-offset-4"
-            >
-              Cambiar
-            </button>
-          </p>
-
-          <fieldset className="flex flex-col gap-2">
-            <legend className="sr-only">Código de 6 dígitos</legend>
-            <div className="flex justify-between gap-2">
-              {digitos.map((d, i) => (
-                <input
-                  key={IDS_OTP[i]}
-                  ref={(el) => {
-                    refsOtp.current[i] = el;
-                  }}
-                  type="text"
-                  inputMode="numeric"
-                  autoComplete={i === 0 ? "one-time-code" : "off"}
-                  maxLength={1}
-                  aria-label={`Dígito ${i + 1}`}
-                  value={d}
-                  onChange={(e) => escribirDigito(i, e.target.value)}
-                  onKeyDown={(e) => teclaOtp(i, e)}
-                  onPaste={pegarOtp}
-                  className={cn(
-                    "h-14 w-full rounded-lg border bg-card text-center font-label text-h3 tabular-nums outline-none transition-colors",
-                    "focus-visible:border-brand-petrol focus-visible:ring-2 focus-visible:ring-brand-aqua",
-                    d ? "border-brand-petrol" : "border-border"
-                  )}
-                />
-              ))}
-            </div>
-          </fieldset>
-
-          <div className="flex items-center justify-between gap-3 text-caption">
-            <span className="text-ink-600">
-              {segundos > 0
-                ? `Puedes reenviarlo en ${segundos}s`
-                : "¿No te llegó?"}
-            </span>
-            <button
-              type="button"
-              disabled={segundos > 0 || enviando}
-              onClick={pedirCodigo}
-              className="cursor-pointer text-brand-petrol underline underline-offset-4 disabled:cursor-not-allowed disabled:text-ink-500 disabled:no-underline"
-            >
-              Reenviar código
-            </button>
-          </div>
-
-          <Button
-            type="submit"
-            variant="petrol"
-            size="cta"
-            disabled={!codigoCompleto || enviando}
-            className="w-full"
-          >
-            {enviando ? (
-              <>
-                <Loader2 data-icon="inline-start" className="animate-spin" />
-                Validando…
-              </>
-            ) : (
-              "Validar código"
-            )}
-          </Button>
-
-          <button
-            type="button"
-            onClick={() => irA(0)}
-            className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 text-body-2 text-ink-600 hover:text-brand-petrol"
-          >
-            <ArrowLeft aria-hidden className="size-4" />
-            Regresar
-          </button>
-        </form>
-      )}
-
-      {/* ── Paso 3: datos ── */}
-      {paso === 2 && (
-        <form
-          className="mt-6 flex flex-col gap-5"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (datosValidos) enviarDatos();
-          }}
-        >
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor={`${baseId}-nombre`} className="font-label text-label">
-                Nombre
-              </label>
-              <Input
-                id={`${baseId}-nombre`}
-                ref={nombreRef}
-                autoComplete="given-name"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                className="h-12 text-body-2"
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor={`${baseId}-apellido`}
-                className="font-label text-label"
-              >
-                Apellido
-              </label>
-              <Input
-                id={`${baseId}-apellido`}
-                autoComplete="family-name"
-                value={apellido}
-                onChange={(e) => setApellido(e.target.value)}
-                className="h-12 text-body-2"
-              />
-            </div>
-          </div>
-
-          {/* El correo sólo se pide si entró por teléfono: si ya lo dio, volver
-              a pedirlo es fricción sin ganancia. */}
-          {canal === "telefono" && (
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor={`${baseId}-email`} className="font-label text-label">
-                Correo electrónico{" "}
-                <span className="font-normal text-ink-600">(opcional)</span>
-              </label>
-              <Input
-                id={`${baseId}-email`}
-                type="email"
-                autoComplete="email"
-                placeholder="tucorreo@ejemplo.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="h-12 text-body-2"
-              />
-            </div>
+              </fieldset>
+            </>
           )}
 
-          <fieldset className="flex flex-col gap-3">
-            <legend className="font-label text-label">
-              ¿Por dónde prefieres que te contactemos?
-            </legend>
-            <div className="grid gap-2 sm:grid-cols-3">
-              {PREFERENCIAS.map(({ valor: v, label, icon: Icon }) => {
-                const activo = preferencias.includes(v);
-                return (
-                  <label
+          {/* ── Paso 2: contacto ── */}
+          {paso === 1 && (
+            <>
+              <p className="text-body-2 text-ink-800">
+                Te enviamos un código para confirmar que eres tú.
+              </p>
+
+              <div
+                role="radiogroup"
+                aria-label="Medio de contacto"
+                className="flex gap-2"
+              >
+                {[
+                  { v: "telefono" as const, label: "Celular", icon: Phone },
+                  { v: "email" as const, label: "Correo", icon: Mail },
+                ].map(({ v, label, icon: Icon }) => (
+                  <button
                     key={v}
+                    type="button"
+                    role="radio"
+                    aria-checked={datos.canal === v}
+                    // Sólo cambia el canal. Teléfono y correo son campos
+                    // distintos en el slice, así que alternar no borra nada.
+                    onClick={() => {
+                      dispatch(setCanal(v));
+                      setError(null);
+                    }}
                     className={cn(
-                      "flex min-h-11 cursor-pointer items-center gap-2.5 rounded-lg border px-3 py-2.5 text-body-2 transition-colors",
-                      "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring",
-                      activo
+                      "flex min-h-11 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border text-body-2 transition-colors",
+                      "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+                      datos.canal === v
                         ? "border-brand-petrol bg-brand-aqua/30 font-medium text-brand-petrol"
                         : "border-border bg-card hover:bg-muted"
                     )}
                   >
-                    {/* Checkbox real oculto, no un div con onClick: se navega
-                        con teclado y se anuncia como casilla. */}
-                    <input
-                      type="checkbox"
-                      checked={activo}
-                      onChange={() =>
-                        setPreferencias((p) =>
-                          p.includes(v) ? p.filter((x) => x !== v) : [...p, v]
-                        )
-                      }
-                      className="sr-only"
-                    />
-                    <span
-                      aria-hidden
-                      className={cn(
-                        "flex size-5 shrink-0 items-center justify-center rounded-sm border-2",
-                        activo
-                          ? "border-brand-petrol bg-brand-petrol text-white"
-                          : "border-border"
-                      )}
-                    >
-                      {activo && <Check className="size-3" strokeWidth={3} />}
-                    </span>
                     <Icon aria-hidden className="size-4" />
                     {label}
-                  </label>
-                );
-              })}
-            </div>
-            {preferencias.length === 0 && (
-              <p className="text-caption text-destructive">
-                Elige al menos una forma de contacto.
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor={`${baseId}-valor`}
+                  className="font-label text-label"
+                >
+                  {datos.canal === "telefono"
+                    ? "Número de celular"
+                    : "Correo electrónico"}
+                </label>
+                <div className="flex items-center gap-2">
+                  {datos.canal === "telefono" && (
+                    <span className="flex h-12 shrink-0 items-center rounded-lg border border-border bg-muted px-3 text-body-2 tabular-nums text-ink-600">
+                      +52
+                    </span>
+                  )}
+                  <Input
+                    id={`${baseId}-valor`}
+                    type={datos.canal === "telefono" ? "tel" : "email"}
+                    inputMode={datos.canal === "telefono" ? "numeric" : "email"}
+                    autoComplete={
+                      datos.canal === "telefono" ? "tel-national" : "email"
+                    }
+                    placeholder={
+                      datos.canal === "telefono"
+                        ? "81 1234 5678"
+                        : "tucorreo@ejemplo.com"
+                    }
+                    value={
+                      datos.canal === "telefono"
+                        ? formatearTelefono(datos.telefono)
+                        : datos.email
+                    }
+                    onChange={(e) =>
+                      dispatch(
+                        setCampo({
+                          campo:
+                            datos.canal === "telefono" ? "telefono" : "email",
+                          valor: e.target.value,
+                        })
+                      )
+                    }
+                    className="h-12 flex-1 text-body-2"
+                  />
+                </div>
+                <p className="text-caption text-ink-600">
+                  {datos.canal === "telefono"
+                    ? "Te llegará un SMS con un código de 6 dígitos."
+                    : "Te llegará un correo con un código de 6 dígitos."}
+                </p>
+              </div>
+            </>
+          )}
+
+          {/* ── Paso 3: código ── */}
+          {paso === 2 && (
+            <>
+              <p className="text-body-2 text-ink-800">
+                Ingresa el código que te enviamos{" "}
+                {datos.canal === "telefono" ? "por SMS al" : "al correo"}{" "}
+                <span className="font-medium text-foreground">
+                  {destinoLegible(identidad)}
+                </span>{" "}
+                <button
+                  type="button"
+                  onClick={() => irA(1)}
+                  className="cursor-pointer text-brand-petrol underline underline-offset-4"
+                >
+                  Cambiar
+                </button>
               </p>
-            )}
-          </fieldset>
 
-          <Button
-            type="submit"
-            variant="petrol"
-            size="cta"
-            disabled={!datosValidos || enviando}
-            className="w-full"
-          >
-            {enviando ? (
-              <>
-                <Loader2 data-icon="inline-start" className="animate-spin" />
-                Enviando…
-              </>
-            ) : (
-              "Agendar mi cita"
-            )}
-          </Button>
+              <fieldset className="flex flex-col gap-2">
+                <legend className="sr-only">Código de 6 dígitos</legend>
+                <div className="flex justify-between gap-2">
+                  {digitos.map((d, i) => (
+                    <input
+                      key={IDS_OTP[i]}
+                      ref={(el) => {
+                        refsOtp.current[i] = el;
+                      }}
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete={i === 0 ? "one-time-code" : "off"}
+                      maxLength={1}
+                      aria-label={`Dígito ${i + 1}`}
+                      value={d}
+                      onChange={(e) => escribirDigito(i, e.target.value)}
+                      onKeyDown={(e) => teclaOtp(i, e)}
+                      onPaste={pegarOtp}
+                      className={cn(
+                        "h-14 w-full rounded-lg border bg-card text-center font-label text-h3 tabular-nums outline-none transition-colors",
+                        "focus-visible:border-brand-petrol focus-visible:ring-2 focus-visible:ring-brand-aqua",
+                        d ? "border-brand-petrol" : "border-border"
+                      )}
+                    />
+                  ))}
+                </div>
+              </fieldset>
 
-          <p className="text-caption text-ink-600">
-            Al continuar aceptas que un asesor te contacte por los medios que
-            elegiste.
-          </p>
+              <div className="flex items-center justify-between gap-3 text-caption">
+                <span className="text-ink-600">
+                  {segundos > 0
+                    ? `Puedes reenviarlo en ${segundos}s`
+                    : "¿No te llegó?"}
+                </span>
+                <button
+                  type="button"
+                  disabled={segundos > 0 || enviando}
+                  onClick={pedirCodigo}
+                  className="cursor-pointer text-brand-petrol underline underline-offset-4 disabled:cursor-not-allowed disabled:text-ink-500 disabled:no-underline"
+                >
+                  Reenviar código
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Navegación común a los tres pasos editables. */}
+          <div className="mt-1 flex items-center gap-3">
+            {paso > 0 && (
+              <Button
+                type="button"
+                variant="outline"
+                size="cta"
+                onClick={() => irA(paso - 1)}
+                disabled={enviando}
+              >
+                <ArrowLeft data-icon="inline-start" />
+                Anterior
+              </Button>
+            )}
+            <Button
+              type="submit"
+              variant="petrol"
+              size="cta"
+              disabled={!puedeAvanzar || enviando}
+              className="flex-1"
+            >
+              {enviando ? (
+                <>
+                  <Loader2 data-icon="inline-start" className="animate-spin" />
+                  Un momento…
+                </>
+              ) : (
+                <>
+                  {etiquetaAvanzar}
+                  <ArrowRight data-icon="inline-end" />
+                </>
+              )}
+            </Button>
+          </div>
         </form>
       )}
 
-      {/* ── Paso 4: éxito ── */}
+      {/* ── Confirmación. Sin navegación: el lead ya se envió. ── */}
       {paso === 3 && (
         <div className="mt-6 flex flex-col items-center gap-6 text-center">
           <ExitoCheck />
 
-          <div>
-            <p className="text-body-1 text-ink-800">
-              Recibimos tus datos{nombre ? `, ${nombre}` : ""}. Un asesor te
-              contactará por{" "}
-              <span className="font-medium text-foreground">
-                {preferencias
-                  .map(
-                    (p) => PREFERENCIAS.find((x) => x.valor === p)?.label ?? p
-                  )
-                  .join(", ")}
-              </span>
-              .
-            </p>
-          </div>
+          <p className="text-body-1 text-ink-800">
+            Recibimos tus datos{datos.nombre ? `, ${datos.nombre}` : ""}. Un
+            asesor te contactará por{" "}
+            <span className="font-medium text-foreground">
+              {datos.preferencias
+                .map((p) => PREFERENCIAS.find((x) => x.valor === p)?.label ?? p)
+                .join(", ")}
+            </span>
+            .
+          </p>
 
           <p className="flex items-center gap-2 rounded-lg bg-muted px-4 py-3 text-body-2 text-ink-800">
             <Clock aria-hidden className="size-4 shrink-0 text-brand-petrol" />
@@ -660,7 +648,13 @@ export function AgendarFlow({
                 </a>
               </Button>
             )}
-            <Button variant="outline" size="cta" className="w-full" asChild>
+            <Button
+              variant="outline"
+              size="cta"
+              className="w-full"
+              asChild
+              onClick={() => dispatch(limpiarAgendar())}
+            >
               <Link href="/vehiculos">Seguir viendo autos</Link>
             </Button>
           </div>
@@ -673,9 +667,9 @@ export function AgendarFlow({
 /**
  * Checkmark de éxito.
  *
- * El trazo se dibuja con `stroke-dashoffset`, que sólo anima propiedades
- * compuestas. Respeta `prefers-reduced-motion`: con la preferencia activa
- * aparece ya dibujado en vez de suprimir la confirmación.
+ * El trazo se dibuja con `stroke-dashoffset`. Respeta `prefers-reduced-motion`:
+ * con la preferencia activa aparece ya dibujado, en vez de suprimir la
+ * confirmación.
  */
 function ExitoCheck() {
   return (
