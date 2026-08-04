@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { Search } from "lucide-react";
@@ -8,8 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { addSearch } from "@/redux/slices/searchesSlice";
 import { cn } from "@/lib/utils";
-
-let autoId = 0;
 
 /**
  * Buscador de vehículos. Se usa en el hero y sobre el catálogo.
@@ -34,7 +33,11 @@ export function SearchForm({
 }) {
   const dispatch = useDispatch();
   const router = useRouter();
-  const id = `search-${(autoId += 1)}`;
+  // useId, no un contador de módulo: aquel se incrementaba en el render del
+  // servidor y volvía a empezar en el cliente, así que el servidor emitía
+  // "search-1" y el cliente "search-2" — desajuste de hidratación. useId
+  // genera identificadores estables entre ambos.
+  const id = useId();
 
   return (
     <form
