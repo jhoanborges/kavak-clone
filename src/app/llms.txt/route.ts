@@ -1,4 +1,4 @@
-import { CARS, carSlug } from "@/data/cars";
+import { fetchTodosLosVehiculos, type Vehiculo } from "@/lib/api/vehiculos";
 import { APP_NAME } from "@/lib/config";
 import { SITE_DESCRIPTION, absoluteUrl } from "@/lib/seo";
 
@@ -16,24 +16,27 @@ import { SITE_DESCRIPTION, absoluteUrl } from "@/lib/seo";
  * Se genera como route handler para que las URLs y el inventario nunca queden
  * desincronizados respecto al sitemap.
  */
-export const dynamic = "force-static";
+export const revalidate = 3600;
 
-function brandIndex() {
+function brandIndex(vehiculos: Vehiculo[]) {
   const byBrand = new Map<string, number>();
-  for (const car of CARS) {
-    byBrand.set(car.brand, (byBrand.get(car.brand) ?? 0) + 1);
+  for (const v of vehiculos) {
+    byBrand.set(v.marca, (byBrand.get(v.marca) ?? 0) + 1);
   }
   return [...byBrand.entries()].sort((a, b) => a[0].localeCompare(b[0], "es"));
 }
 
-export function GET() {
-  const brands = brandIndex();
+export async function GET() {
+  // Inventario real, no el array hardcodeado: antes listaba fichas de ejemplo
+  // que devolvían 404.
+  const vehiculos = await fetchTodosLosVehiculos();
+  const brands = brandIndex(vehiculos);
 
   // Muestra representativa: un auto por marca. El inventario completo vive en
   // el sitemap; volcar 115 fichas aquí sería ruido para un índice.
   const sample = brands
-    .map(([brand]) => CARS.find((c) => c.brand === brand))
-    .filter((c): c is (typeof CARS)[number] => Boolean(c));
+    .map(([brand]) => vehiculos.find((v) => v.marca === brand))
+    .filter((v): v is Vehiculo => Boolean(v));
 
   const body = `# ${APP_NAME}
 
@@ -57,7 +60,7 @@ operación es 100% en México y los precios se expresan en pesos mexicanos (MXN)
 ## Páginas principales
 
 - [Inicio](${absoluteUrl("/")}): resumen de la propuesta, autos destacados y simulador de crédito.
-- [Catálogo de seminuevos](${absoluteUrl("/vehiculos")}): ${CARS.length} unidades certificadas de ${brands.length} marcas, con filtros.
+- [Catálogo de seminuevos](${absoluteUrl("/vehiculos")}): ${vehiculos.length} unidades certificadas de ${brands.length} marcas, con filtros.
 - [Cotiza y vende tu auto](${absoluteUrl("/cotizar")}): valuación en línea paso a paso.
 - [Contacto](${absoluteUrl("/contacto")}): formulario, teléfono y ubicación.
 
@@ -69,14 +72,14 @@ ${brands.map(([brand, count]) => `- ${brand} (${count} ${count === 1 ? "unidad" 
 
 ${sample
   .map(
-    (car) =>
-      `- [${car.brand} ${car.model} ${car.year} — ${car.variant}](${absoluteUrl(`/vehiculos/${carSlug(car)}`)}): $${car.price.toLocaleString("es-MX")} MXN, ${car.km.toLocaleString("es-MX")} km, ${car.transmission}, ${car.fuel}.`
+    (v) =>
+      `- [${v.marca} ${v.modelo} ${v.anio ?? ""} — ${v.version}](${absoluteUrl(v.href)}): $${(v.precio ?? 0).toLocaleString("es-MX")} MXN, ${(v.km ?? 0).toLocaleString("es-MX")} km, ${v.transmision}, ${v.combustible}.`
   )
   .join("\n")}
 
 ## Optional
 
-- [Sitemap XML](${absoluteUrl("/sitemap.xml")}): las ${CARS.length + 4} URLs indexables.
+- [Sitemap XML](${absoluteUrl("/sitemap.xml")}): las ${vehiculos.length + 4} URLs indexables.
 - [robots.txt](${absoluteUrl("/robots.txt")}): reglas de rastreo.
 
 ## Notas para sistemas automatizados

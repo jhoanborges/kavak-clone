@@ -95,6 +95,7 @@ export function AgendarFlow({
   ]);
 
   const tituloRef = useRef<HTMLHeadingElement>(null);
+  const nombreRef = useRef<HTMLInputElement>(null);
   const baseId = useId();
 
   const identidad: LeadIdentidad = { canal, valor };
@@ -115,7 +116,13 @@ export function AgendarFlow({
   const irA = (n: number) => {
     setPaso(n);
     setError(null);
-    requestAnimationFrame(() => tituloRef.current?.focus());
+    requestAnimationFrame(() => {
+      // En el paso de datos el foco va al primer campo, no al título: la
+      // persona ya sabe dónde está y lo único que falta es escribir. El cambio
+      // de paso se sigue anunciando por el aria-live del progreso.
+      if (n === 2) nombreRef.current?.focus();
+      else tituloRef.current?.focus();
+    });
   };
 
   const identidadValida =
@@ -490,6 +497,7 @@ export function AgendarFlow({
               </label>
               <Input
                 id={`${baseId}-nombre`}
+                ref={nombreRef}
                 autoComplete="given-name"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}

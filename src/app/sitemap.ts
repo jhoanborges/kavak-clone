@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { POSTS } from "@/data/blog";
-import { CARS, carSlug } from "@/data/cars";
+import { fetchTodosLosVehiculos } from "@/lib/api/vehiculos";
 import { absoluteUrl } from "@/lib/seo";
 
 /**
@@ -24,10 +24,18 @@ const STATIC_ROUTES: Array<{
   { path: "/contacto", changeFrequency: "yearly", priority: 0.5 },
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  // El inventario es estático hoy. Cuando venga de una API, usar la fecha real
-  // de actualización de cada ficha en lugar de la del build.
+/**
+ * Dinámico: el inventario lo decide la API y cambia a diario.
+ *
+ * Antes salía del array `CARS` hardcodeado, así que el sitemap publicaba 115
+ * fichas inventadas que devolvían 404 — enviar 404 a Google quema presupuesto
+ * de rastreo y resta confianza al sitemap entero.
+ */
+export const revalidate = 3600;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
+  const vehiculos = await fetchTodosLosVehiculos();
 
   return [
     ...STATIC_ROUTES.map((route) => ({
@@ -42,8 +50,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),
-    ...CARS.map((car) => ({
-      url: absoluteUrl(`/vehiculos/${carSlug(car)}`),
+    ...vehiculos.map((v) => ({
+      // `href` ya trae el token público, no el id crudo.
+      url: absoluteUrl(v.href),
       lastModified,
       changeFrequency: "weekly" as const,
       priority: 0.7,

@@ -505,3 +505,36 @@ export async function fetchImagenes(id: string): Promise<GrupoFotos[]> {
   if (!res.ok) return [];
   return normalizeImagenes(await res.json());
 }
+
+/**
+ * Inventario completo, en SERVIDOR. Lo usan el sitemap y llms.txt.
+ *
+ * Devuelve un array vacío si la API falla: un sitemap sin fichas es un
+ * inconveniente, uno que no responde es un error de rastreo.
+ */
+export async function fetchTodosLosVehiculos(): Promise<Vehiculo[]> {
+  if (!UPSTREAM_ORIGIN) return [];
+
+  try {
+    const url = `${UPSTREAM_ORIGIN}/api/vehiculos?${new URLSearchParams({
+      busqueda: "",
+      precio_min: "",
+      precio_max: "",
+      km_min: "",
+      km_max: "",
+      pagina: "1",
+      cantidad: "500",
+    })}`;
+
+    const res = await fetch(url, {
+      headers: { Accept: "application/json" },
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!res.ok) return [];
+
+    return normalizeRespuesta(await res.json()).vehiculos;
+  } catch {
+    return [];
+  }
+}

@@ -16,7 +16,7 @@ import BusquedasRecientes from "@/components/sections/BusquedasRecientes";
 import Footer from "@/components/sections/Footer";
 
 /**
- * Los dos <CarCarousel> con arrays de autos inventados y fotos de Unsplash
+ * El catálogo de autos inventados con fotos de Unsplash
  * quedaron fuera: el inventario del home sale ahora de la API real, vía
  * <OfertasDestacadas>. Ver docs/api-vehiculos.md.
  *

@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 
 import { BrandLogo } from "@/components/ds";
 import { BrandIcon } from "@/components/ui/brand-icon";
 import { Separator } from "@/components/ui/separator";
-import { OFICINAS, SEDE, mapsHref } from "@/data/ubicaciones";
 import { APP_NAME } from "@/lib/config";
 import { CONTACT, LEGAL, SOCIALS, telHref } from "@/lib/site";
 
@@ -22,8 +21,6 @@ const NAV = {
 };
 
 export default function Footer() {
-  const oficinas = [SEDE, ...OFICINAS];
-
   return (
     <footer className="relative isolate mt-8 overflow-hidden bg-brand-ink text-brand-mist">
       {/* Blob petróleo del Figma */}
@@ -102,44 +99,6 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-        </div>
-
-        <Separator className="mb-8 bg-sidebar-border" />
-
-        {/* Ubicaciones — enlace directo a Maps por oficina. Aquí abajo son un
-            dato de contacto, no navegación: por eso van compactas. */}
-        <div className="mb-8">
-          <p className="mb-4 font-label text-overline uppercase text-white">
-            Nuestras oficinas
-          </p>
-          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {oficinas.map((o) => (
-              <li key={o.id} className="flex gap-2">
-                <MapPin aria-hidden className="mt-0.5 size-4 shrink-0 text-brand-aqua" />
-                <div>
-                  <a
-                    href={mapsHref(o)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-label text-label text-white transition-colors hover:text-brand-neon"
-                  >
-                    {o.ciudad}
-                  </a>
-                  <p className="text-caption leading-snug text-brand-sage">
-                    {o.estado}
-                  </p>
-                  {o.telefonos[0] && (
-                    <a
-                      href={telHref(o.telefonos[0])}
-                      className="text-caption text-brand-sage transition-colors hover:text-brand-neon"
-                    >
-                      {o.telefonos[0]}
-                    </a>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
         </div>
 
         {/* Separador y bloque van juntos: si no hay redes configuradas, sin
