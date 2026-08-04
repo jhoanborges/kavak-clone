@@ -338,10 +338,13 @@ export default async function VehiculoDetallePage({ params }: Props) {
 
           {similares.length > 0 && (
             <section className="pt-14">
+              {/* Título genérico a propósito: la lista se completa con otras
+                  carrocerías cuando no hay suficientes de la misma, así que
+                  prometer "Otros SUVs" sería inexacto. */}
               <SectionHeading
                 overline="También te puede interesar"
-                title={`Otros ${vehiculo.segmento || "vehículos"}`}
-                lead="Unidades de la misma carrocería, listas para entrega."
+                title="Otras unidades disponibles"
+                lead="Seminuevos certificados, listos para entrega."
               />
               <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 {similares.map((v: Vehiculo) => (

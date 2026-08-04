@@ -6,23 +6,16 @@
  * tenga valor, así que dejar una red sin llenar no deja un icono muerto.
  */
 
-export type SocialKey =
-  | "facebook"
-  | "instagram"
-  | "x"
-  | "linkedin"
-  | "youtube"
-  | "tiktok";
+/** Sólo estas cuatro. No añadir más sin pedirlo. */
+export type SocialKey = "facebook" | "instagram" | "x" | "linkedin";
 
 export type SocialLink = { key: SocialKey; label: string; href: string };
 
 const RAW_SOCIALS: Array<{ key: SocialKey; label: string; href?: string }> = [
-  { key: "facebook", label: "Facebook", href: process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK },
-  { key: "instagram", label: "Instagram", href: process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM },
-  { key: "x", label: "X", href: process.env.NEXT_PUBLIC_SOCIAL_X },
-  { key: "linkedin", label: "LinkedIn", href: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN },
-  { key: "youtube", label: "YouTube", href: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE },
-  { key: "tiktok", label: "TikTok", href: process.env.NEXT_PUBLIC_SOCIAL_TIKTOK },
+  { key: "facebook", label: "Facebook", href: process.env.NEXT_PUBLIC_FACEBOOK },
+  { key: "instagram", label: "Instagram", href: process.env.NEXT_PUBLIC_INSTAGRAM },
+  { key: "x", label: "X", href: process.env.NEXT_PUBLIC_X },
+  { key: "linkedin", label: "LinkedIn", href: process.env.NEXT_PUBLIC_LINKEDIN },
 ];
 
 /** Sólo las redes que tienen URL configurada. */

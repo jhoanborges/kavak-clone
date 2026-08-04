@@ -471,12 +471,26 @@ export async function fetchVehiculoPorId(
   const { vehiculos } = normalizeRespuesta(await res.json());
   const vehiculo = vehiculos.find((v) => v.id === id) ?? null;
 
-  // Similares: mismo segmento, distinta unidad. Es la afinidad más útil que
-  // permiten los datos disponibles.
+  /**
+   * Similares: primero la misma carrocería, que es la afinidad más útil que
+   * permiten los datos. Si no llegan a cuatro, se completa con el resto del
+   * inventario.
+   *
+   * Es deliberado: con carrocerías de las que sólo hay una unidad (Coupe,
+   * Hatchback) la sección salía vacía o con un solo auto, y una fila a medias
+   * es peor que una fila con opciones aunque no sean equivalentes. La gente
+   * llega aquí a seguir mirando, no sólo a comparar carrocerías.
+   */
+  const OBJETIVO = 4;
+  const otros = vehiculos.filter((v) => v.id !== id);
+  const mismoSegmento = vehiculo
+    ? otros.filter((v) => v.segmento === vehiculo.segmento)
+    : [];
+  const relleno = vehiculo
+    ? otros.filter((v) => v.segmento !== vehiculo.segmento)
+    : [];
   const similares = vehiculo
-    ? vehiculos
-        .filter((v) => v.id !== id && v.segmento === vehiculo.segmento)
-        .slice(0, 4)
+    ? [...mismoSegmento, ...relleno].slice(0, OBJETIVO)
     : [];
 
   return { vehiculo, similares };

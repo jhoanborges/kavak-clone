@@ -1,10 +1,4 @@
-import {
-  siFacebook,
-  siInstagram,
-  siTiktok,
-  siX,
-  siYoutube,
-} from "simple-icons";
+import { siFacebook, siInstagram, siX } from "simple-icons";
 
 import type { SocialKey } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -24,8 +18,6 @@ const PATHS: Partial<Record<SocialKey, string>> = {
   facebook: siFacebook.path,
   instagram: siInstagram.path,
   x: siX.path,
-  youtube: siYoutube.path,
-  tiktok: siTiktok.path,
 };
 
 export function BrandIcon({
