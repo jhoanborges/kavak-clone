@@ -503,16 +503,17 @@ export default function DesignSystemPage() {
 
           {/* Banner */}
           <div className="mt-11">
-            <SubTitle hint="Radio 20px con flecha a la derecha. Base petróleo · hover salvia (el hover propaga a la flecha).">
-              Banner · ¿Tienes más dudas?
+            <SubTitle hint="Acción primaria + secundaria, señal de disponibilidad y foto de apoyo. Los canales se adaptan a lo que haya en .env.">
+              CTA de contacto
             </SubTitle>
-            <div className="flex flex-col gap-4">
-              <DudasBanner href="/contacto" />
+            <div className="flex flex-col gap-6">
+              <DudasBanner />
+              {/* Sin foto: para huecos estrechos o cuando ya hay mucha imagen
+                  alrededor. */}
               <DudasBanner
-                href="/contacto"
-                label="¿Listo para cotizar?"
-                className="bg-brand-sage"
-                classNames={{ arrow: "border-brand-ink bg-brand-aqua text-brand-ink" }}
+                imagen={null}
+                titulo="¿Listo para cotizar tu auto?"
+                descripcion="Te damos una oferta en minutos, sin costo ni compromiso."
               />
             </div>
           </div>
