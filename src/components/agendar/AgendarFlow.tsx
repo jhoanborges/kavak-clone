@@ -128,7 +128,10 @@ export function AgendarFlow({
   const datosValidos =
     datos.nombre.trim().length > 1 &&
     datos.apellido.trim().length > 1 &&
-    datos.preferencias.length > 0;
+    datos.preferencias.length > 0 &&
+    // Opcional, pero si lo escriben tiene que ser válido: dejar pasar un correo
+    // mal escrito significa un lead al que nadie podrá responder.
+    (datos.email.trim() === "" || emailValido(datos.email));
 
   const contactoValido =
     datos.canal === "telefono"
@@ -360,6 +363,33 @@ export function AgendarFlow({
                     className="h-12 text-body-2"
                   />
                 </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor={`${baseId}-email`}
+                  className="font-label text-label"
+                >
+                  Correo electrónico{" "}
+                  <span className="font-normal text-ink-600">(opcional)</span>
+                </label>
+                <Input
+                  id={`${baseId}-email`}
+                  type="email"
+                  autoComplete="email"
+                  placeholder="tucorreo@ejemplo.com"
+                  value={datos.email}
+                  onChange={(e) =>
+                    dispatch(setCampo({ campo: "email", valor: e.target.value }))
+                  }
+                  className="h-12 text-body-2"
+                />
+                {/* Mismo campo que el del paso de contacto: si luego eliges
+                    verificar por correo, ya viene puesto. Pedirlo dos veces
+                    sería fricción sin ganancia. */}
+                <p className="text-caption text-ink-600">
+                  Si eliges verificar por correo, usaremos este.
+                </p>
               </div>
 
               <fieldset className="flex flex-col gap-3">
