@@ -48,15 +48,25 @@ export const CAMPO_SELECT = cn(
 export const CAMPO_TEXTAREA = cn(CAMPO_NATIVO, "resize-none py-3");
 
 /**
- * Etiqueta del campo. En `text-foreground`, no en `text-muted-foreground`:
- * /cotizar las tenía a 12px en gris sobre fondo gris —por debajo del 4.5:1 de
- * WCAG AA— y una etiqueta ilegible convierte el formulario en adivinanza.
+ * Etiqueta del campo, con los tokens del design system: `font-label` (Raleway)
+ * y `text-label` (14px con su interlineado), no un `text-sm` suelto.
+ *
+ * En `text-foreground`, no en `text-muted-foreground`: /cotizar las tenía a
+ * 12px en gris sobre fondo gris —por debajo del 4.5:1 de WCAG AA— y una
+ * etiqueta ilegible convierte el formulario en adivinanza.
  */
-export const ETIQUETA = "text-sm font-medium text-foreground";
+export const ETIQUETA = "font-label text-label font-medium text-foreground";
 
-/** Texto de ayuda y de error bajo el campo. */
-export const AYUDA = "text-xs text-muted-foreground";
-export const ERROR = "text-xs text-destructive leading-tight";
+/**
+ * Texto de ayuda bajo el campo. `text-caption` (13px) en vez de `text-xs`
+ * (12px) por lo mismo: es el token del sistema.
+ *
+ * `text-muted-foreground`, no `text-ink-600`. Hoy valen igual (#5c676e), pero
+ * el token semántico es el que se aclara en modo oscuro; el literal se queda
+ * fijo y desaparece contra el fondo.
+ */
+export const AYUDA = "text-caption text-muted-foreground";
+export const ERROR = "text-caption text-destructive leading-tight";
 
 /** Separación vertical entre etiqueta, control y ayuda. */
 export const CAMPO_STACK = "flex flex-col gap-1.5";

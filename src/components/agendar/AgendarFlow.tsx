@@ -36,6 +36,7 @@ import {
   type LeadIdentidad,
   type PreferenciaContacto,
 } from "@/lib/agendar";
+import { AYUDA, CAMPO, ETIQUETA } from "@/lib/form-styles";
 import {
   obtenerTokenRecaptcha,
   verificarRecaptcha,
@@ -334,7 +335,7 @@ export function AgendarFlow({
                 <div className="flex flex-col gap-1.5">
                   <label
                     htmlFor={`${baseId}-nombre`}
-                    className="font-label text-label"
+                    className={ETIQUETA}
                   >
                     Nombre
                   </label>
@@ -348,13 +349,13 @@ export function AgendarFlow({
                         setCampo({ campo: "nombre", valor: e.target.value })
                       )
                     }
-                    className="h-12 text-body-2"
+                    className={CAMPO}
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label
                     htmlFor={`${baseId}-apellido`}
-                    className="font-label text-label"
+                    className={ETIQUETA}
                   >
                     Apellido
                   </label>
@@ -367,7 +368,7 @@ export function AgendarFlow({
                         setCampo({ campo: "apellido", valor: e.target.value })
                       )
                     }
-                    className="h-12 text-body-2"
+                    className={CAMPO}
                   />
                 </div>
               </div>
@@ -375,7 +376,7 @@ export function AgendarFlow({
               <div className="flex flex-col gap-1.5">
                 <label
                   htmlFor={`${baseId}-email`}
-                  className="font-label text-label"
+                  className={ETIQUETA}
                 >
                   Correo electrónico{" "}
                   <span className="font-normal text-ink-600">(opcional)</span>
@@ -389,18 +390,18 @@ export function AgendarFlow({
                   onChange={(e) =>
                     dispatch(setCampo({ campo: "email", valor: e.target.value }))
                   }
-                  className="h-12 text-body-2"
+                  className={CAMPO}
                 />
                 {/* Mismo campo que el del paso de contacto: si luego eliges
                     verificar por correo, ya viene puesto. Pedirlo dos veces
                     sería fricción sin ganancia. */}
-                <p className="text-caption text-ink-600">
+                <p className={AYUDA}>
                   Si eliges verificar por correo, usaremos este.
                 </p>
               </div>
 
               <fieldset className="flex flex-col gap-3">
-                <legend className="font-label text-label">
+                <legend className={ETIQUETA}>
                   ¿Por dónde prefieres que te contactemos?
                 </legend>
                 <div className="grid gap-2 sm:grid-cols-3">
@@ -497,7 +498,7 @@ export function AgendarFlow({
               <div className="flex flex-col gap-1.5">
                 <label
                   htmlFor={`${baseId}-valor`}
-                  className="font-label text-label"
+                  className={ETIQUETA}
                 >
                   {datos.canal === "telefono"
                     ? "Número de celular"
@@ -535,10 +536,10 @@ export function AgendarFlow({
                         })
                       )
                     }
-                    className="h-12 flex-1 text-body-2"
+                    className={cn(CAMPO, "flex-1")}
                   />
                 </div>
-                <p className="text-caption text-ink-600">
+                <p className={AYUDA}>
                   {datos.canal === "telefono"
                     ? "Te llegará un SMS con un código de 6 dígitos."
                     : "Te llegará un correo con un código de 6 dígitos."}
