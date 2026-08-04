@@ -25,6 +25,7 @@ import {
 } from "@/lib/api/vehiculos";
 import { APP_NAME } from "@/lib/config";
 import { absoluteUrl, buildMetadata } from "@/lib/seo";
+import { encodeVehiculoId } from "@/lib/api/id-publico";
 import { CONTACT, telHref } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -315,7 +316,10 @@ export default async function VehiculoDetallePage({ params }: Props) {
 
                 <div className="mt-6 flex flex-col gap-3">
                   <Button variant="petrol" size="cta" className="w-full" asChild>
-                    <Link href={`/contacto?vehiculo=${vehiculo.id}`}>
+                    {/* Al embudo de captura, no a /contacto: el objetivo es
+                        obtener el lead, y el token opaco mantiene el id fuera
+                        de la URL. */}
+                    <Link href={`/agendar?vehiculo=${encodeVehiculoId(vehiculo.id)}`}>
                       <CalendarDays data-icon="inline-start" />
                       Agendar una cita
                     </Link>
