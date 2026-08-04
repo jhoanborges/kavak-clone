@@ -47,7 +47,7 @@ function OficinaCard({ oficina, destacada = false }: { oficina: Oficina; destaca
       className={
         destacada
           ? "grid gap-0 overflow-hidden rounded-xl border border-border bg-card md:grid-cols-2"
-          : "flex flex-col overflow-hidden rounded-xl border border-border bg-card"
+          : "flex h-full w-full flex-col overflow-hidden rounded-xl border border-border bg-card"
       }
     >
       <div className={destacada ? "relative min-h-[280px]" : "relative aspect-[4/3]"}>
@@ -56,7 +56,7 @@ function OficinaCard({ oficina, destacada = false }: { oficina: Oficina; destaca
           alt={`Oficina Value en ${oficina.ciudad}`}
           fill
           className="object-cover"
-          sizes={destacada ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 100vw, 33vw"}
+          sizes="(max-width: 640px) 100vw, 50vw"
         />
       </div>
 
@@ -157,7 +157,7 @@ export default function UbicacionesPage() {
             title="Casa de Bolsa"
             lead="Atención presencial en las principales plazas del país."
           />
-          <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {OFICINAS.map((o) => (
               <li key={o.id} className="flex">
                 <OficinaCard oficina={o} />
