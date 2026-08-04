@@ -142,11 +142,13 @@ export default function Footer() {
           </ul>
         </div>
 
-        <Separator className="mb-6 bg-sidebar-border" />
-
-        <div className="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-          {SOCIALS.length > 0 && (
-            <ul className="flex gap-3">
+        {/* Separador y bloque van juntos: si no hay redes configuradas, sin
+            esta condición quedaban dos divisores seguidos con un hueco vacío
+            en medio. */}
+        {SOCIALS.length > 0 && (
+          <>
+            <Separator className="mb-6 bg-sidebar-border" />
+            <ul className="mb-6 flex gap-3">
               {SOCIALS.map(({ key, label, href }) => (
                 <li key={key}>
                   <a
@@ -161,21 +163,8 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          )}
-
-          <ul className="flex gap-3">
-            {["App Store", "Google Play", "AppGallery"].map((store) => (
-              <li key={store}>
-                <a
-                  href="#"
-                  className="inline-flex min-h-11 items-center rounded-lg border border-brand-sage/50 px-3 text-caption text-brand-mist transition-colors hover:border-brand-neon hover:text-brand-neon"
-                >
-                  {store}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+          </>
+        )}
 
         <Separator className="mb-4 bg-sidebar-border" />
 

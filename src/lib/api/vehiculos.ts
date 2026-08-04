@@ -1,3 +1,5 @@
+import { encodeVehiculoId, idDesdeSlugPublico } from "@/lib/api/id-publico";
+
 /**
  * Cliente de la API de vehículos de Value Autos.
  *
@@ -365,7 +367,9 @@ export function normalizeVehiculo(raw: AutoRaw): Vehiculo {
     mensualidad: typeof raw.monto_mes === "number" ? Math.round(raw.monto_mes) : null,
     meses: typeof raw.meses === "number" ? raw.meses : null,
     imagenes: (raw.imagenes ?? []).filter(Boolean).map(imagenUrl),
-    href: `/vehiculos/${slugify(`${raw.marca}-${raw.modelo || raw.modelo_string}-${raw.id_partida}`)}`,
+    // El último segmento es un token opaco, no el id crudo. El slug
+    // descriptivo se mantiene delante para no perder las palabras clave.
+    href: `/vehiculos/${slugify(`${raw.marca}-${raw.modelo || raw.modelo_string}`)}-${encodeVehiculoId(raw.id_partida)}`,
   };
 }
 
@@ -427,12 +431,11 @@ export function normalizeImagenes(data: unknown): GrupoFotos[] {
 }
 
 /**
- * Extrae el id de un slug "marca-modelo-12577".
- * El id siempre es el último segmento numérico.
+ * Traduce el último segmento del slug al id de la API.
+ * Acepta tanto el token público ("k3f9m") como un id crudo heredado.
  */
 export function idDesdeSlug(slug: string): string | null {
-  const m = slug.match(/(\d+)$/);
-  return m ? m[1] : null;
+  return idDesdeSlugPublico(slug);
 }
 
 /**
