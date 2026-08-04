@@ -47,3 +47,23 @@ export function VehiculosVacio({ busqueda }: { busqueda?: string }) {
     </div>
   );
 }
+
+/**
+ * Descargo legal de las mensualidades.
+ *
+ * OBLIGATORIO siempre que se muestre una mensualidad. Publicitar "desde $8,442
+ * al mes" sin decir el plazo, el enganche y que está sujeta a aprobación
+ * crediticia es publicidad financiera incompleta.
+ *
+ * Verificado contra la API: `monto_mes` financia el 70% del precio (enganche
+ * del 30%) a `meses` plazos, con interés — los pagos suman ~1.35 veces lo
+ * financiado. El texto refleja eso.
+ */
+export function VehiculosDisclaimer({ meses = 36 }: { meses?: number }) {
+  return (
+    <p className="mt-8 text-caption text-ink-600">
+      *Las mensualidades están calculadas a un plazo de {meses} meses con un
+      enganche del 30%. Crédito sujeto a aprobación de buró de crédito.
+    </p>
+  );
+}

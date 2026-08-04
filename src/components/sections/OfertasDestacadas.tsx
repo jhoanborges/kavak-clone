@@ -6,6 +6,7 @@ import { SectionHeading } from "@/components/ds";
 import VehiculoCard from "@/components/catalog/VehiculoCard";
 import VehiculoCardSkeleton from "@/components/catalog/VehiculoCardSkeleton";
 import {
+  VehiculosDisclaimer,
   VehiculosError,
   VehiculosVacio,
 } from "@/components/catalog/VehiculosEstado";
@@ -50,13 +51,16 @@ export default function OfertasDestacadas({ cantidad = 4 }: { cantidad?: number 
       ) : vehiculos.length === 0 ? (
         <VehiculosVacio />
       ) : (
-        <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {vehiculos.map((v, i) => (
-            <li key={v.id || `${v.marca}-${v.modelo}-${i}`} className="flex">
-              <VehiculoCard vehiculo={v} priority={i < 2} />
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {vehiculos.map((v, i) => (
+              <li key={v.id || `${v.marca}-${v.modelo}-${i}`} className="flex">
+                <VehiculoCard vehiculo={v} priority={i < 2} />
+              </li>
+            ))}
+          </ul>
+          <VehiculosDisclaimer meses={vehiculos[0]?.meses ?? 36} />
+        </>
       )}
     </section>
   );

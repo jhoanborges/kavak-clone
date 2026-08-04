@@ -6,6 +6,7 @@ import { SectionHeading } from "@/components/ds";
 import VehiculoCard from "@/components/catalog/VehiculoCard";
 import VehiculoCardSkeleton from "@/components/catalog/VehiculoCardSkeleton";
 import {
+  VehiculosDisclaimer,
   VehiculosError,
   VehiculosVacio,
 } from "@/components/catalog/VehiculosEstado";
@@ -144,6 +145,8 @@ export default function CatalogoInfinito({
               </Button>
             </div>
           )}
+
+          <VehiculosDisclaimer meses={vehiculos[0]?.meses ?? 36} />
 
           {error && vehiculos.length > 0 && (
             <p role="alert" className="mt-6 text-center text-body-2 text-ink-800">

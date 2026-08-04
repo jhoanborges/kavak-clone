@@ -4,10 +4,12 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
+import { ChevronLeft, ChevronRight, Fuel, Gauge, ImageOff, Settings2 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import type { Vehiculo } from "@/lib/api/vehiculos";
+import { segmentoIcono } from "@/lib/segmentos";
+import { cn } from "@/lib/utils";
 
 const mxn = (n: number | null) =>
   n == null ? "—" : `$${n.toLocaleString("es-MX")}`;
@@ -15,9 +17,17 @@ const mxn = (n: number | null) =>
 /**
  * Tarjeta de vehículo con carrusel Embla para la galería.
  *
+ * La MENSUALIDAD es el dato protagonista, no el precio de contado. Es la
+ * decisión del sitio original y tiene sentido comercial: "$8,442 al mes" se
+ * lee como alcanzable, "$320,000" como una barrera. El contado sigue visible,
+ * pero en segundo plano.
+ *
+ * Ese protagonismo obliga al descargo legal que acompaña a la rejilla
+ * (<VehiculosDisclaimer>): mostrar una mensualidad sin decir plazo, enganche y
+ * que está sujeta a aprobación crediticia es publicidad financiera incompleta.
+ *
  * Las flechas y los puntos sólo se montan si hay más de una imagen: unos
- * controles que no llevan a ningún sitio son ruido, y con una sola foto el
- * carrusel entero sobra.
+ * controles que no llevan a ningún sitio son ruido.
  */
 export default function VehiculoCard({
   vehiculo,
@@ -55,6 +65,7 @@ export default function VehiculoCard({
   }, [emblaApi, onSelect]);
 
   const titulo = [vehiculo.marca, vehiculo.modelo].filter(Boolean).join(" ");
+  const silueta = segmentoIcono(vehiculo.segmento);
 
   return (
     // `relative` es necesario para el enlace estirado del título (after:inset-0).
@@ -156,63 +167,110 @@ export default function VehiculoCard({
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-1 p-5">
-        <p className="font-label text-caption uppercase tracking-wide text-ink-600">
-          {[vehiculo.anio, vehiculo.segmento].filter(Boolean).join(" · ")}
-        </p>
-
-        {/*
-          Combinación de las dos familias del DS: la marca en Raleway pequeña y
-          espaciada, el modelo en Avenir. Antes iban juntos en un solo bloque de
-          texto grande y el conjunto pesaba demasiado.
-
-          `line-clamp-2` es la red de seguridad: aunque el dato venga sucio, el
-          título nunca pasa de dos líneas y todas las tarjetas conservan la misma
-          altura.
-
-          El enlace envuelve marca y modelo: un solo destino accesible, con el
-          nombre completo, en vez de duplicar el link en imagen y texto.
-        */}
-        <h3 className="leading-snug">
-          <Link
-            href={vehiculo.href}
-            className="after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-          >
-            <span className="block font-label text-caption font-semibold uppercase tracking-[0.12em] text-ink-600">
-              {vehiculo.marca}
+      <div className="flex flex-1 flex-col p-5">
+        {/* Marca + año en la misma línea: al escanear una rejilla, el año es de
+            lo primero que se compara entre unidades. */}
+        <div className="flex items-baseline justify-between gap-3">
+          <span className="truncate font-label text-label font-bold uppercase tracking-[0.08em]">
+            {vehiculo.marca}
+          </span>
+          {vehiculo.anio && (
+            <span className="shrink-0 font-label text-label font-bold tabular-nums">
+              {vehiculo.anio}
             </span>
-            <span className="line-clamp-2 font-heading text-h4 font-medium">
+          )}
+        </div>
+
+        <div className="mt-0.5 flex items-start justify-between gap-3">
+          <h3 className="min-w-0">
+            <Link
+              href={vehiculo.href}
+              className="line-clamp-2 font-heading text-h4 font-medium after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            >
               {vehiculo.modelo}
-            </span>
-          </Link>
-        </h3>
+            </Link>
+          </h3>
+          {/* El ID es el que usa la gente al llamar para preguntar por una
+              unidad concreta; por eso va visible y no sólo en la URL. */}
+          {vehiculo.id && (
+            <Badge variant="secondary" className="shrink-0 tabular-nums">
+              ID {vehiculo.id}
+            </Badge>
+          )}
+        </div>
 
         {vehiculo.version && (
-          <p className="line-clamp-1 text-caption text-ink-600">
+          <p className="mt-1 line-clamp-1 text-caption text-ink-600">
             {vehiculo.version}
           </p>
         )}
 
-        {/* mt-auto empuja el bloque de precio al fondo: con títulos de una o dos
-            líneas, los precios de la fila quedan igualmente alineados. */}
-        <p className="mt-auto pt-3 font-label text-h3 font-bold tabular-nums text-brand-petrol">
-          {mxn(vehiculo.precio)}
-        </p>
-        {vehiculo.mensualidad != null && (
-          <p className="text-caption text-ink-600">
-            o {mxn(vehiculo.mensualidad)}/mes
-            {vehiculo.meses ? ` a ${vehiculo.meses} meses` : ""}
-          </p>
-        )}
-        <p className="mt-1 text-caption text-ink-600">
-          {[
-            vehiculo.km != null && `${vehiculo.km.toLocaleString("es-MX")} km`,
-            vehiculo.transmision,
-            vehiculo.combustible,
-          ]
-            .filter(Boolean)
-            .join(" · ")}
-        </p>
+        <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+          <div className="min-w-0">
+            {vehiculo.mensualidad != null ? (
+              <>
+                <p className="text-caption text-ink-600">Desde:</p>
+                <p className="font-label text-h3 font-bold tabular-nums text-brand-petrol">
+                  {mxn(vehiculo.mensualidad)}
+                  <span className="ml-1 text-caption font-normal text-ink-600">
+                    / mes*
+                  </span>
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-caption text-ink-600">Contado:</p>
+                <p className="font-label text-h3 font-bold tabular-nums text-brand-petrol">
+                  {mxn(vehiculo.precio)}
+                </p>
+              </>
+            )}
+          </div>
+
+          {silueta && (
+            <Image
+              src={silueta}
+              alt=""
+              width={56}
+              height={32}
+              className="h-8 w-14 shrink-0 self-center object-contain opacity-80"
+            />
+          )}
+
+          {vehiculo.mensualidad != null && vehiculo.precio != null && (
+            <div className="shrink-0 text-right">
+              <p className="text-caption text-ink-600">Contado:</p>
+              <p className="font-label text-body-2 font-semibold tabular-nums">
+                {mxn(vehiculo.precio)}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Iconos en vez de texto separado por puntos: la fila se escanea de un
+            vistazo y cada dato queda identificable sin leerlo entero. */}
+        <ul className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-border pt-3 text-caption text-ink-800">
+          {vehiculo.km != null && (
+            <li className="flex items-center gap-1.5">
+              <Gauge aria-hidden className="size-4 text-brand-petrol" />
+              <span className="tabular-nums">
+                {vehiculo.km.toLocaleString("es-MX")} km
+              </span>
+            </li>
+          )}
+          {vehiculo.combustible && (
+            <li className="flex items-center gap-1.5">
+              <Fuel aria-hidden className="size-4 text-brand-petrol" />
+              {vehiculo.combustible}
+            </li>
+          )}
+          {vehiculo.transmision && (
+            <li className="flex items-center gap-1.5">
+              <Settings2 aria-hidden className="size-4 text-brand-petrol" />
+              {vehiculo.transmision}
+            </li>
+          )}
+        </ul>
       </div>
     </article>
   );
