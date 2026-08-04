@@ -1,5 +1,6 @@
 "use client";
 
+import { cloneElement, isValidElement, useId } from "react";
 import { useFormik } from "formik";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -7,6 +8,11 @@ import { Loader2, Send, Phone, Mail, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { APP_NAME } from "@/lib/config";
+import {
+  obtenerTokenRecaptcha,
+  verificarRecaptcha,
+  RECAPTCHA_ACCIONES,
+} from "@/lib/recaptcha";
 
 // ── Zod schema ──────────────────────────────────────────────────────────────
 const schema = z.object({
@@ -59,6 +65,12 @@ const infoItems = [
 ];
 
 // ── Field wrapper ────────────────────────────────────────────────────────────
+/**
+ * Etiqueta el control con `htmlFor` + `id` inyectado al hijo. Asociación
+ * EXPLÍCITA, no implícita: además de anunciar la etiqueta, hace que pulsar
+ * sobre ella enfoque el campo, y enlaza el mensaje de error vía
+ * `aria-describedby` para que el lector de pantalla lo lea al entrar al campo.
+ */
 function Field({
   label,
   required,
@@ -70,18 +82,31 @@ function Field({
   required?: boolean;
   error?: string;
   touched?: boolean;
-  children: React.ReactNode;
+  children: React.ReactElement<React.InputHTMLAttributes<HTMLInputElement>>;
 }) {
-  const showError = touched && error;
+  const id = useId();
+  const errorId = `${id}-error`;
+  const showError = Boolean(touched && error);
+
+  const control = isValidElement(children)
+    ? cloneElement(children, {
+        id,
+        "aria-invalid": showError || undefined,
+        "aria-describedby": showError ? errorId : undefined,
+      } as React.InputHTMLAttributes<HTMLInputElement>)
+    : children;
+
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-medium text-foreground">
+      <label htmlFor={id} className="text-sm font-medium text-foreground">
         {label}
         {required && <span className="text-destructive ml-0.5">*</span>}
       </label>
-      {children}
+      {control}
       {showError && (
-        <p className="text-xs text-destructive leading-tight">{error}</p>
+        <p id={errorId} className="text-xs text-destructive leading-tight">
+          {error}
+        </p>
       )}
     </div>
   );
@@ -101,6 +126,18 @@ export default function ContactoPage() {
     validate,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
+        // reCAPTCHA antes del POST. Con el interruptor apagado el token es
+        // null y el servidor responde `omitido`, así que no bloquea el envío.
+        const token = await obtenerTokenRecaptcha(RECAPTCHA_ACCIONES.contacto);
+        const check = await verificarRecaptcha(token, RECAPTCHA_ACCIONES.contacto);
+        if (!check.ok) {
+          toast.error("No pudimos verificar tu envío", {
+            description: check.error,
+          });
+          setSubmitting(false);
+          return;
+        }
+
         const res = await fetch(`${API_URL}/api/leads`, {
           method: "POST",
           headers: {
@@ -130,7 +167,7 @@ export default function ContactoPage() {
 
   const inputClass = (field: keyof FormValues) =>
     [
-      "h-11 bg-white transition-colors",
+      "h-12 bg-card text-body-2 transition-colors",
       touched[field] && errors[field]
         ? "border-destructive focus-visible:ring-destructive/30"
         : "",
@@ -144,19 +181,13 @@ export default function ContactoPage() {
 
         {/* Header */}
         <div className="text-center mb-10">
-          <span
-            className="inline-block text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4"
-            style={{
-              backgroundColor: "color-mix(in oklch, var(--brand-primary) 12%, transparent)",
-              color: "var(--brand-primary)",
-            }}
-          >
+          <span className="mb-4 inline-block rounded-4xl bg-brand-aqua/30 px-3 py-1 font-label text-overline uppercase text-brand-petrol">
             Contáctanos
           </span>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+          <h1 className="mb-3 font-heading text-h1 font-light text-foreground">
             ¿Cómo podemos ayudarte?
           </h1>
-          <p className="text-muted-foreground max-w-md mx-auto text-sm md:text-base">
+          <p className="mx-auto max-w-md text-body-2 text-ink-800">
             Llena el formulario y un asesor de {APP_NAME} se comunicará contigo
             a la brevedad posible.
           </p>
@@ -166,13 +197,10 @@ export default function ContactoPage() {
 
           {/* ── Info sidebar ── */}
           <div className="md:col-span-2 flex flex-col gap-4">
-            <div
-              className="rounded-2xl p-6 flex flex-col gap-6 text-white h-full"
-              style={{ backgroundColor: "var(--brand-primary)" }}
-            >
+            <div className="flex h-full flex-col gap-6 rounded-xl bg-brand-petrol p-6 text-white">
               <div>
-                <h2 className="text-xl font-bold mb-1">Información de contacto</h2>
-                <p className="text-white/70 text-sm leading-relaxed">
+                <h2 className="mb-1 font-heading text-h3 font-medium">Información de contacto</h2>
+                <p className="text-body-2 leading-relaxed text-white/80">
                   Estamos disponibles de lunes a viernes de 9:00 a 18:00 hrs.
                 </p>
               </div>
@@ -213,7 +241,7 @@ export default function ContactoPage() {
             <form
               onSubmit={handleSubmit}
               noValidate
-              className="bg-white rounded-2xl border border-border shadow-sm p-6 md:p-8 flex flex-col gap-5"
+              className="flex flex-col gap-5 rounded-xl border border-border bg-card p-6 md:p-8"
             >
               {/* Row 1: name + company */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -328,11 +356,11 @@ export default function ContactoPage() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   className={[
-                    "w-full rounded-md border bg-white px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground resize-none",
+                    "w-full resize-none rounded-lg border bg-card px-4 py-3 text-body-2 text-foreground placeholder:text-ink-500",
                     "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 transition-colors",
                     touched.description && errors.description
                       ? "border-destructive focus-visible:ring-destructive/30"
-                      : "border-input",
+                      : "border-border",
                   ].join(" ")}
                 />
               </Field>
@@ -342,11 +370,18 @@ export default function ContactoPage() {
                 <p className="text-xs text-muted-foreground">
                   Los campos con <span className="text-destructive">*</span> son obligatorios.
                 </p>
+                {/*
+                  variant="petrol", no un style inline con el color de fondo.
+                  El parche pintaba petróleo pero dejaba el texto en
+                  `text-brand-ink` de la variante `default`: tinta oscura sobre
+                  petróleo oscuro, 1.80:1. Ilegible.
+                */}
                 <Button
                   type="submit"
+                  variant="petrol"
+                  size="cta"
                   disabled={isSubmitting}
-                  className="cursor-pointer self-stretch sm:self-auto gap-2 min-w-36"
-                  style={{ backgroundColor: "var(--brand-primary)" }}
+                  className="w-full cursor-pointer sm:w-auto"
                 >
                   {isSubmitting ? (
                     <>

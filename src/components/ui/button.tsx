@@ -9,7 +9,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        // "Primary" del Figma: fondo Aqua sobre claro. No usa --primary porque
+        // ese token debe seguir sirviendo como color de TEXTO (ver globals.css).
+        default: "bg-brand-aqua text-brand-ink hover:bg-aqua-500",
+        // Superficie petróleo con texto blanco, para CTA sobre fondo claro
+        // que necesitan más peso que el aqua.
+        petrol: "bg-primary text-primary-foreground hover:bg-primary/90",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
@@ -19,6 +24,21 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
+
+        /* ---- Variantes del Design System VALUE -------------------------
+           El Figma define 4 CTA según el fondo sobre el que viven.
+           `default` ya es la "Primary" (bg-primary = Aqua). */
+        // Type3 · fondo blanco, se usa SOBRE color (petróleo, aqua, foto clara)
+        onColor:
+          "border-border bg-white text-brand-ink hover:bg-ink-300 dark:border-transparent",
+        // Secondary · outline, se usa SOBRE oscuro (tinta, petróleo)
+        onDark:
+          "border-background/90 bg-transparent text-background hover:bg-background/10",
+        // Type4 · vidrio 20%, se usa SOBRE imagen
+        glass:
+          "border-white/90 bg-white/20 text-white backdrop-blur-sm hover:bg-white/30",
+        // Neón · highlight, para el CTA de máxima prioridad
+        neon: "bg-brand-neon text-brand-ink hover:bg-brand-neon/80",
       },
       size: {
         default:
@@ -32,6 +52,13 @@ const buttonVariants = cva(
         "icon-sm":
           "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
         "icon-lg": "size-9",
+
+        /* ---- Tamaños del Design System VALUE ----------------------------
+           cta        = padding 16/24, 16px, radio 10 (medida exacta del Figma)
+           icon-round = círculo 47px, radio 100 (botón flecha direccional) */
+        cta: "h-auto gap-2 px-6 py-4 text-body-2 has-data-[icon=inline-end]:pr-5 has-data-[icon=inline-start]:pl-5 [&_svg:not([class*='size-'])]:size-5",
+        "icon-round":
+          "size-[47px] rounded-4xl [&_svg:not([class*='size-'])]:size-5",
       },
     },
     defaultVariants: {

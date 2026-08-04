@@ -57,8 +57,8 @@ export default function HowItWorks() {
   const { headline, cta, steps } = content[active];
 
   return (
-    <section className="max-w-7xl mx-auto px-4 py-12">
-      <div className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden">
+    <section className="mx-auto max-w-7xl px-6 md:px-14 py-14">
+      <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
           {/* Left */}
           <div className="p-8 md:p-10 flex flex-col gap-5 border-b md:border-b-0 md:border-r border-border">
@@ -71,7 +71,7 @@ export default function HowItWorks() {
                   className={[
                     "px-5 py-1.5 rounded-md text-sm font-medium transition-all cursor-pointer",
                     active === tab
-                      ? "bg-white shadow-sm text-foreground"
+                      ? "bg-card shadow-sm text-foreground"
                       : "text-muted-foreground hover:text-foreground",
                   ].join(" ")}
                 >
@@ -82,7 +82,7 @@ export default function HowItWorks() {
             <h2 className="text-2xl md:text-3xl font-bold text-foreground leading-snug">
               {headline}
             </h2>
-            <Button className="self-start cursor-pointer">
+            <Button size="cta" variant="petrol" className="self-start cursor-pointer">
               {cta}
               <ArrowRight className="size-4" />
             </Button>
@@ -92,12 +92,12 @@ export default function HowItWorks() {
           <div className="p-8 md:p-10 flex flex-col gap-6">
             {steps.map((step, i) => (
               <div key={step.n} className="flex gap-4">
-                <div className="shrink-0 size-8 rounded-full border-2 border-primary text-primary font-bold text-sm flex items-center justify-center">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-4xl bg-brand-aqua font-label text-label font-bold text-brand-ink flex items-center justify-center">
                   {step.n}
                 </div>
                 <div className={i < steps.length - 1 ? "pb-4 border-b border-border flex-1" : "flex-1"}>
                   <p className="font-semibold text-foreground text-sm">{step.title}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{step.desc}</p>
+                  <p className="text-caption text-ink-600 mt-0.5 leading-relaxed">{step.desc}</p>
                 </div>
               </div>
             ))}

@@ -30,8 +30,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# Env runtime con secretos - nunca commitear.
+# `.env` = copia de `.env.production` con los secretos llenos, en el host prod.
+# `.env.development` / `.env.production` SÍ se commitean: sólo llevan NEXT_PUBLIC_*
+# (públicos por definición) y el Dockerfile los necesita en build time.
+.env
+.env*.local
 
 # vercel
 .vercel

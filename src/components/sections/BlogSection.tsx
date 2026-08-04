@@ -31,9 +31,9 @@ const posts = [
 
 export default function BlogSection() {
   return (
-    <section className="max-w-7xl mx-auto px-4 py-10">
+    <section className="mx-auto max-w-7xl px-6 md:px-14 py-14">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-foreground">Expertos {APP_NAME}</h2>
+        <h2 className="font-heading text-h2 font-normal text-foreground">Expertos {APP_NAME}</h2>
         <a
           href="#"
           className="flex items-center gap-1 text-sm text-primary font-medium hover:underline cursor-pointer"
@@ -46,7 +46,7 @@ export default function BlogSection() {
         {posts.map((post) => (
           <div
             key={post.id}
-            className="rounded-2xl overflow-hidden border border-border bg-white hover:shadow-md transition-shadow cursor-pointer group"
+            className="rounded-xl overflow-hidden border border-border bg-card hover:shadow-md transition-shadow cursor-pointer group"
           >
             <div className="relative h-44 overflow-hidden">
               <Image
@@ -56,10 +56,10 @@ export default function BlogSection() {
                 className="object-cover group-hover:scale-105 transition-transform duration-300"
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
-              <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
+              <div className="absolute inset-0 bg-brand-ink/10 group-hover:bg-brand-ink/0 transition-colors" />
             </div>
             <div className="p-4">
-              <p className="text-xs text-muted-foreground mb-1.5">{post.category}</p>
+              <p className="text-caption text-ink-600 mb-1.5">{post.category}</p>
               <p className="text-sm font-semibold text-foreground leading-snug group-hover:text-primary transition-colors">
                 {post.title}
               </p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { cloneElement, isValidElement, useId, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Lock, ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,20 +16,43 @@ const STEPS = [
 
 // ─── Shared field component ──────────────────────────────────────────────────
 
+/**
+ * Etiqueta el control con `htmlFor` + `id` inyectado al hijo. Asociación
+ * EXPLÍCITA: anuncia la etiqueta, permite enfocar el campo pulsando sobre ella
+ * y enlaza la ayuda con `aria-describedby`.
+ */
 function Field({
   label,
   children,
   hint,
 }: {
   label?: string;
-  children: React.ReactNode;
+  children: React.ReactElement<React.InputHTMLAttributes<HTMLInputElement>>;
   hint?: string;
 }) {
+  const id = useId();
+  const hintId = `${id}-hint`;
+
+  const control = isValidElement(children)
+    ? cloneElement(children, {
+        id,
+        "aria-describedby": hint ? hintId : undefined,
+      } as React.InputHTMLAttributes<HTMLInputElement>)
+    : children;
+
   return (
     <div className="flex flex-col gap-1">
-      {label && <label className="text-xs font-medium text-muted-foreground">{label}</label>}
-      {children}
-      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+      {label && (
+        <label htmlFor={id} className="text-xs font-medium text-muted-foreground">
+          {label}
+        </label>
+      )}
+      {control}
+      {hint && (
+        <p id={hintId} className="text-xs text-muted-foreground">
+          {hint}
+        </p>
+      )}
     </div>
   );
 }
@@ -100,15 +123,22 @@ function Step1({
       </Field>
 
       <label className="flex items-center gap-2.5 cursor-pointer select-none">
-        <div
-          onClick={() => setData("rfcOk", data.rfcOk === "1" ? "" : "1")}
+        <input
+          type="checkbox"
+          checked={data.rfcOk === "1"}
+          onChange={() => setData("rfcOk", data.rfcOk === "1" ? "" : "1")}
+          className="peer sr-only"
+        />
+        <span
+          aria-hidden="true"
           className={cn(
-            "w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all cursor-pointer",
+            "w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all",
+            "peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ring",
             data.rfcOk === "1" ? "bg-primary border-primary" : "border-border bg-white"
           )}
         >
-          {data.rfcOk === "1" && <Check className="size-3 text-white" strokeWidth={3} />}
-        </div>
+          {data.rfcOk === "1" && <Check className="size-3 text-primary-foreground" strokeWidth={3} />}
+        </span>
         <span className="text-sm text-foreground">El RFC es correcto</span>
       </label>
     </div>
@@ -203,7 +233,7 @@ function Step3({ data, setData }: { data: Record<string, string>; setData: (k: s
         <div className="bg-white border border-border rounded-xl p-4 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">Mensualidad</span>
-            <span className="text-xl font-bold" style={{ color: "var(--brand-primary)" }}>
+            <span className="text-xl font-bold" style={{ color: "var(--color-brand-petrol)" }}>
               ${monthly.toLocaleString("es-MX")}/mes
             </span>
           </div>
@@ -277,7 +307,7 @@ function Step4({ data }: { data: Record<string, string> }) {
   return (
     <div className="flex flex-col gap-6">
       {/* Hero result */}
-      <div className="rounded-2xl p-6 flex flex-col items-center gap-3 text-center" style={{ backgroundColor: "var(--brand-primary)" }}>
+      <div className="rounded-2xl p-6 flex flex-col items-center gap-3 text-center" style={{ backgroundColor: "var(--color-brand-petrol)" }}>
         <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center">
           <Check className="size-8 text-white" strokeWidth={2.5} />
         </div>
@@ -291,7 +321,7 @@ function Step4({ data }: { data: Record<string, string> }) {
       <div className="bg-white border border-border rounded-2xl divide-y divide-border overflow-hidden">
         <div className="px-5 py-4">
           <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium mb-1">Mensualidad estimada</p>
-          <p className="text-3xl font-black" style={{ color: "var(--brand-primary)" }}>
+          <p className="text-3xl font-black" style={{ color: "var(--color-brand-petrol)" }}>
             ${monthly.toLocaleString("es-MX")}<span className="text-base font-medium text-muted-foreground">/mes</span>
           </p>
         </div>
@@ -314,9 +344,9 @@ function Step4({ data }: { data: Record<string, string> }) {
       {/* Next step */}
       <div className="flex flex-col gap-3">
         <Link
-          href="/compra"
+          href="/vehiculos"
           className="w-full h-12 flex items-center justify-center rounded-xl text-sm font-bold text-white transition-all active:scale-[0.99]"
-          style={{ backgroundColor: "var(--brand-primary)" }}
+          style={{ backgroundColor: "var(--color-brand-petrol)" }}
         >
           Ver autos que se ajustan a mi presupuesto
         </Link>
@@ -372,7 +402,7 @@ export default function CotizarPage() {
               className="h-full rounded-full transition-all duration-500"
               style={{
                 width: `${((step + 1) / STEPS.length) * 100}%`,
-                backgroundColor: "var(--brand-primary)",
+                backgroundColor: "var(--color-brand-petrol)",
               }}
             />
           </div>
@@ -415,7 +445,7 @@ export default function CotizarPage() {
               onClick={() => setStep(s => s + 1)}
               className="w-full h-12 rounded-xl text-sm font-bold text-white transition-all active:scale-[0.99] cursor-pointer disabled:cursor-not-allowed"
               style={{
-                backgroundColor: canAdvance() ? "var(--brand-primary)" : "oklch(0.75 0 0)",
+                backgroundColor: canAdvance() ? "var(--color-brand-petrol)" : "var(--color-ink-500)",
               }}
             >
               Continuar

@@ -1,4 +1,6 @@
 import { CreditCard, Car, RefreshCw } from "lucide-react";
+
+import { SectionHeading } from "@/components/ds";
 import { APP_NAME } from "@/lib/config";
 
 const benefits = [
@@ -15,28 +17,45 @@ const benefits = [
   {
     icon: RefreshCw,
     title: "Más ofertas, más libertad",
-    desc: `Compramos más autos que nunca, cambia tu auto con ${APP_NAME} y recibe un bono extra.`,
+    desc: `Compramos más autos que nunca: cambia el tuyo con ${APP_NAME} y recibe un bono extra.`,
   },
 ];
 
 export default function TrustSection() {
   return (
-    <section className="max-w-7xl mx-auto px-4 py-10">
-      <h2 className="text-xl md:text-2xl font-bold text-foreground mb-8 text-center">
-        Descubre por qué más de{" "}
-        <span className="text-primary">300,000 clientes</span> ya confiaron en {APP_NAME}
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {benefits.map((b) => (
-          <div key={b.title} className="flex flex-col items-center text-center gap-3 p-6 bg-white rounded-2xl border border-border shadow-sm">
-            <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <b.icon className="size-5 text-primary" />
+    <section className="mx-auto max-w-7xl px-6 py-14 md:px-14">
+      {/*
+        Aquí decía «Más de 300,000 clientes ya confiaron en …»: una cifra
+        inventada, heredada del clon de Kavak, atribuida a una empresa real.
+        Sustituida por el eslogan de marca, que además es verificable.
+      */}
+      <SectionHeading
+        overline="Por qué elegirnos"
+        title={
+          <>
+            ¡Tu seminuevo de confianza en{" "}
+            <span className="text-brand-petrol">Monterrey</span>!
+          </>
+        }
+        className="mb-10 max-w-[720px]"
+      />
+
+      <ul className="grid grid-cols-1 gap-5 md:grid-cols-3">
+        {benefits.map(({ icon: Icon, title, desc }) => (
+          <li
+            key={title}
+            className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6"
+          >
+            <span className="flex size-[50px] items-center justify-center rounded-4xl bg-brand-aqua">
+              <Icon aria-hidden className="size-6 text-brand-ink" />
+            </span>
+            <div>
+              <h3 className="font-heading text-h4 font-medium">{title}</h3>
+              <p className="mt-2 text-body-2 text-ink-800">{desc}</p>
             </div>
-            <p className="font-semibold text-foreground">{b.title}</p>
-            <p className="text-sm text-muted-foreground leading-relaxed">{b.desc}</p>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }

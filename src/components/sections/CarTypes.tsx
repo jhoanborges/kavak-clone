@@ -14,13 +14,13 @@ const carTypes = [
 
 export default function CarTypes() {
   return (
-    <section className="max-w-7xl mx-auto px-4 py-10">
-      <h2 className="text-xl font-bold text-foreground mb-6">Explora por tipo de auto</h2>
+    <section className="mx-auto max-w-7xl px-6 md:px-14 py-14">
+      <h2 className="font-heading text-h2 font-normal text-foreground mb-6">Explora por tipo de auto</h2>
       <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-3">
         {carTypes.map((type) => (
           <button
             key={type.label}
-            className="flex flex-col items-center gap-2 p-3 bg-white rounded-xl border border-border hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group"
+            className="flex flex-col items-center gap-2 p-3 bg-card rounded-xl border border-border hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group"
           >
             <div className="size-14 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
               <Image
@@ -31,7 +31,7 @@ export default function CarTypes() {
                 className="object-contain w-full h-full drop-shadow-sm"
               />
             </div>
-            <span className="text-xs text-muted-foreground group-hover:text-primary font-medium transition-colors text-center leading-tight">
+            <span className="text-caption text-ink-600 group-hover:text-primary font-medium transition-colors text-center leading-tight">
               {type.label}
             </span>
           </button>
