@@ -9,6 +9,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { APP_NAME } from "@/lib/config";
 import {
+  CAMPO,
+  CAMPO_ERROR,
+  CAMPO_STACK,
+  CAMPO_TEXTAREA,
+  ERROR,
+  ETIQUETA,
+} from "@/lib/form-styles";
+import { cn } from "@/lib/utils";
+import {
   obtenerTokenRecaptcha,
   verificarRecaptcha,
   RECAPTCHA_ACCIONES,
@@ -97,14 +106,14 @@ function Field({
     : children;
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium text-foreground">
+    <div className={CAMPO_STACK}>
+      <label htmlFor={id} className={ETIQUETA}>
         {label}
         {required && <span className="text-destructive ml-0.5">*</span>}
       </label>
       {control}
       {showError && (
-        <p id={errorId} className="text-xs text-destructive leading-tight">
+        <p id={errorId} className={ERROR}>
           {error}
         </p>
       )}
@@ -166,14 +175,7 @@ export default function ContactoPage() {
   const { values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting } = formik;
 
   const inputClass = (field: keyof FormValues) =>
-    [
-      "h-12 bg-card text-body-2 transition-colors",
-      touched[field] && errors[field]
-        ? "border-destructive focus-visible:ring-destructive/30"
-        : "",
-    ]
-      .filter(Boolean)
-      .join(" ");
+    cn(CAMPO, touched[field] && errors[field] && CAMPO_ERROR);
 
   return (
     <main className="min-h-[calc(100vh-56px)] py-12 px-4">
@@ -355,13 +357,10 @@ export default function ContactoPage() {
                   value={values.description}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className={[
-                    "w-full resize-none rounded-lg border bg-card px-4 py-3 text-body-2 text-foreground placeholder:text-ink-500",
-                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 transition-colors",
-                    touched.description && errors.description
-                      ? "border-destructive focus-visible:ring-destructive/30"
-                      : "border-border",
-                  ].join(" ")}
+                  className={cn(
+                    CAMPO_TEXTAREA,
+                    touched.description && errors.description && CAMPO_ERROR
+                  )}
                 />
               </Field>
 

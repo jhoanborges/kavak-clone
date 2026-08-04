@@ -3,6 +3,8 @@
 import { cloneElement, isValidElement, useId, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Lock, ChevronDown, Check } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { AYUDA, CAMPO, CAMPO_SELECT, CAMPO_STACK, ETIQUETA } from "@/lib/form-styles";
 import { cn } from "@/lib/utils";
 
 // ─── Step definitions ───────────────────────────────────────────────────────
@@ -41,27 +43,21 @@ function Field({
     : children;
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className={CAMPO_STACK}>
       {label && (
-        <label htmlFor={id} className="text-xs font-medium text-muted-foreground">
+        <label htmlFor={id} className={ETIQUETA}>
           {label}
         </label>
       )}
       {control}
       {hint && (
-        <p id={hintId} className="text-xs text-muted-foreground">
+        <p id={hintId} className={AYUDA}>
           {hint}
         </p>
       )}
     </div>
   );
 }
-
-const inputCls =
-  "w-full h-12 rounded-xl border border-border bg-white px-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all";
-
-const selectCls =
-  "w-full h-12 rounded-xl border border-border bg-white px-4 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all appearance-none cursor-pointer";
 
 // ─── Step 1: Datos personales ─────────────────────────────────────────────
 
@@ -90,26 +86,26 @@ function Step1({
 
       <div className="grid grid-cols-2 gap-3">
         <Field label="Primer nombre">
-          <input className={inputCls} placeholder="Primer nombre" value={data.firstName || ""} onChange={e => setData("firstName", e.target.value)} />
+          <Input className={CAMPO} placeholder="Primer nombre" value={data.firstName || ""} onChange={e => setData("firstName", e.target.value)} />
         </Field>
         <Field label="Segundo nombre">
-          <input className={inputCls} placeholder="Segundo nombre" value={data.secondName || ""} onChange={e => setData("secondName", e.target.value)} />
+          <Input className={CAMPO} placeholder="Segundo nombre" value={data.secondName || ""} onChange={e => setData("secondName", e.target.value)} />
         </Field>
         <Field label="Apellido paterno">
-          <input className={inputCls} placeholder="Apellido paterno" value={data.lastName1 || ""} onChange={e => setData("lastName1", e.target.value)} />
+          <Input className={CAMPO} placeholder="Apellido paterno" value={data.lastName1 || ""} onChange={e => setData("lastName1", e.target.value)} />
         </Field>
         <Field label="Apellido materno">
-          <input className={inputCls} placeholder="Apellido materno" value={data.lastName2 || ""} onChange={e => setData("lastName2", e.target.value)} />
+          <Input className={CAMPO} placeholder="Apellido materno" value={data.lastName2 || ""} onChange={e => setData("lastName2", e.target.value)} />
         </Field>
       </div>
 
       <Field>
-        <input className={inputCls} placeholder="Fecha de nacimiento (dd/mm/aaaa)" value={data.dob || ""} onChange={e => setData("dob", e.target.value)} />
+        <Input className={CAMPO} placeholder="Fecha de nacimiento (dd/mm/aaaa)" value={data.dob || ""} onChange={e => setData("dob", e.target.value)} />
       </Field>
 
       <Field label="Género" hint="Debe ser el mismo que sale en tus documentos oficiales: pasaporte, IFE o acta de nacimiento.">
         <div className="relative">
-          <select className={selectCls} value={data.gender || ""} onChange={e => setData("gender", e.target.value)}>
+          <select className={CAMPO_SELECT} value={data.gender || ""} onChange={e => setData("gender", e.target.value)}>
             <option value="">Selecciona</option>
             <option value="M">Masculino</option>
             <option value="F">Femenino</option>
@@ -119,7 +115,7 @@ function Step1({
       </Field>
 
       <Field>
-        <input className={inputCls} placeholder="RFC con homoclave" value={data.rfc || ""} onChange={e => setData("rfc", e.target.value)} />
+        <Input className={CAMPO} placeholder="RFC con homoclave" value={data.rfc || ""} onChange={e => setData("rfc", e.target.value)} />
       </Field>
 
       <label className="flex items-center gap-2.5 cursor-pointer select-none">
@@ -166,7 +162,7 @@ function Step2({ data, setData }: { data: Record<string, string>; setData: (k: s
 
       <Field label="Tipo de empleo">
         <div className="relative">
-          <select className={selectCls} value={data.employment || ""} onChange={e => setData("employment", e.target.value)}>
+          <select className={CAMPO_SELECT} value={data.employment || ""} onChange={e => setData("employment", e.target.value)}>
             <option value="">Selecciona</option>
             <option value="employed">Empleado de empresa</option>
             <option value="self">Independiente / Freelance</option>
@@ -180,13 +176,13 @@ function Step2({ data, setData }: { data: Record<string, string>; setData: (k: s
       <Field label="Ingresos mensuales netos" hint="Ingresa el monto que recibes después de impuestos.">
         <div className="relative">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
-          <input className={cn(inputCls, "pl-7")} placeholder="0.00" type="number" min={0} value={data.income || ""} onChange={e => setData("income", e.target.value)} />
+          <Input className={cn(CAMPO, "pl-7")} placeholder="0.00" type="number" min={0} value={data.income || ""} onChange={e => setData("income", e.target.value)} />
         </div>
       </Field>
 
       <Field label="Antigüedad laboral">
         <div className="relative">
-          <select className={selectCls} value={data.seniority || ""} onChange={e => setData("seniority", e.target.value)}>
+          <select className={CAMPO_SELECT} value={data.seniority || ""} onChange={e => setData("seniority", e.target.value)}>
             <option value="">Selecciona</option>
             <option value="0">Menos de 6 meses</option>
             <option value="1">6 meses a 1 año</option>
@@ -198,7 +194,7 @@ function Step2({ data, setData }: { data: Record<string, string>; setData: (k: s
       </Field>
 
       <Field label="CURP" hint="Puedes encontrarla en tu credencial de elector o acta de nacimiento.">
-        <input className={inputCls} placeholder="CURP" value={data.curp || ""} onChange={e => setData("curp", e.target.value)} />
+        <Input className={CAMPO} placeholder="CURP" value={data.curp || ""} onChange={e => setData("curp", e.target.value)} />
       </Field>
     </div>
   );
@@ -261,7 +257,7 @@ function Step3({ data, setData }: { data: Record<string, string>; setData: (k: s
 
       <Field label="Marca preferida (opcional)">
         <div className="relative">
-          <select className={selectCls} value={data.brand || ""} onChange={e => setData("brand", e.target.value)}>
+          <select className={CAMPO_SELECT} value={data.brand || ""} onChange={e => setData("brand", e.target.value)}>
             <option value="">Sin preferencia</option>
             {BRANDS.map(b => <option key={b} value={b}>{b}</option>)}
           </select>
