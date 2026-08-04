@@ -34,6 +34,11 @@ import {
   type LeadIdentidad,
   type PreferenciaContacto,
 } from "@/lib/agendar";
+import {
+  obtenerTokenRecaptcha,
+  verificarRecaptcha,
+  RECAPTCHA_ACCIONES,
+} from "@/lib/recaptcha";
 import { CONTACT, whatsappHref } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -147,6 +152,23 @@ export function AgendarFlow({
   async function enviarDatos() {
     setEnviando(true);
     setError(null);
+
+    // reCAPTCHA antes de crear el lead. Con el interruptor apagado devuelve
+    // null y el servidor responde `omitido`, así que el flujo no se bloquea.
+    try {
+      const token = await obtenerTokenRecaptcha(RECAPTCHA_ACCIONES.agendar);
+      const check = await verificarRecaptcha(token, RECAPTCHA_ACCIONES.agendar);
+      if (!check.ok) {
+        setEnviando(false);
+        return setError(check.error);
+      }
+    } catch {
+      setEnviando(false);
+      return setError(
+        "No pudimos completar la verificación de seguridad. Inténtalo de nuevo."
+      );
+    }
+
     const r = await registrarLead(identidad, {
       nombre,
       apellido,

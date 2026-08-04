@@ -8,6 +8,11 @@ import { Loader2, Send, Phone, Mail, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { APP_NAME } from "@/lib/config";
+import {
+  obtenerTokenRecaptcha,
+  verificarRecaptcha,
+  RECAPTCHA_ACCIONES,
+} from "@/lib/recaptcha";
 
 // ── Zod schema ──────────────────────────────────────────────────────────────
 const schema = z.object({
@@ -121,6 +126,18 @@ export default function ContactoPage() {
     validate,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
+        // reCAPTCHA antes del POST. Con el interruptor apagado el token es
+        // null y el servidor responde `omitido`, así que no bloquea el envío.
+        const token = await obtenerTokenRecaptcha(RECAPTCHA_ACCIONES.contacto);
+        const check = await verificarRecaptcha(token, RECAPTCHA_ACCIONES.contacto);
+        if (!check.ok) {
+          toast.error("No pudimos verificar tu envío", {
+            description: check.error,
+          });
+          setSubmitting(false);
+          return;
+        }
+
         const res = await fetch(`${API_URL}/api/leads`, {
           method: "POST",
           headers: {

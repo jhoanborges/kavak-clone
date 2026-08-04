@@ -5,8 +5,8 @@ import {
   ChevronRight,
   Fuel,
   Gauge,
+  MessageCircle,
   Palette,
-  Phone,
   Settings2,
   ShieldCheck,
 } from "lucide-react";
@@ -26,7 +26,7 @@ import {
 import { APP_NAME } from "@/lib/config";
 import { absoluteUrl, buildMetadata } from "@/lib/seo";
 import { encodeVehiculoId } from "@/lib/api/id-publico";
-import { CONTACT, telHref } from "@/lib/site";
+import { CONTACT, whatsappHref } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -325,11 +325,22 @@ export default async function VehiculoDetallePage({ params }: Props) {
                     </Link>
                   </Button>
 
-                  {CONTACT.phone && (
+                  {/* WhatsApp, no teléfono: es el canal que la gente usa de
+                      verdad, y deja el hilo abierto para el asesor. El mensaje
+                      lleva precargado el auto, así nadie tiene que explicar de
+                      cuál habla. */}
+                  {CONTACT.whatsapp && (
                     <Button variant="outline" size="cta" className="w-full" asChild>
-                      <a href={telHref(CONTACT.phone)}>
-                        <Phone data-icon="inline-start" />
-                        Hablar con un asesor
+                      <a
+                        href={whatsappHref(
+                          CONTACT.whatsapp,
+                          `Hola, me interesa el ${tituloCompleto} (ID ${vehiculo.id}).`
+                        )}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <MessageCircle data-icon="inline-start" />
+                        Hablar por WhatsApp
                       </a>
                     </Button>
                   )}
