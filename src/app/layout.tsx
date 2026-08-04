@@ -138,6 +138,13 @@ export default function RootLayout({
     <html
       lang="es"
       className={`${avenir.variable} ${museoSans.variable} ${raleway.variable} h-full antialiased`}
+      /*
+        globals.css pone `scroll-behavior: smooth` (viene del design system, para
+        los anclas internos). Este atributo le dice a Next que lo desactive
+        durante los cambios de ruta: sin él, cada navegación anima el scroll
+        hasta arriba en vez de saltar, y el contenido tarda en aparecer.
+      */
+      data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col">
         <script
