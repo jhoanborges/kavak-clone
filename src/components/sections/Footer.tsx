@@ -1,7 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, Phone } from "lucide-react";
 
-import { BrandLogo } from "@/components/ds";
 import { BrandIcon } from "@/components/ui/brand-icon";
 import { Separator } from "@/components/ui/separator";
 import { APP_NAME } from "@/lib/config";
@@ -32,7 +32,14 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-6 pt-14 pb-6 md:px-14">
         <div className="mb-10 grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
-            <BrandLogo tone="white" height={48} />
+            <Image
+              src="/value-pantone-white.svg"
+              alt="VALUE"
+              width={600}
+              height={200}
+              unoptimized
+              className="h-12 w-auto"
+            />
             <p className="mt-4 max-w-xs text-caption leading-relaxed text-brand-sage">
               Seminuevos certificados con revisión de 240 puntos, garantía
               incluida y financiamiento a tu medida.

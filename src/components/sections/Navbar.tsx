@@ -62,19 +62,21 @@ export default function Navbar() {
             `.dark` en <html> (CSS puro), sin JS ni parpadeo de hidratación. */}
         <Link href="/" className="shrink-0" aria-label="VALUE - Inicio">
           <Image
-            src="/gf.png"
+            src="/value-pantone.svg"
             alt="VALUE"
-            width={502}
-            height={161}
+            width={600}
+            height={200}
             priority
+            unoptimized
             className="h-7 w-auto block dark:hidden"
           />
           <Image
-            src="/logo-w.png"
+            src="/value-pantone-white.svg"
             alt="VALUE"
-            width={1280}
-            height={437}
+            width={600}
+            height={200}
             priority
+            unoptimized
             className="h-7 w-auto hidden dark:block"
           />
         </Link>
