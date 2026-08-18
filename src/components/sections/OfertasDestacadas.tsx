@@ -17,7 +17,7 @@ import { useVehiculosDestacados } from "@/hooks/useVehiculos";
  * "Ofertas destacadas" del home.
  *
  * OJO con el nombre: el endpoint no tiene ningún concepto de destacado. Esto es
- * una búsqueda SIN filtros recortada a 4 resultados — el orden lo decide el
+ * una búsqueda SIN filtros recortada a 4 resultados - el orden lo decide el
  * backend. Ver docs/api-vehiculos.md. Si se quiere una curaduría real hace
  * falta un campo nuevo en la API.
  */

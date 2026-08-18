@@ -18,7 +18,7 @@ export default function CreditSimulator() {
       <div className="overflow-hidden rounded-xl border border-border bg-card">
         <div className="grid grid-cols-1 md:grid-cols-2">
           <div className="flex flex-col justify-center gap-5 p-8 md:p-10">
-            {/* Trazo decorativo — antes iba en #1B4FD8, un azul ajeno al DS */}
+            {/* Trazo decorativo - antes iba en #1B4FD8, un azul ajeno al DS */}
             <svg
               width="160"
               height="80"
@@ -29,7 +29,7 @@ export default function CreditSimulator() {
             >
               <path
                 d="M10 70 Q 40 10 80 40 Q 120 70 150 20"
-                stroke="var(--color-brand-petrol)"
+                stroke="var(--color-primary)"
                 strokeWidth="2"
                 fill="none"
                 strokeLinecap="round"
@@ -67,7 +67,7 @@ export default function CreditSimulator() {
               <p className="mb-1 font-label text-overline uppercase text-ink-600">
                 Tu vehículo estimado
               </p>
-              <p className="font-label text-[2.5rem] font-bold leading-none tabular-nums text-brand-petrol">
+              <p className="font-label text-[2.5rem] font-bold leading-none tabular-nums text-primary">
                 ${carPrice.toLocaleString("es-MX")}
               </p>
             </div>

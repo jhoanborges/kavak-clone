@@ -9,8 +9,8 @@ rompe cualquier build sin internet (Docker aislado, CI offline, red corporativa)
 
 | Familia | Rol en el DS | Variable CSS | Licencia |
 |---|---|---|---|
-| `avenir/` | Títulos (`font-heading`) | `--font-avenir` | Comercial — Monotype/Linotype |
-| `museo-sans/` | Cuerpo (`font-sans`) | `--font-museo` | Comercial — exljbris |
+| `avenir/` | Títulos (`font-heading`) | `--font-avenir` | Comercial - Monotype/Linotype |
+| `museo-sans/` | Cuerpo (`font-sans`) | `--font-museo` | Comercial - exljbris |
 | `raleway/` | Etiquetas y números (`font-label`) | `--font-raleway` | SIL OFL 1.1 |
 
 Los tokens se consumen sólo desde `@theme` en `src/app/globals.css`. Cambiar una
@@ -53,10 +53,10 @@ El subset `latin` (`U+0000-00FF` + puntuación) cubre todo el español: acentos,
 
 ## Pesos disponibles
 
-- **Avenir** — Light 300 · Roman 400 · Medium 500 · Heavy 700 · Black 900, con
+- **Avenir** - Light 300 · Roman 400 · Medium 500 · Heavy 700 · Black 900, con
   obliques. `Avenir-Book` (45) existe en `public/fonts/avenir/` pero el DS no lo
   lista, así que no está cableado.
-- **Museo Sans** — 100 · 300 · 500 · 700 · 900, con itálicas.
+- **Museo Sans** - 100 · 300 · 500 · 700 · 900, con itálicas.
   `Museo-Sans-Regular` / `Museo-Sans-Medium` quedaron fuera: son de otro subset
   (300 KB+ vs 60 KB) y su peso real es ambiguo frente a los numerados.
-- **Raleway** — variable 100–900 en un solo archivo por estilo.
+- **Raleway** - variable 100-900 en un solo archivo por estilo.

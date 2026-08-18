@@ -58,7 +58,7 @@ function ArticleBody({ blocks }: { blocks: BlogBlock[] }) {
             return (
               <blockquote
                 key={block.id}
-                className="border-l-4 border-brand-aqua bg-muted px-6 py-5 font-heading text-h4 font-light text-brand-petrol"
+                className="border-l-4 border-brand-aqua bg-muted px-6 py-5 font-heading text-h4 font-light text-primary"
               >
                 {block.text}
               </blockquote>

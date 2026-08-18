@@ -74,19 +74,19 @@ function OficinaCard({ oficina, destacada = false }: { oficina: Oficina; destaca
         <dl className="flex flex-col gap-3 text-body-2">
           <div className="flex gap-3">
             <dt className="sr-only">Dirección</dt>
-            <MapPin aria-hidden className="mt-0.5 size-5 shrink-0 text-brand-petrol" />
+            <MapPin aria-hidden className="mt-0.5 size-5 shrink-0 text-primary" />
             <dd className="text-ink-800">{oficina.direccion}</dd>
           </div>
 
           <div className="flex gap-3">
             <dt className="sr-only">Teléfono</dt>
-            <Phone aria-hidden className="mt-0.5 size-5 shrink-0 text-brand-petrol" />
+            <Phone aria-hidden className="mt-0.5 size-5 shrink-0 text-primary" />
             <dd className="flex flex-col gap-0.5">
               {oficina.telefonos.map((t) => (
                 <a
                   key={t}
                   href={telHref(t)}
-                  className="text-brand-petrol underline-offset-4 hover:underline"
+                  className="text-primary underline-offset-4 hover:underline"
                 >
                   {t}
                 </a>
@@ -96,7 +96,7 @@ function OficinaCard({ oficina, destacada = false }: { oficina: Oficina; destaca
 
           <div className="flex gap-3">
             <dt className="sr-only">Horario</dt>
-            <Clock aria-hidden className="mt-0.5 size-5 shrink-0 text-brand-petrol" />
+            <Clock aria-hidden className="mt-0.5 size-5 shrink-0 text-primary" />
             <dd className="text-ink-800">{oficina.horario}</dd>
           </div>
         </dl>
@@ -121,7 +121,7 @@ export default function UbicacionesPage() {
       />
 
       <main className="flex-1">
-        {/* Hero — overlay del DS sobre tinta, sin imagen: la sección ya carga
+        {/* Hero - overlay del DS sobre tinta, sin imagen: la sección ya carga
             cinco fotos abajo y otra más aquí sería peso sin información. */}
         <section className="relative overflow-hidden bg-brand-ink px-6 py-20 text-white md:px-14 md:py-28">
           <div

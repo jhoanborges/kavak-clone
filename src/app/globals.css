@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================================
-   VALUE Arrendadora — Design System v1.0
+   VALUE Arrendadora - Design System v1.0
    Fuente: initial-design/Design System VALUE Arrendadora.dc.html
    ----------------------------------------------------------------------------
    TODO vive en @theme => todo es una utility de Tailwind.
@@ -72,7 +72,7 @@
   --color-brand-neon: #def698; /* Neón         · highlight, badges */
   --color-brand-mist: #e2e6ea; /* Gris         · neutro, fondos, divisores */
 
-  /* ---- Escala secundaria · Aqua (200–800) ---- */
+  /* ---- Escala secundaria · Aqua (200-800) ---- */
   --color-aqua-200: #dcf1ef;
   --color-aqua-300: #c2e7e4;
   --color-aqua-400: #a5dbd9;
@@ -81,13 +81,17 @@
   --color-aqua-700: #3a918c;
   --color-aqua-800: #2e726e;
 
-  /* ---- Neutrales (200–800) · "ink" para no chocar con el gray de Tailwind ---- */
-  --color-ink-200: #ffffff;
-  --color-ink-300: #f5f6f7;
-  --color-ink-400: #e2e6ea;
-  --color-ink-500: #b0b8bf;
-  --color-ink-600: #5c676e;
-  --color-ink-800: #3a4449;
+  /* ---- Neutrales (200-800) · "ink" para no chocar con el gray de Tailwind ----
+     Referencian `var(--ink-*)` (definidos en :root y sobreescritos en .dark) en
+     vez de un hex literal. `@theme inline` inlinea el VALOR en cada utility: con
+     un hex, `.text-ink-800` quedaría fijo en #3a4449 e imposible de adaptar en
+     dark; con la var, queda `color: var(--ink-800)` y sí responde al tema. */
+  --color-ink-200: var(--ink-200);
+  --color-ink-300: var(--ink-300);
+  --color-ink-400: var(--ink-400);
+  --color-ink-500: var(--ink-500);
+  --color-ink-600: var(--ink-600);
+  --color-ink-800: var(--ink-800);
 
   /* ---- Radios del sistema (5 / 10 / 20 / 100) --------------------------
      Se mapean sobre los nombres que YA usan los componentes shadcn, así
@@ -148,7 +152,16 @@
   --popover: #ffffff;
   --popover-foreground: #0d1f26;
 
-  /* Acciones — Primary = Petróleo.
+  /* Escala neutral `ink` (claro). La consume @theme como var para que .dark
+     pueda invertirla. Mismos valores de siempre: el modo claro no cambia. */
+  --ink-200: #ffffff;
+  --ink-300: #f5f6f7;
+  --ink-400: #e2e6ea;
+  --ink-500: #b0b8bf;
+  --ink-600: #5c676e;
+  --ink-800: #3a4449;
+
+  /* Acciones - Primary = Petróleo.
      OJO: shadcn usa --primary como SUPERFICIE (`bg-primary`) y como FOREGROUND
      (`text-primary`, `border-primary`, `ring-primary`). El Aqua del Figma sólo
      funciona de superficie: como texto da 1.9:1 sobre blanco, ilegible.
@@ -165,7 +178,7 @@
   --muted-foreground: #5c676e;
   --destructive: oklch(0.577 0.245 27.325);
 
-  /* Bordes finos 1px — el sistema es plano, sin sombras pesadas */
+  /* Bordes finos 1px - el sistema es plano, sin sombras pesadas */
   --border: #e2e6ea;
   --input: #e2e6ea;
   --ring: #004e59;
@@ -191,31 +204,54 @@
 }
 
 .dark {
-  --background: #0d1f26;
-  --foreground: #eef1f1;
-  --card: #04333b;
-  --card-foreground: #eef1f1;
-  --popover: #04333b;
-  --popover-foreground: #eef1f1;
+  /* Dark mode NEUTRO: casi-negro + grises + texto blanco. El verde de marca
+     NO se usa como fondo ni como texto de cuerpo (ilegible sobre oscuro); el
+     aqua/neon quedan SOLO como acento puntual (CTA, activo, foco). */
+
+  /* Superficies: negro con un matiz frio minimo, elevaciones en gris oscuro */
+  --background: #0e1011;
+  --foreground: #ecedef;
+  --card: #17191b;
+  --card-foreground: #ecedef;
+  --popover: #1b1e20;
+  --popover-foreground: #ecedef;
+
+  /* Acento aqua SOLO para acciones; el resto es neutro */
   --primary: #a5dbd9;
   --primary-foreground: #0d1f26;
-  --secondary: #004e59;
-  --secondary-foreground: #eef1f1;
-  --accent: #def698;
+  --secondary: #24272a; /* gris neutro: badges, superficies secundarias */
+  --secondary-foreground: #ecedef;
+  --accent: #def698; /* neon: highlight puntual */
   --accent-foreground: #0d1f26;
-  --muted: #04333b;
-  --muted-foreground: #a5dbd9;
+  --muted: #1e2123;
+  --muted-foreground: #a2a9ae; /* gris claro legible sobre las superficies */
   --destructive: oklch(0.704 0.191 22.216);
-  --border: rgb(165 219 217 / 0.2);
-  --input: rgb(165 219 217 / 0.25);
+
+  /* Bordes: blanco a baja opacidad, visibles pero discretos */
+  --border: rgb(255 255 255 / 0.1);
+  --input: rgb(255 255 255 / 0.16);
   --ring: #a5dbd9;
-  --sidebar: #04333b;
-  --sidebar-foreground: #eef1f1;
+
+  /* Escala neutral `ink-*` INVERTIDA. Los componentes emparejan fondo y texto
+     en extremos opuestos de la rampa (bg-ink-300 + text-ink-800), asi que
+     invertir la luminancia de forma monotona conserva TODOS los contrastes sin
+     tocar componente alguno: los grises oscuros de texto se vuelven claros y
+     los fondos claros se vuelven oscuros. */
+  --ink-200: #14171a; /* era el mas claro (fondo), ahora el mas oscuro */
+  --ink-300: #1b1e20;
+  --ink-400: #33383b; /* divisores, tracks: un punto mas visibles */
+  --ink-500: #9aa1a6; /* texto tenue, mas brillo para no perderse en negro */
+  --ink-600: #bcc2c7; /* subtitulos: blanco ligeramente opaco para resaltar */
+  --ink-800: #e6e8ea; /* texto de cuerpo: casi blanco */
+
+  /* Sidebar / panel oscuro: neutro, no verde */
+  --sidebar: #17191b;
+  --sidebar-foreground: #ecedef;
   --sidebar-primary: #def698;
   --sidebar-primary-foreground: #0d1f26;
-  --sidebar-accent: #004e59;
-  --sidebar-accent-foreground: #eef1f1;
-  --sidebar-border: rgb(165 219 217 / 0.2);
+  --sidebar-accent: #24272a;
+  --sidebar-accent-foreground: #ecedef;
+  --sidebar-border: rgb(255 255 255 / 0.08);
   --sidebar-ring: #a5dbd9;
 }
 

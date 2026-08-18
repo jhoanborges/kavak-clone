@@ -4,7 +4,7 @@
  * El mapa es explícito porque las extensiones son mixtas y porque el nombre del
  * archivo no siempre coincide con lo que devuelve la API.
  *
- * FORMATO: SVG por defecto — es vectorial, nítido en cualquier densidad de
+ * FORMATO: SVG por defecto - es vectorial, nítido en cualquier densidad de
  * pantalla y más ligero que un ráster para formas planas. Convertirlo todo a
  * WebP sería un retroceso.
  *

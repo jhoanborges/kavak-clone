@@ -13,7 +13,7 @@ const BARRAS = 28;
  *
  * Las barras salen de los precios (o kilometrajes) que devuelve la API para el
  * contexto actual: si ya filtraste por Audi, la distribución es la de los Audi.
- * NO se recalculan al mover el control — si se aplicase el propio rango, las
+ * NO se recalculan al mover el control - si se aplicase el propio rango, las
  * barras desaparecerían bajo el cursor mientras arrastras.
  *
  * Las barras dentro del rango van en petróleo y las de fuera en gris, así que
@@ -163,7 +163,7 @@ export function RangoHistograma({
       <div className="flex items-end gap-3">
         {campo("min")}
         <span aria-hidden className="pb-2.5 text-ink-500">
-          –
+          -
         </span>
         {campo("max")}
       </div>

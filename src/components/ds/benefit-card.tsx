@@ -58,7 +58,7 @@ function BenefitCard({
         <h3
           data-slot="benefit-card-title"
           className={cn(
-            "font-sans text-body-1 font-light text-brand-ink",
+            "font-sans text-body-1 font-light text-foreground",
             classNames?.title
           )}
         >

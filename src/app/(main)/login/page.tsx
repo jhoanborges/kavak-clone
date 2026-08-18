@@ -2,15 +2,21 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const isValid = email.includes("@") && password.length >= 6;
+
+  // No hay auth real (es un clon): cualquier credencial válida entra directo al
+  // perfil. Los botones sociales hacen lo mismo.
+  const entrar = () => router.push("/perfil");
 
   return (
     <main className="flex-1 flex items-center justify-center px-4 py-16">
@@ -26,7 +32,8 @@ export default function LoginPage() {
         <div className="flex flex-col gap-3">
           <button
             type="button"
-            className="w-full h-12 flex items-center justify-center gap-3 rounded-lg border border-border bg-white text-sm font-medium text-foreground hover:bg-muted active:scale-[0.99] transition-all cursor-pointer shadow-sm"
+            onClick={entrar}
+            className="w-full h-12 flex items-center justify-center gap-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:bg-muted active:scale-[0.99] transition-all cursor-pointer shadow-sm"
           >
             <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path d="M17.64 9.20455C17.64 8.56636 17.5827 7.95273 17.4764 7.36364H9V10.845H13.8436C13.635 11.97 13.0009 12.9232 12.0477 13.5614V15.8195H14.9564C16.6582 14.2527 17.64 11.9455 17.64 9.20455Z" fill="#4285F4"/>
@@ -39,7 +46,8 @@ export default function LoginPage() {
 
           <button
             type="button"
-            className="w-full h-12 flex items-center justify-center gap-3 rounded-lg border border-border bg-white text-sm font-medium text-foreground hover:bg-muted active:scale-[0.99] transition-all cursor-pointer shadow-sm"
+            onClick={entrar}
+            className="w-full h-12 flex items-center justify-center gap-3 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:bg-muted active:scale-[0.99] transition-all cursor-pointer shadow-sm"
           >
             <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="#1877F2">
               <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.268h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
@@ -56,13 +64,19 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            entrar();
+          }}
+          className="flex flex-col gap-4"
+        >
           <div className="flex flex-col gap-1.5">
             <label htmlFor="email" className="text-sm font-medium text-foreground">
               Correo electrónico
             </label>
             <div className={cn(
-              "flex items-center gap-2.5 h-12 rounded-lg border bg-white px-3.5 transition-all",
+              "flex items-center gap-2.5 h-12 rounded-lg border bg-card px-3.5 transition-all",
               "focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary",
               email ? "border-primary" : "border-border"
             )}>
@@ -89,7 +103,7 @@ export default function LoginPage() {
               </Link>
             </div>
             <div className={cn(
-              "flex items-center gap-2.5 h-12 rounded-lg border bg-white px-3.5 transition-all",
+              "flex items-center gap-2.5 h-12 rounded-lg border bg-card px-3.5 transition-all",
               "focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary",
               password ? "border-primary" : "border-border"
             )}>
@@ -114,14 +128,18 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {/* Tokens en vez de `style` inline: `bg-primary` es petróleo en claro y
+              aqua en oscuro, ambos con contraste sobrado sobre su foreground.
+              Deshabilitado usa la superficie muted, legible en ambos temas. */}
           <button
             type="submit"
             disabled={!isValid}
-            className="w-full h-12 mt-1 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer disabled:cursor-not-allowed"
-            style={{
-              backgroundColor: isValid ? "var(--color-brand-petrol)" : "var(--color-ink-500)",
-              color: "white",
-            }}
+            className={cn(
+              "w-full h-12 mt-1 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer disabled:cursor-not-allowed",
+              isValid
+                ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                : "bg-muted text-muted-foreground"
+            )}
           >
             Ingresar
             {isValid && <ArrowRight className="size-4" />}

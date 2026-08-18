@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 
 /**
- * OJO — aquí NO va `PersistGate`.
+ * OJO - aquí NO va `PersistGate`.
  *
  * PersistGate no renderiza a sus hijos hasta que redux-persist rehidrata desde
  * localStorage, algo que sólo ocurre en el navegador. Como este provider

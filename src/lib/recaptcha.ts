@@ -1,5 +1,5 @@
 /**
- * reCAPTCHA v3 — configuración compartida.
+ * reCAPTCHA v3 - configuración compartida.
  *
  * REPARTO DE CLAVES, y es importante:
  *  - NEXT_PUBLIC_RECAPTCHA_SITE_KEY es pública por diseño: viaja en el HTML y
@@ -72,7 +72,7 @@ function cargarScript(): Promise<void> {
 /**
  * Obtiene un token para la acción indicada.
  *
- * Devuelve `null` cuando reCAPTCHA está desactivado — el llamante lo trata como
+ * Devuelve `null` cuando reCAPTCHA está desactivado - el llamante lo trata como
  * "sin token" y el servidor decide qué hacer. Nunca inventa un token falso.
  *
  * El script SÓLO se carga aquí, no en el layout: si estuviera en el layout,

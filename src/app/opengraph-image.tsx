@@ -13,7 +13,7 @@ import { SITE_DESCRIPTION } from "@/lib/seo";
  */
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = `${APP_NAME} — Seminuevos certificados`;
+export const alt = `${APP_NAME} - Seminuevos certificados`;
 
 export default function OpengraphImage() {
   return new ImageResponse(

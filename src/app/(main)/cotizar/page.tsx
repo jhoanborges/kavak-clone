@@ -130,7 +130,7 @@ function Step1({
           className={cn(
             "w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-all",
             "peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ring",
-            data.rfcOk === "1" ? "bg-primary border-primary" : "border-border bg-white"
+            data.rfcOk === "1" ? "bg-primary border-primary" : "border-border bg-card"
           )}
         >
           {data.rfcOk === "1" && <Check className="size-3 text-primary-foreground" strokeWidth={3} />}
@@ -217,7 +217,7 @@ function Step3({ data, setData }: { data: Record<string, string>; setData: (k: s
     <div className="flex flex-col gap-5">
       <div>
         <h2 className="text-2xl font-bold text-foreground leading-snug">¿Cómo es el auto que tienes en mente?</h2>
-        <p className="text-sm text-muted-foreground mt-1">Sin compromisos — solo exploramos tus opciones.</p>
+        <p className="text-sm text-muted-foreground mt-1">Sin compromisos - solo exploramos tus opciones.</p>
       </div>
 
       <div className="flex items-center gap-2 bg-primary/8 border border-primary/20 rounded-xl px-4 py-3">
@@ -226,10 +226,10 @@ function Step3({ data, setData }: { data: Record<string, string>; setData: (k: s
       </div>
 
       <Field label="¿Cuánto quieres pagar al mes?">
-        <div className="bg-white border border-border rounded-xl p-4 flex flex-col gap-3">
+        <div className="bg-card border border-border rounded-xl p-4 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <span className="text-sm text-muted-foreground">Mensualidad</span>
-            <span className="text-xl font-bold" style={{ color: "var(--color-brand-petrol)" }}>
+            <span className="text-xl font-bold text-primary">
               ${monthly.toLocaleString("es-MX")}/mes
             </span>
           </div>
@@ -276,7 +276,7 @@ function Step3({ data, setData }: { data: Record<string, string>; setData: (k: s
                 "h-11 rounded-xl border-2 text-sm font-semibold transition-all cursor-pointer",
                 data.term === m
                   ? "border-primary text-primary bg-primary/8"
-                  : "border-border text-foreground bg-white hover:border-primary/40"
+                  : "border-border text-foreground bg-card hover:border-primary/40"
               )}
             >
               {m} meses
@@ -314,10 +314,10 @@ function Step4({ data }: { data: Record<string, string> }) {
       </div>
 
       {/* Offer card */}
-      <div className="bg-white border border-border rounded-2xl divide-y divide-border overflow-hidden">
+      <div className="bg-card border border-border rounded-2xl divide-y divide-border overflow-hidden">
         <div className="px-5 py-4">
           <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium mb-1">Mensualidad estimada</p>
-          <p className="text-3xl font-black" style={{ color: "var(--color-brand-petrol)" }}>
+          <p className="text-3xl font-black text-primary">
             ${monthly.toLocaleString("es-MX")}<span className="text-base font-medium text-muted-foreground">/mes</span>
           </p>
         </div>
@@ -348,7 +348,7 @@ function Step4({ data }: { data: Record<string, string> }) {
         </Link>
         <Link
           href="/"
-          className="w-full h-12 flex items-center justify-center rounded-xl text-sm font-medium text-foreground border border-border bg-white hover:bg-muted transition-colors"
+          className="w-full h-12 flex items-center justify-center rounded-xl text-sm font-medium text-foreground border border-border bg-card hover:bg-muted transition-colors"
         >
           Explorar más tarde
         </Link>

@@ -28,7 +28,7 @@ const STATIC_ROUTES: Array<{
  * Dinámico: el inventario lo decide la API y cambia a diario.
  *
  * Antes salía del array `CARS` hardcodeado, así que el sitemap publicaba 115
- * fichas inventadas que devolvían 404 — enviar 404 a Google quema presupuesto
+ * fichas inventadas que devolvían 404 - enviar 404 a Google quema presupuesto
  * de rastreo y resta confianza al sitemap entero.
  */
 export const revalidate = 3600;

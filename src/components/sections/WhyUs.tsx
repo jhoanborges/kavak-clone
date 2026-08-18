@@ -34,7 +34,7 @@ export default function WhyUs() {
   return (
     <section className="mx-auto max-w-7xl px-6 py-8 md:px-14">
       <div className="overflow-hidden rounded-xl border border-border">
-        {/* Barra de stats — petróleo del DS. Antes usaba un inline style con
+        {/* Barra de stats - petróleo del DS. Antes usaba un inline style con
             var(--brand-primary), variable que ya no existe: renderizaba
             transparente y el texto blanco quedaba invisible. */}
         <dl className="grid grid-cols-2 bg-brand-petrol md:grid-cols-4">

@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
                   Correo electrónico
                 </label>
                 <div className={cn(
-                  "flex items-center gap-2.5 h-12 rounded-lg border bg-white px-3.5 transition-all",
+                  "flex items-center gap-2.5 h-12 rounded-lg border bg-card px-3.5 transition-all",
                   "focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary",
                   email ? "border-primary" : "border-border"
                 )}>
@@ -69,10 +69,12 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={!isValid}
-                className="w-full h-12 rounded-lg text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer disabled:cursor-not-allowed"
-                style={{
-                  backgroundColor: isValid ? "var(--color-brand-petrol)" : "var(--color-ink-500)",
-                }}
+                className={cn(
+                  "w-full h-12 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer disabled:cursor-not-allowed",
+                  isValid
+                    ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                    : "bg-muted text-muted-foreground"
+                )}
               >
                 Enviar enlace
                 {isValid && <ArrowRight className="size-4" />}
@@ -92,7 +94,7 @@ export default function ForgotPasswordPage() {
             <div className="flex flex-col items-center gap-6 text-center">
               {/* Icon */}
               <div className="relative flex items-center justify-center">
-                <span className="absolute w-24 h-24 rounded-full bg-primary/100/10 animate-ping" style={{ animationDuration: "2s" }} />
+                <span className="absolute w-24 h-24 rounded-full bg-primary/10 animate-ping" style={{ animationDuration: "2s" }} />
                 <div className="relative w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
                   <CheckCircle className="size-8 text-primary" />
                 </div>
@@ -117,7 +119,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="button"
                 onClick={() => setStep("email")}
-                className="w-full h-11 rounded-lg border border-border bg-white text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
+                className="w-full h-11 rounded-lg border border-border bg-card text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
               >
                 Intentar con otro correo
               </button>

@@ -15,6 +15,7 @@ import FiltrosSidebar from "@/components/catalog/FiltrosSidebar";
 import { SearchForm } from "@/components/sections/SearchForm";
 import { useVehiculosInfinito } from "@/hooks/useVehiculos";
 import type { FiltrosSeleccionados } from "@/lib/api/vehiculos";
+import { cn } from "@/lib/utils";
 
 /**
  * Listado completo con scroll infinito.
@@ -42,10 +43,16 @@ export default function CatalogoInfinito({
     filtros: facetas,
     hasMore,
     isLoading,
+    cambiandoFiltros,
     isLoadingMore,
     loadMore,
     error,
   } = useVehiculosInfinito({ busqueda, filtros, cantidad });
+
+  // Skeleton en la columna de productos: primera carga (nada que mostrar) o
+  // cambio de filtro (los datos viejos se sustituyen por skeleton mientras
+  // llegan los nuevos). El sidebar nunca entra aquí: se queda y hace fade.
+  const skeletonProductos = isLoading || cambiandoFiltros;
 
   const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -94,29 +101,47 @@ export default function CatalogoInfinito({
           aria-label="Filtros"
           className="lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:overflow-y-auto scrollbar-minimal"
         >
-          <FiltrosSidebar
-            facetas={facetas}
-            seleccion={filtros ?? {}}
-            busqueda={busqueda}
-            isLoading={isLoading}
-          />
+          {/* El sidebar no se desmonta al filtrar: conserva sus facetas previas
+              y sólo se atenúa mientras llegan los nuevos conteos, que entran con
+              un fade. Nunca desaparece ni salta a skeleton tras la primera carga. */}
+          <div
+            className={cn(
+              "transition-opacity duration-300",
+              cambiandoFiltros && "opacity-50"
+            )}
+          >
+            <FiltrosSidebar
+              facetas={facetas}
+              seleccion={filtros ?? {}}
+              busqueda={busqueda}
+              isLoading={isLoading}
+            />
+          </div>
         </aside>
 
         <div>
       {error && vehiculos.length === 0 ? (
         <VehiculosError error={error} />
-      ) : !isLoading && vehiculos.length === 0 ? (
+      ) : skeletonProductos ? (
+        <ul className="grid grid-cols-1 gap-5 duration-300 animate-in fade-in sm:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: cantidad }, (_, i) => (
+            <li key={`sk-${i}`}>
+              <VehiculoCardSkeleton />
+            </li>
+          ))}
+        </ul>
+      ) : vehiculos.length === 0 ? (
         <VehiculosVacio busqueda={busqueda} />
       ) : (
         <>
-          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          <ul className="grid grid-cols-1 gap-5 duration-300 animate-in fade-in sm:grid-cols-2 xl:grid-cols-3">
             {vehiculos.map((v, i) => (
               <li key={v.id || `${v.marca}-${v.modelo}-${i}`} className="flex">
                 <VehiculoCard vehiculo={v} priority={i < 4} />
               </li>
             ))}
 
-            {(isLoading || isLoadingMore) &&
+            {isLoadingMore &&
               Array.from({ length: cantidad }, (_, i) => (
                 <li key={`sk-${i}`}>
                   <VehiculoCardSkeleton />

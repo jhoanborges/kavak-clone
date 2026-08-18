@@ -3,7 +3,7 @@
  *
  * Existe porque /cotizar y /contacto habían divergido: uno usaba el componente
  * `Input` de shadcn (radio 10px, `bg-card`, `text-body-2`) y el otro una cadena
- * suelta con `rounded-xl` —el radio de TARJETA, 20px—, `bg-white` y `text-sm`.
+ * suelta con `rounded-xl` -el radio de TARJETA, 20px-, `bg-white` y `text-sm`.
  * Dos formularios del mismo sitio con cajas de distinto tamaño y esquina.
  *
  * Cualquier campo nuevo debe partir de aquí. Si hay que cambiar el aspecto de
@@ -27,7 +27,7 @@ export const CAMPO_ERROR =
 
 /**
  * Para `<select>` y `<textarea>` nativos, que no pasan por el componente
- * `Input`. Replica lo que éste renderiza — radio 10px, borde y anillo de foco —
+ * `Input`. Replica lo que éste renderiza - radio 10px, borde y anillo de foco -
  * para que las tres cajas se vean iguales.
  */
 export const CAMPO_NATIVO = cn(
@@ -52,7 +52,7 @@ export const CAMPO_TEXTAREA = cn(CAMPO_NATIVO, "resize-none py-3");
  * y `text-label` (14px con su interlineado), no un `text-sm` suelto.
  *
  * En `text-foreground`, no en `text-muted-foreground`: /cotizar las tenía a
- * 12px en gris sobre fondo gris —por debajo del 4.5:1 de WCAG AA— y una
+ * 12px en gris sobre fondo gris -por debajo del 4.5:1 de WCAG AA- y una
  * etiqueta ilegible convierte el formulario en adivinanza.
  */
 export const ETIQUETA = "font-label text-label font-medium text-foreground";

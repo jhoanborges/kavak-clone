@@ -56,7 +56,7 @@ const PASOS = ["Tus datos", "Contacto", "Verificación"] as const;
 const LARGO_CODIGO = 6;
 const IDS_OTP = ["otp-1", "otp-2", "otp-3", "otp-4", "otp-5", "otp-6"];
 
-/** Cuenta atrás en m:ss — "45s" se lee peor que "0:45" cuando pasa del minuto. */
+/** Cuenta atrás en m:ss - "45s" se lee peor que "0:45" cuando pasa del minuto. */
 function formatearCuentaAtras(total: number): string {
   const m = Math.floor(total / 60);
   const s = total % 60;
@@ -86,7 +86,7 @@ const PREFERENCIAS: Array<{
  * solo uso y vive únicamente aquí.
  *
  * Anterior/Siguiente existen en los tres pasos editables. En la confirmación
- * desaparecen: el lead ya se envió y "atrás" no puede deshacerlo — ofrecerlo
+ * desaparecen: el lead ya se envió y "atrás" no puede deshacerlo - ofrecerlo
  * sería mentir sobre lo que hace.
  */
 export function AgendarFlow({
@@ -414,7 +414,7 @@ export function AgendarFlow({
                           "flex min-h-11 cursor-pointer items-center gap-2.5 rounded-lg border px-3 py-2.5 text-body-2 transition-colors",
                           "has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring",
                           activo
-                            ? "border-brand-petrol bg-brand-aqua/30 font-medium text-brand-petrol"
+                            ? "border-brand-petrol bg-brand-aqua/30 font-medium text-primary"
                             : "border-border bg-card hover:bg-muted"
                         )}
                       >
@@ -485,7 +485,7 @@ export function AgendarFlow({
                       "flex min-h-11 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border text-body-2 transition-colors",
                       "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
                       datos.canal === v
-                        ? "border-brand-petrol bg-brand-aqua/30 font-medium text-brand-petrol"
+                        ? "border-brand-petrol bg-brand-aqua/30 font-medium text-primary"
                         : "border-border bg-card hover:bg-muted"
                     )}
                   >
@@ -560,7 +560,7 @@ export function AgendarFlow({
                 <button
                   type="button"
                   onClick={() => irA(1)}
-                  className="cursor-pointer text-brand-petrol underline underline-offset-4"
+                  className="cursor-pointer text-primary underline underline-offset-4"
                 >
                   Cambiar
                 </button>
@@ -601,8 +601,8 @@ export function AgendarFlow({
 
                 `aria-live="polite"`, no "assertive": el cambio importa, pero
                 interrumpir a alguien que está tecleando el código sería peor.
-                Y el contador NO se anuncia cada segundo — sólo el cambio de
-                estado — porque un lector repitiendo el número cada segundo
+                Y el contador NO se anuncia cada segundo - sólo el cambio de
+                estado - porque un lector repitiendo el número cada segundo
                 haría la pantalla inusable.
               */}
               <p aria-live="polite" className="text-center text-caption">
@@ -626,7 +626,7 @@ export function AgendarFlow({
                       type="button"
                       disabled={enviando}
                       onClick={pedirCodigo}
-                      className="cursor-pointer font-medium text-brand-petrol underline underline-offset-4 hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:text-ink-500"
+                      className="cursor-pointer font-medium text-primary underline underline-offset-4 hover:text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:text-ink-500"
                     >
                       Reenviar código
                     </button>
@@ -690,7 +690,7 @@ export function AgendarFlow({
           </p>
 
           <p className="flex items-center gap-2 rounded-lg bg-muted px-4 py-3 text-body-2 text-ink-800">
-            <Clock aria-hidden className="size-4 shrink-0 text-brand-petrol" />
+            <Clock aria-hidden className="size-4 shrink-0 text-primary" />
             Horario de atención: lunes a viernes, 9:00 a 18:00 h
           </p>
 

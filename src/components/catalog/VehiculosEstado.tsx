@@ -15,7 +15,7 @@ export function VehiculosError({ error }: { error: Error }) {
       role="alert"
       className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card px-6 py-14 text-center"
     >
-      <AlertTriangle aria-hidden className="size-8 text-brand-petrol" />
+      <AlertTriangle aria-hidden className="size-8 text-primary" />
       <p className="font-heading text-h4 font-medium">
         No pudimos cargar el inventario
       </p>
@@ -56,7 +56,7 @@ export function VehiculosVacio({ busqueda }: { busqueda?: string }) {
  * crediticia es publicidad financiera incompleta.
  *
  * Verificado contra la API: `monto_mes` financia el 70% del precio (enganche
- * del 30%) a `meses` plazos, con interés — los pagos suman ~1.35 veces lo
+ * del 30%) a `meses` plazos, con interés - los pagos suman ~1.35 veces lo
  * financiado. El texto refleja eso.
  */
 export function VehiculosDisclaimer({ meses = 36 }: { meses?: number }) {

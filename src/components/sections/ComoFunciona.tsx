@@ -71,7 +71,7 @@ export default function ComoFunciona() {
                   {i + 1}
                 </span>
                 <span className="flex size-16 items-center justify-center rounded-4xl border border-border bg-card">
-                  <Icon aria-hidden className="size-7 text-brand-petrol" />
+                  <Icon aria-hidden className="size-7 text-primary" />
                 </span>
                 <span className="font-heading text-h4 font-medium">{title}</span>
                 <span className="max-w-[240px] text-body-2 text-ink-800">
@@ -87,7 +87,7 @@ export default function ComoFunciona() {
                   // actuar sobre él obliga a volver a buscarlo en la nav.
                   <Link
                     href={href}
-                    className="flex flex-col items-center gap-4 text-center transition-colors hover:text-brand-petrol focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                    className="flex flex-col items-center gap-4 text-center transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                   >
                     {contenido}
                   </Link>

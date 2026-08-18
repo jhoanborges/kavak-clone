@@ -43,7 +43,7 @@ type Props = { params: Promise<{ slug: string }> };
 export const dynamic = "force-dynamic";
 
 const mxn = (n: number | null) =>
-  n == null ? "—" : `$${n.toLocaleString("es-MX")}`;
+  n == null ? "-" : `$${n.toLocaleString("es-MX")}`;
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
@@ -56,8 +56,8 @@ export async function generateMetadata({ params }: Props) {
   const titulo = `${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.anio ?? ""}`.trim();
 
   return buildMetadata({
-    title: `${titulo} — Seminuevo certificado`,
-    description: `${titulo} ${vehiculo.version}. ${vehiculo.km?.toLocaleString("es-MX") ?? "—"} km, ${vehiculo.transmision.toLowerCase()}, ${vehiculo.combustible.toLowerCase()}. ${mxn(vehiculo.precio)} MXN.`,
+    title: `${titulo} - Seminuevo certificado`,
+    description: `${titulo} ${vehiculo.version}. ${vehiculo.km?.toLocaleString("es-MX") ?? "-"} km, ${vehiculo.transmision.toLowerCase()}, ${vehiculo.combustible.toLowerCase()}. ${mxn(vehiculo.precio)} MXN.`,
     path: `/vehiculos/${slug}`,
     images: vehiculo.imagenes.slice(0, 1),
   });
@@ -154,12 +154,12 @@ export default async function VehiculoDetallePage({ params }: Props) {
   const franja = [
     {
       icon: Gauge,
-      valor: vehiculo.km ? `${vehiculo.km.toLocaleString("es-MX")} km` : "—",
+      valor: vehiculo.km ? `${vehiculo.km.toLocaleString("es-MX")} km` : "-",
       etiqueta: "Kilometraje",
     },
-    { icon: Fuel, valor: vehiculo.combustible || "—", etiqueta: "Tipo de motor" },
-    { icon: Settings2, valor: vehiculo.transmision || "—", etiqueta: "Transmisión" },
-    { icon: Palette, valor: vehiculo.color || "—", etiqueta: "Color" },
+    { icon: Fuel, valor: vehiculo.combustible || "-", etiqueta: "Tipo de motor" },
+    { icon: Settings2, valor: vehiculo.transmision || "-", etiqueta: "Transmisión" },
+    { icon: Palette, valor: vehiculo.color || "-", etiqueta: "Color" },
   ];
 
   return (
@@ -180,13 +180,13 @@ export default async function VehiculoDetallePage({ params }: Props) {
           <nav aria-label="Migas de pan" className="mb-6">
             <ol className="flex flex-wrap items-center gap-1 text-caption text-ink-600">
               <li>
-                <Link href="/" className="hover:text-brand-petrol">
+                <Link href="/" className="hover:text-primary">
                   Inicio
                 </Link>
               </li>
               <ChevronRight aria-hidden className="size-3.5" />
               <li>
-                <Link href="/vehiculos" className="hover:text-brand-petrol">
+                <Link href="/vehiculos" className="hover:text-primary">
                   Vehículos
                 </Link>
               </li>
@@ -218,7 +218,7 @@ export default async function VehiculoDetallePage({ params }: Props) {
           <ul className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-6 py-4 md:grid-cols-4 md:px-14">
             {franja.map(({ icon: Icon, valor, etiqueta }) => (
               <li key={etiqueta} className="flex items-center gap-2.5">
-                <Icon aria-hidden className="size-5 shrink-0 text-brand-petrol" />
+                <Icon aria-hidden className="size-5 shrink-0 text-primary" />
                 <span className="min-w-0">
                   <span className="block truncate font-label text-body-2 font-semibold">
                     {valor}
@@ -266,7 +266,7 @@ export default async function VehiculoDetallePage({ params }: Props) {
                     <li key={punto} className="flex gap-2.5">
                       <ShieldCheck
                         aria-hidden
-                        className="mt-0.5 size-5 shrink-0 text-brand-petrol"
+                        className="mt-0.5 size-5 shrink-0 text-primary"
                       />
                       <span className="text-body-2 text-ink-800">{punto}</span>
                     </li>
@@ -282,7 +282,7 @@ export default async function VehiculoDetallePage({ params }: Props) {
                 {vehiculo.mensualidad != null && (
                   <>
                     <p className="text-caption text-ink-600">Desde</p>
-                    <p className="whitespace-nowrap font-label text-h1 font-bold tabular-nums text-brand-petrol">
+                    <p className="whitespace-nowrap font-label text-h1 font-bold tabular-nums text-primary">
                       {mxn(vehiculo.mensualidad)}
                       <span className="ml-1 text-body-2 font-normal text-ink-600">
                         /mes*
@@ -303,7 +303,7 @@ export default async function VehiculoDetallePage({ params }: Props) {
                 {/*
                   Sólo se muestra el plazo que devuelve la API. Calcular 6, 12,
                   18 o 24 meses exigiría una tasa fija, y la implícita varía
-                  entre unidades (1.72%–1.75% mensual): saldrían cifras
+                  entre unidades (1.72%-1.75% mensual): saldrían cifras
                   inventadas en un producto financiero regulado. Pendiente del
                   endpoint de financiamiento real.
                 */}

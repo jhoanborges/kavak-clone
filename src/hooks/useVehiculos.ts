@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";
 
@@ -99,14 +99,43 @@ export function useVehiculosInfinito({
   // por parámetro.
   const facetas: FiltrosRaw | null = primera?.filtros ?? null;
 
+  // useSWRInfinite NO soporta keepPreviousData. Al cambiar de filtro o búsqueda
+  // la clave cambia, `data` pasa a `undefined` y el listado parpadearía a
+  // blanco. Guardamos el último resultado bueno y lo seguimos mostrando
+  // mientras llegan los datos del filtro nuevo: la data no desaparece.
+  const hayDatos = (data?.length ?? 0) > 0;
+  const ultimo = useRef<{
+    vehiculos: Vehiculo[];
+    total: number;
+    totalPaginas: number;
+    facetas: FiltrosRaw | null;
+  } | null>(null);
+
+  if (hayDatos) {
+    ultimo.current = { vehiculos, total, totalPaginas, facetas };
+  }
+
+  const previo = ultimo.current;
+  // Hay datos viejos en pantalla y se están pidiendo los nuevos: es un cambio
+  // de filtro/búsqueda, no la primera carga (que no tiene nada que mostrar).
+  const cambiandoFiltros = !hayDatos && previo != null;
+
+  const vista = hayDatos
+    ? { vehiculos, total, totalPaginas, facetas }
+    : previo ?? { vehiculos, total, totalPaginas, facetas };
+
   return {
-    vehiculos,
-    total,
-    filtros: facetas,
-    hasMore: size < totalPaginas && !error,
-    isLoading,
+    vehiculos: vista.vehiculos,
+    total: vista.total,
+    filtros: vista.facetas,
+    hasMore: size < vista.totalPaginas && !error,
+    // Primera carga real: sin nada previo que mostrar → skeleton completo.
+    isLoading: isLoading && !cambiandoFiltros,
+    // Datos previos visibles mientras llega el filtro nuevo → skeleton solo en
+    // productos, el sidebar se queda y sus conteos hacen fade.
+    cambiandoFiltros,
     // `isValidating` con datos ya cargados = está trayendo la página siguiente.
-    isLoadingMore: isValidating && (data?.length ?? 0) > 0,
+    isLoadingMore: isValidating && hayDatos,
     loadMore: () => setSize((s) => s + 1),
     error: error as Error | undefined,
   };
@@ -118,7 +147,7 @@ export function useVehiculosInfinito({
  *
  * Sirve para dibujar el histograma del filtro de precio/kilometraje: las barras
  * deben mostrar la distribución del contexto (por ejemplo, sólo Audis) pero NO
- * encogerse mientras se arrastra el control — si se aplicase el propio rango,
+ * encogerse mientras se arrastra el control - si se aplicase el propio rango,
  * las barras desaparecerían bajo el cursor.
  *
  * OJO CON LA ESCALA: pide todo el inventario de una vez. Hoy son 29 unidades y

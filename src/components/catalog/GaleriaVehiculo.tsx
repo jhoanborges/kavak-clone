@@ -85,7 +85,7 @@ export function GaleriaVehiculo({
         >
           <Image
             src={principal.src}
-            alt={`${titulo} — ${principal.categoria}`}
+            alt={`${titulo} - ${principal.categoria}`}
             fill
             priority
             sizes="(max-width: 768px) 100vw, 50vw"
@@ -109,7 +109,7 @@ export function GaleriaVehiculo({
               >
                 <Image
                   src={foto.src}
-                  alt={`${titulo} — ${foto.categoria}`}
+                  alt={`${titulo} - ${foto.categoria}`}
                   fill
                   sizes="(max-width: 768px) 50vw, 25vw"
                   className="object-cover transition-transform duration-300 group-hover/foto:scale-105"
@@ -128,7 +128,7 @@ export function GaleriaVehiculo({
       <Dialog open={abierto} onOpenChange={setAbierto}>
         <DialogContent className="max-w-[min(96vw,1200px)] gap-0 overflow-hidden p-0 sm:max-w-[min(96vw,1200px)]">
           <DialogTitle className="sr-only">
-            {titulo} — fotografía {indice + 1} de {fotos.length}
+            {titulo} - fotografía {indice + 1} de {fotos.length}
           </DialogTitle>
           <DialogDescription className="sr-only">
             Usa las flechas del teclado para moverte entre las fotografías.
@@ -137,7 +137,7 @@ export function GaleriaVehiculo({
           <div className="relative aspect-[4/3] w-full bg-brand-ink md:aspect-[16/9]">
             <Image
               src={fotos[indice].src}
-              alt={`${titulo} — ${fotos[indice].categoria}`}
+              alt={`${titulo} - ${fotos[indice].categoria}`}
               fill
               sizes="96vw"
               className="object-contain"

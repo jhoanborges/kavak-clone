@@ -34,7 +34,7 @@ export default function TrustSection() {
         title={
           <>
             ¡Tu seminuevo de confianza en{" "}
-            <span className="text-brand-petrol">Monterrey</span>!
+            <span className="text-primary">Monterrey</span>!
           </>
         }
         className="mb-10 max-w-[720px]"

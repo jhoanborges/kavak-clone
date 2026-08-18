@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
  * Círculo de 47px (radio 100). Dos estados: default (outline) y hover (relleno aqua).
  *
  * Personalización: `className` se fusiona con tailwind-merge, así que cualquier
- * utility que pases GANA sobre la base — `<ArrowButton className="size-14 bg-brand-neon" />`.
+ * utility que pases GANA sobre la base - `<ArrowButton className="size-14 bg-brand-neon" />`.
  */
 function ArrowButton({
   className,

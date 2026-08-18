@@ -8,8 +8,8 @@
  *
  * Esto es COSMÉTICO, no seguridad. La transformación es reversible sin secreto
  * alguno y cualquiera puede deducirla leyendo este archivo, que va en el bundle
- * del cliente. Sirve para que la URL no exhiba un contador de base de datos —
- * que además revela cuántas unidades hay y permite recorrerlas de una en una —
+ * del cliente. Sirve para que la URL no exhiba un contador de base de datos -
+ * que además revela cuántas unidades hay y permite recorrerlas de una en una -
  * pero NO protege nada.
  *
  * Si en algún momento hay algo que proteger de verdad, la respuesta es control

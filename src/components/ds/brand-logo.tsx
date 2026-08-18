@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 /**
  * Los tres logos tienen dimensiones intrínsecas DISTINTAS y ninguno es 3:1
  * (blanco 3.138, negro 2.843, verde 2.930). Antes se calculaba el ancho como
- * `height * 3` para los tres, lo que deformaba el logo — al negro lo estiraba
+ * `height * 3` para los tres, lo que deformaba el logo - al negro lo estiraba
  * ~10% a lo ancho. El DS es explícito: nunca distorsionar la marca.
  *
  * Los valores salen de los propios PNG. Si se reemplaza un archivo, hay que

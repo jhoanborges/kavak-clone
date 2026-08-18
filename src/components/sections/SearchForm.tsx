@@ -35,7 +35,7 @@ export function SearchForm({
   const router = useRouter();
   // useId, no un contador de módulo: aquel se incrementaba en el render del
   // servidor y volvía a empezar en el cliente, así que el servidor emitía
-  // "search-1" y el cliente "search-2" — desajuste de hidratación. useId
+  // "search-1" y el cliente "search-2" - desajuste de hidratación. useId
   // genera identificadores estables entre ambos.
   const id = useId();
 

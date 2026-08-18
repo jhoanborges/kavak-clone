@@ -73,7 +73,7 @@ export function BlogCardCompacta({ post }: { post: BlogPost }) {
         <h3 className="font-sans text-body-2 font-medium leading-snug">
           <Link
             href={`/blog/${post.slug}`}
-            className="after:absolute after:inset-0 hover:text-brand-petrol focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="after:absolute after:inset-0 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             {post.title}
           </Link>

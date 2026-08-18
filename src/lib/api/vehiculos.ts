@@ -9,7 +9,7 @@ import { encodeVehiculoId, idDesdeSlugPublico } from "@/lib/api/id-publico";
  * El contrato de abajo está transcrito de una respuesta REAL del endpoint.
  * La API es pública y responde bien desde un navegador; sólo bloquea peticiones
  * desde IPs de datacenter (WAF de Imperva), así que no se puede probar desde
- * CI/sandbox — pero sí desde el navegador del usuario final.
+ * CI/sandbox - pero sí desde el navegador del usuario final.
  */
 
 /** Origen real de Value. El proxy del servidor lo usa como destino fijo. */
@@ -60,7 +60,7 @@ export const VEHICULOS_PARAMS = [
  * Base de las imágenes. `imagenes` devuelve NOMBRES DE ARCHIVO sueltos
  * ("12577-1_2_0-3-DEFAULT.JPG"), no URLs, así que hay que prefijarlos.
  *
- * ⚠️ La ruta real está SIN CONFIRMAR — no se pudo inspeccionar el HTML del
+ * ⚠️ La ruta real está SIN CONFIRMAR - no se pudo inspeccionar el HTML del
  * sitio. Sacarla del `src` de cualquier <img> del catálogo original y ponerla
  * en NEXT_PUBLIC_IMAGES_URL.
  */
@@ -189,7 +189,7 @@ export function catalogoQuery({
 }
 
 export const VEHICULOS_PRESETS = {
-  /** Home · "Ofertas destacadas" — en realidad una búsqueda sin filtros. */
+  /** Home · "Ofertas destacadas" - en realidad una búsqueda sin filtros. */
   destacados: (cantidad = 4): VehiculosQuery => ({
     busqueda: "",
     segmento: "",
@@ -441,7 +441,7 @@ export function idDesdeSlug(slug: string): string | null {
 /**
  * Busca un vehículo por id, en SERVIDOR.
  *
- * Todavía no hay endpoint de detalle — el equipo lo pasará más adelante — así
+ * Todavía no hay endpoint de detalle - el equipo lo pasará más adelante - así
  * que se pide el listado completo y se filtra. Funciona porque la API devuelve
  * las 29 unidades en una sola respuesta; con un catálogo grande esto no se
  * sostiene y habrá que sustituirlo por el endpoint real.

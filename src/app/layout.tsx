@@ -5,6 +5,8 @@ import { APP_NAME } from "@/lib/config";
 import { SITE_URL, SITE_DESCRIPTION, absoluteUrl } from "@/lib/seo";
 import { SWRProvider } from "@/lib/swr-provider";
 import { ReduxProvider } from "@/redux/provider";
+import { ThemeProvider } from "@/components/theme-provider";
+import OdooLivechat from "@/components/OdooLivechat";
 
 /**
  * Design System VALUE: Avenir (títulos) + Museo Sans (cuerpo) + Raleway
@@ -22,7 +24,7 @@ import { ReduxProvider } from "@/redux/provider";
  * build sin salida a internet (Docker aislado, CI offline, red corporativa).
  * Aquí los .woff2 están versionados en el repo, así que el build es hermético.
  *
- * Raleway es SIL Open Font License 1.1 — self-hosting y redistribución
+ * Raleway es SIL Open Font License 1.1 - self-hosting y redistribución
  * permitidos. Subset latin (U+0000-00FF): cubre todo el español, incluidos
  * acentos, ñ, ¿ y ¡. Para actualizarla, ver src/fonts/README.md.
  */
@@ -40,7 +42,7 @@ const raleway = localFont({
 
 /**
  * Títulos y destacados. Licencia propia, self-hosted (.woff2).
- * Mapeo de los nombres Avenir a pesos CSS — el DS usa Light (Display L) y
+ * Mapeo de los nombres Avenir a pesos CSS - el DS usa Light (Display L) y
  * Medium (Heading 1-4):
  *   Light 35 → 300 · Roman 55 → 400 · Medium 65 → 500 · Heavy 85 → 700 · Black 95 → 900
  * `Avenir-Book` (45) existe en public/fonts/avenir pero el DS no lo lista, así
@@ -88,7 +90,7 @@ export const metadata: Metadata = {
   // Base para resolver canonical / OG / JSON-LD a URLs absolutas.
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${APP_NAME} — Compra y Vende tu Auto`,
+    default: `${APP_NAME} - Compra y Vende tu Auto`,
     // Las páginas hijas sólo declaran su título; la marca se añade aquí.
     template: `%s | ${APP_NAME}`,
   },
@@ -103,7 +105,7 @@ export const metadata: Metadata = {
     type: "website",
     url: absoluteUrl("/"),
     siteName: APP_NAME,
-    title: `${APP_NAME} — Compra y Vende tu Auto`,
+    title: `${APP_NAME} - Compra y Vende tu Auto`,
     description: SITE_DESCRIPTION,
     locale: "es_MX",
   },
@@ -137,6 +139,9 @@ export default function RootLayout({
   return (
     <html
       lang="es"
+      // next-themes escribe la clase del tema en <html> antes de hidratar; sin
+      // esto React avisaría de un desajuste servidor/cliente que es esperado.
+      suppressHydrationWarning
       className={`${avenir.variable} ${museoSans.variable} ${raleway.variable} h-full antialiased`}
       /*
         globals.css pone `scroll-behavior: smooth` (viene del design system, para
@@ -152,9 +157,17 @@ export default function RootLayout({
           // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD serializado desde datos estáticos propios, no entrada de usuario
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
-        <SWRProvider>
-          <ReduxProvider>{children}</ReduxProvider>
-        </SWRProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SWRProvider>
+            <ReduxProvider>{children}</ReduxProvider>
+          </SWRProvider>
+        </ThemeProvider>
+        <OdooLivechat />
       </body>
     </html>
   );

@@ -6,7 +6,7 @@ import type { Canal, PreferenciaContacto } from "@/lib/agendar";
  * Datos del embudo de "Agendar una cita", persistidos.
  *
  * QUÉ SE GUARDA: lo que la persona escribió. Cambiar de teléfono a correo, o
- * volver un paso atrás, no debe borrar nada — reescribir lo mismo es la forma
+ * volver un paso atrás, no debe borrar nada - reescribir lo mismo es la forma
  * más rápida de que alguien abandone.
  *
  * QUÉ NO SE GUARDA, A PROPÓSITO: el código de verificación. Es un secreto de un

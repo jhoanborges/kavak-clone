@@ -4,12 +4,13 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Heart, User, Menu, X, Trash2 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { Heart, User, Menu, X, Trash2, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/redux/store";
 import { toggleFavorite } from "@/redux/slices/carsSlice";
 import { CARS } from "@/data/cars";
-import { APP_NAME } from "@/lib/config";
 
 // Todos apuntan a rutas reales: un "#" en la nav principal es un callejón sin
 // salida que el usuario no puede distinguir de un enlace roto.
@@ -38,6 +39,7 @@ export default function Navbar() {
   const [favOpen, setFavOpen] = useState(false);
   const favRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
+  const { setTheme, resolvedTheme } = useTheme();
 
   const favoriteIds = useSelector((state: RootState) => state.cars.favorites);
   const favoriteCars = CARS.filter((c) => favoriteIds.includes(c.id));
@@ -54,13 +56,27 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-border">
+    <header className="sticky top-0 z-50 bg-card border-b border-border">
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between gap-6">
-        {/* Logo */}
-        <Link href="/" className="shrink-0">
-          <span style={{ fontFamily: "Arial Black, Arial, sans-serif" }} className="font-black text-lg tracking-wider text-foreground">
-            {APP_NAME}
-          </span>
+        {/* Logo: cambia por tema. Ambos se renderizan y se alternan por la clase
+            `.dark` en <html> (CSS puro), sin JS ni parpadeo de hidratación. */}
+        <Link href="/" className="shrink-0" aria-label="VALUE - Inicio">
+          <Image
+            src="/gf.png"
+            alt="VALUE"
+            width={502}
+            height={161}
+            priority
+            className="h-7 w-auto block dark:hidden"
+          />
+          <Image
+            src="/logo-w.png"
+            alt="VALUE"
+            width={1280}
+            height={437}
+            priority
+            className="h-7 w-auto hidden dark:block"
+          />
         </Link>
 
         {/* Desktop nav */}
@@ -84,6 +100,9 @@ export default function Navbar() {
             <span className="text-base">🇲🇽</span>
           </button>
 
+          {/* Theme toggle - al lado de favoritos */}
+          <ThemeToggle className="hidden md:flex" />
+
           {/* Favorites button + dropdown */}
           <div ref={favRef} className="relative hidden md:block">
             <button
@@ -101,7 +120,7 @@ export default function Navbar() {
 
             {/* Dropdown */}
             {favOpen && (
-              <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-border rounded-xl shadow-xl z-50 overflow-hidden">
+              <div className="absolute right-0 top-full mt-2 w-80 bg-popover border border-border rounded-xl shadow-xl z-50 overflow-hidden">
                 <div className="px-4 py-3 border-b border-border flex items-center justify-between">
                   <span className="text-sm font-bold text-foreground">
                     Favoritos {favoriteCars.length > 0 && <span className="text-muted-foreground font-normal">({favoriteCars.length})</span>}
@@ -154,7 +173,7 @@ export default function Navbar() {
                         </Link>
                         <button
                           onClick={() => dispatch(toggleFavorite(car.id))}
-                          className="shrink-0 p-1.5 rounded-full hover:bg-red-50 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer opacity-0 group-hover:opacity-100"
+                          className="shrink-0 p-1.5 rounded-full hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer opacity-0 group-hover:opacity-100"
                           aria-label="Quitar de favoritos"
                         >
                           <Trash2 className="size-3.5" />
@@ -186,7 +205,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden border-t border-border bg-white px-4 py-3 flex flex-col gap-1">
+        <div className="lg:hidden border-t border-border bg-card px-4 py-3 flex flex-col gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.label}
@@ -211,6 +230,17 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
+            <button
+              type="button"
+              onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+              className="flex items-center gap-2 px-3 py-2.5 rounded-md text-sm text-foreground/80 hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+            >
+              <span className="relative size-4">
+                <Sun className="absolute inset-0 size-4 rotate-0 scale-100 transition-transform duration-300 dark:-rotate-90 dark:scale-0" />
+                <Moon className="absolute inset-0 size-4 rotate-90 scale-0 transition-transform duration-300 dark:rotate-0 dark:scale-100" />
+              </span>
+              Cambiar tema
+            </button>
             <Button className="w-full cursor-pointer" size="sm" asChild>
               <Link href="/login">
                 <User className="size-3.5" />

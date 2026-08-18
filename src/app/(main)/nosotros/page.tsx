@@ -75,7 +75,7 @@ const SOLUCIONES = [
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
-  name: `Quiénes somos — ${APP_NAME}`,
+  name: `Quiénes somos - ${APP_NAME}`,
   url: absoluteUrl("/nosotros"),
   mainEntity: {
     "@type": "Organization",
@@ -171,7 +171,7 @@ export default function NosotrosPage() {
           </ul>
         </section>
 
-        {/* Cita destacada — patrón del DS: superficie petróleo, tipografía
+        {/* Cita destacada - patrón del DS: superficie petróleo, tipografía
             display ligera, sin comillas decorativas. */}
         <section className="mx-auto max-w-7xl px-6 pb-14 md:px-14">
           <blockquote className="rounded-xl bg-brand-petrol px-8 py-14 text-center text-white md:px-14">
@@ -180,7 +180,7 @@ export default function NosotrosPage() {
               capital de trabajo del año.
             </p>
             <footer className="mt-6 font-label text-label text-brand-aqua">
-              Dirección de Administración — Cliente de Value Arrendadora
+              Dirección de Administración - Cliente de Value Arrendadora
             </footer>
           </blockquote>
         </section>
@@ -199,7 +199,7 @@ export default function NosotrosPage() {
                   aria-hidden
                   className="absolute top-1.5 -left-[38px] size-3 rounded-4xl bg-brand-aqua ring-4 ring-background"
                 />
-                <p className="font-label text-h4 font-bold tabular-nums text-brand-petrol">
+                <p className="font-label text-h4 font-bold tabular-nums text-primary">
                   {h.anio}
                 </p>
                 <h3 className="mt-1 font-heading text-h4 font-medium">

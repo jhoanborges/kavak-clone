@@ -57,7 +57,7 @@ export default async function AgendarPage({ searchParams }: Props) {
         {/*
           Dos columnas: a la izquierda lo que NO cambia entre pasos, a la
           derecha el formulario. El panel fijo sostiene el motivo para terminar
-          el embudo mientras la parte interactiva avanza — un formulario suelto
+          el embudo mientras la parte interactiva avanza - un formulario suelto
           en una página vacía no da ninguna razón para seguir.
         */}
         <div className="grid gap-8 lg:grid-cols-[380px_1fr] lg:items-start">

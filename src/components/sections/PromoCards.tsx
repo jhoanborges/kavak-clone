@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
  * desvanece a casi blanco sobre un fondo ya claro: quedaba lavada y rompía el
  * equilibrio de la fila.
  *
- * La del medio NO destaca sólo por color — eso se pierde en escala de grises y
+ * La del medio NO destaca sólo por color - eso se pierde en escala de grises y
  * con daltonismo. Lleva además el acento neón (que el DS define justamente como
  * «Highlight · destacar») en el icono y en la flecha, así que la jerarquía
  * sobrevive sin percepción de color.

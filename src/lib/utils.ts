@@ -7,7 +7,7 @@ import { extendTailwindMerge } from "tailwind-merge";
  * POR QUÉ HACE FALTA: tailwind-merge sólo resuelve conflictos entre clases que
  * conoce. Nuestros roles tipográficos (`text-body-2`, `text-h3`, …) y familias
  * (`font-heading`, `font-label`) se definen en @theme, así que de fábrica los
- * clasificaba mal —`text-body-2` como COLOR de texto— y al fusionar eliminaba
+ * clasificaba mal -`text-body-2` como COLOR de texto- y al fusionar eliminaba
  * el color real.
  *
  * Síntoma que provocó: `<Button size="cta">` quedaba con `bg-primary` pero sin
@@ -20,7 +20,7 @@ import { extendTailwindMerge } from "tailwind-merge";
 const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {
-      // Roles tipográficos del DS — son font-size, no color.
+      // Roles tipográficos del DS - son font-size, no color.
       "font-size": [
         {
           text: [
@@ -37,7 +37,7 @@ const twMerge = extendTailwindMerge({
           ],
         },
       ],
-      // Familias del DS — son font-family, no font-weight.
+      // Familias del DS - son font-family, no font-weight.
       "font-family": [{ font: ["heading", "label", "museo", "avenir"] }],
     },
   },

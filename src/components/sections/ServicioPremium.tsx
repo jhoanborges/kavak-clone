@@ -76,7 +76,7 @@ export default function ServicioPremium() {
                   className="size-[42px]"
                 />
               </span>
-              <h3 className="font-heading text-h4 font-medium text-brand-petrol">
+              <h3 className="font-heading text-h4 font-medium text-primary">
                 {servicio.title}
               </h3>
             </div>

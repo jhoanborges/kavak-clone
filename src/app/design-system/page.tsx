@@ -242,7 +242,7 @@ export default function DesignSystemPage() {
                   <BrandLogo tone={item.tone} height={64} />
                 </div>
                 <figcaption className="bg-card px-5 py-3.5 text-caption text-ink-600">
-                  <strong className="text-foreground">{item.label}</strong> — {item.desc}
+                  <strong className="text-foreground">{item.label}</strong> - {item.desc}
                 </figcaption>
               </figure>
             ))}
@@ -520,7 +520,7 @@ export default function DesignSystemPage() {
 
           {/* Inputs */}
           <div className="mt-11">
-            <SubTitle hint="Radio 10px, borde 1px. Etiqueta siempre visible — nunca placeholder como label.">
+            <SubTitle hint="Radio 10px, borde 1px. Etiqueta siempre visible - nunca placeholder como label.">
               Inputs
             </SubTitle>
             <div className="grid max-w-xl gap-4 sm:grid-cols-2">

@@ -11,7 +11,7 @@ import type { Vehiculo } from "@/lib/api/vehiculos";
 import { cn } from "@/lib/utils";
 
 const mxn = (n: number | null) =>
-  n == null ? "—" : `$${n.toLocaleString("es-MX")}`;
+  n == null ? "-" : `$${n.toLocaleString("es-MX")}`;
 
 /**
  * Tarjeta de vehículo con carrusel Embla para la galería.
@@ -88,7 +88,7 @@ export default function VehiculoCard({
                       alt={
                         i === 0
                           ? `${titulo} ${vehiculo.version}`.trim()
-                          : `${titulo} — imagen ${i + 1} de ${imagenes.length}`
+                          : `${titulo} - imagen ${i + 1} de ${imagenes.length}`
                       }
                       fill
                       className="object-cover"
@@ -106,7 +106,7 @@ export default function VehiculoCard({
                 {/*
                   z-20 es OBLIGATORIO: el enlace estirado del título
                   (`after:inset-0`) va después en el DOM y, sin z-index, se
-                  pinta encima de estas flechas y se traga el clic — pulsar
+                  pinta encima de estas flechas y se traga el clic - pulsar
                   "siguiente" abría la ficha del auto.
 
                   Círculo visible de 32px, pero el área de clic sigue siendo de
@@ -206,7 +206,7 @@ export default function VehiculoCard({
         {/*
           Dos columnas, no tres. La silueta genérica de carrocería iba en medio
           y robaba el ancho: en una tarjeta estrecha partía "$4,773 / mes*" en
-          dos líneas. Además era redundante — arriba está la foto real del auto,
+          dos líneas. Además era redundante - arriba está la foto real del auto,
           y la carrocería ya se lee en el overline.
 
           `whitespace-nowrap` en la cifra: el importe y su sufijo son una sola
@@ -217,7 +217,7 @@ export default function VehiculoCard({
             {vehiculo.mensualidad != null ? (
               <>
                 <p className="text-caption text-ink-600">Desde:</p>
-                <p className="whitespace-nowrap font-label text-h3 font-bold tabular-nums text-brand-petrol">
+                <p className="whitespace-nowrap font-label text-h3 font-bold tabular-nums text-primary dark:text-foreground">
                   {mxn(vehiculo.mensualidad)}
                   <span className="ml-1 text-caption font-normal text-ink-600">
                     /mes*
@@ -227,7 +227,7 @@ export default function VehiculoCard({
             ) : (
               <>
                 <p className="text-caption text-ink-600">Contado:</p>
-                <p className="whitespace-nowrap font-label text-h3 font-bold tabular-nums text-brand-petrol">
+                <p className="whitespace-nowrap font-label text-h3 font-bold tabular-nums text-primary dark:text-foreground">
                   {mxn(vehiculo.precio)}
                 </p>
               </>
@@ -249,7 +249,7 @@ export default function VehiculoCard({
         <ul className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-border pt-3 text-caption text-ink-800">
           {vehiculo.km != null && (
             <li className="flex items-center gap-1.5">
-              <Gauge aria-hidden className="size-4 text-brand-petrol" />
+              <Gauge aria-hidden className="size-4 text-primary" />
               <span className="tabular-nums">
                 {vehiculo.km.toLocaleString("es-MX")} km
               </span>
@@ -257,13 +257,13 @@ export default function VehiculoCard({
           )}
           {vehiculo.combustible && (
             <li className="flex items-center gap-1.5">
-              <Fuel aria-hidden className="size-4 text-brand-petrol" />
+              <Fuel aria-hidden className="size-4 text-primary" />
               {vehiculo.combustible}
             </li>
           )}
           {vehiculo.transmision && (
             <li className="flex items-center gap-1.5">
-              <Settings2 aria-hidden className="size-4 text-brand-petrol" />
+              <Settings2 aria-hidden className="size-4 text-primary" />
               {vehiculo.transmision}
             </li>
           )}

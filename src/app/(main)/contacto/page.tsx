@@ -183,7 +183,7 @@ export default function ContactoPage() {
 
         {/* Header */}
         <div className="text-center mb-10">
-          <span className="mb-4 inline-block rounded-4xl bg-brand-aqua/30 px-3 py-1 font-label text-overline uppercase text-brand-petrol">
+          <span className="mb-4 inline-block rounded-4xl bg-brand-aqua/30 px-3 py-1 font-label text-overline uppercase text-primary">
             Contáctanos
           </span>
           <h1 className="mb-3 font-heading text-h1 font-light text-foreground">

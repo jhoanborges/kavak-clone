@@ -34,7 +34,7 @@ const searchesSlice = createSlice({
     /**
      * Registra una búsqueda. Más reciente primero.
      *
-     * Deduplica de forma laxa —"Audi", "audi " y "AUDÍ" son la misma— pero
+     * Deduplica de forma laxa -"Audi", "audi " y "AUDÍ" son la misma- pero
      * conserva el texto tal cual lo escribió la persona: es lo que espera ver
      * al volver. Repetir una búsqueda la sube al principio en vez de duplicarla.
      */

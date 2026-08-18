@@ -9,7 +9,7 @@
  * Un OTP que valida cualquier cosa es peor que no tener OTP: aparenta
  * verificación y no verifica nada.
  *
- * Al conectar el backend, cambiar sólo este archivo — el flujo consume estas
+ * Al conectar el backend, cambiar sólo este archivo - el flujo consume estas
  * tres funciones y nada más.
  */
 

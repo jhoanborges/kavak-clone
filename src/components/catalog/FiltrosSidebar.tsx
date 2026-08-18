@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
  * El estado vive en la URL, no en React: los filtros se pueden compartir, el
  * botón "atrás" funciona y recargar no los pierde.
  *
- * Selección ÚNICA por grupo — el endpoint sólo acepta un valor por parámetro.
+ * Selección ÚNICA por grupo - el endpoint sólo acepta un valor por parámetro.
  * Volver a pulsar la opción activa la quita.
  *
  * No hay filtro de modelo: el parámetro `modelo` hace que el origen responda
@@ -129,7 +129,7 @@ export default function FiltrosSidebar({
           <button
             type="button"
             onClick={limpiarTodo}
-            className="inline-flex cursor-pointer items-center gap-1.5 text-body-2 text-ink-600 transition-colors hover:text-brand-petrol focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="inline-flex cursor-pointer items-center gap-1.5 text-body-2 text-ink-600 transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             <CircleX aria-hidden className="size-4" />
             Limpiar

@@ -3,7 +3,7 @@ import { APP_NAME } from "@/lib/config";
 import { SITE_DESCRIPTION, absoluteUrl } from "@/lib/seo";
 
 /**
- * /llms.txt — índice en Markdown del sitio para consumo de LLMs
+ * /llms.txt - índice en Markdown del sitio para consumo de LLMs
  * (convención propuesta en https://llmstxt.org/).
  *
  * EXPECTATIVAS REALISTAS: a día de hoy ningún proveedor grande (OpenAI,
@@ -73,7 +73,7 @@ ${brands.map(([brand, count]) => `- ${brand} (${count} ${count === 1 ? "unidad" 
 ${sample
   .map(
     (v) =>
-      `- [${v.marca} ${v.modelo} ${v.anio ?? ""} — ${v.version}](${absoluteUrl(v.href)}): $${(v.precio ?? 0).toLocaleString("es-MX")} MXN, ${(v.km ?? 0).toLocaleString("es-MX")} km, ${v.transmision}, ${v.combustible}.`
+      `- [${v.marca} ${v.modelo} ${v.anio ?? ""} - ${v.version}](${absoluteUrl(v.href)}): $${(v.precio ?? 0).toLocaleString("es-MX")} MXN, ${(v.km ?? 0).toLocaleString("es-MX")} km, ${v.transmision}, ${v.combustible}.`
   )
   .join("\n")}
 

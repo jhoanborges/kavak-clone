@@ -10,7 +10,7 @@ import type { RootState } from "@/redux/store";
 import { clearSearches, removeSearch } from "@/redux/slices/searchesSlice";
 
 /**
- * "Continúa tu búsqueda" — las 10 últimas búsquedas de esta persona.
+ * "Continúa tu búsqueda" - las 10 últimas búsquedas de esta persona.
  *
  * Sustituye al acordeón de filtros hardcodeados ("Busca por precio", "Busca por
  * año"…), que prometía funcionalidad inexistente: ninguna de esas opciones
@@ -40,7 +40,7 @@ export default function BusquedasRecientes() {
         <button
           type="button"
           onClick={() => dispatch(clearSearches())}
-          className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg px-3 font-label text-label text-ink-600 transition-colors hover:text-brand-petrol focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg px-3 font-label text-label text-ink-600 transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           <Trash2 aria-hidden className="size-4" />
           Borrar historial
@@ -56,7 +56,7 @@ export default function BusquedasRecientes() {
             <div className="group/chip flex items-center overflow-hidden rounded-4xl border border-border bg-card transition-colors hover:border-brand-petrol">
               <Link
                 href={`/vehiculos?busqueda=${encodeURIComponent(term)}`}
-                className="flex min-h-11 items-center gap-2 py-2 pr-3 pl-4 text-body-2 transition-colors group-hover/chip:text-brand-petrol focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+                className="flex min-h-11 items-center gap-2 py-2 pr-3 pl-4 text-body-2 transition-colors group-hover/chip:text-primary focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
               >
                 <Search aria-hidden className="size-4 text-ink-500" />
                 {term}

@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
  * registradas), así que los glifos vienen de `simple-icons`, que es la fuente
  * canónica y mantiene los trazos oficiales.
  *
- * LinkedIn tampoco está ahí — lo retiraron a petición de LinkedIn — así que se
+ * LinkedIn tampoco está ahí - lo retiraron a petición de LinkedIn - así que se
  * dibuja como marca tipográfica "in", que es exactamente lo que es su logo.
  * Inventar el trazo de memoria daría un glifo deforme.
  */

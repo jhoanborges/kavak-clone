@@ -14,7 +14,7 @@ import { UPSTREAM_ORIGIN, VEHICULOS_PARAMS } from "@/lib/api/vehiculos";
  * con nuestro dominio; entonces se apaga `NEXT_PUBLIC_API_PROXY` y se vuelve a
  * llamada directa, sin tocar una línea de componente.
  *
- * SEGURIDAD — esto NO es un proxy abierto:
+ * SEGURIDAD - esto NO es un proxy abierto:
  *  - La URL de destino está fijada (UPSTREAM_ORIGIN + ruta fija). El cliente no
  *    puede elegir a dónde se conecta el servidor (eso sería un SSRF de manual).
  *  - Sólo se reenvían los parámetros de la allowlist; cualquier otro se ignora.

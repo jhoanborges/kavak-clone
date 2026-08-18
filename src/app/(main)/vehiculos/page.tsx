@@ -37,7 +37,7 @@ export async function generateMetadata({ searchParams }: Props) {
 
   if (!termino && !hayFiltros) {
     return buildMetadata({
-      title: "Vehículos — Seminuevos certificados",
+      title: "Vehículos - Seminuevos certificados",
       description:
         "Explora nuestro catálogo de seminuevos certificados: unidades revisadas, con garantía y financiamiento. Filtra por marca, carrocería, año, transmisión, color, precio y kilometraje.",
       path: "/vehiculos",
@@ -46,8 +46,8 @@ export async function generateMetadata({ searchParams }: Props) {
 
   return buildMetadata({
     title: termino
-      ? `Vehículos "${termino}" — Seminuevos certificados`
-      : "Vehículos filtrados — Seminuevos certificados",
+      ? `Vehículos "${termino}" - Seminuevos certificados`
+      : "Vehículos filtrados - Seminuevos certificados",
     description: termino
       ? `Resultados de "${termino}" en nuestro catálogo de seminuevos certificados.`
       : "Resultados filtrados del catálogo de seminuevos certificados.",
@@ -63,17 +63,15 @@ export default async function VehiculosPage({ searchParams }: Props) {
   const busqueda = primero(params.busqueda);
   const filtros = leerFiltros(params);
 
-  // La `key` remonta el listado al cambiar búsqueda o filtros: sin ella,
-  // useSWRInfinite conservaría el `size` anterior y arrancaría pidiendo la
-  // página 4 de unos resultados recién estrenados.
-  const key = `${busqueda}|${JSON.stringify(filtros)}`;
-
+  // Antes se pasaba una `key` que remontaba el listado en cada cambio de filtro,
+  // y por eso todo parpadeaba a blanco. Ya no: useSWRInfinite resetea el `size`
+  // solo al cambiar la clave de la primera página (persistSize=false), y el hook
+  // conserva los datos previos para no perder lo que ya está en pantalla.
   return (
     <main className="flex-1 bg-muted">
       {/* FiltrosSidebar usa useSearchParams, que exige un límite de Suspense. */}
       <Suspense fallback={null}>
         <CatalogoInfinito
-          key={key}
           busqueda={busqueda}
           filtros={filtros}
           cantidad={12}
