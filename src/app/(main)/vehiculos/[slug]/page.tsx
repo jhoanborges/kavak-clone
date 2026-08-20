@@ -12,6 +12,11 @@ import {
 } from "lucide-react";
 
 import { GaleriaVehiculo } from "@/components/catalog/GaleriaVehiculo";
+import {
+  FAQS_VEHICULO,
+  PreguntasFrecuentes,
+} from "@/components/catalog/PreguntasFrecuentes";
+import { FinanciamientoAside } from "@/components/catalog/FinanciamientoAside";
 import VehiculoCard from "@/components/catalog/VehiculoCard";
 import { VehiculosDisclaimer } from "@/components/catalog/VehiculosEstado";
 import { DudasBanner, SectionHeading } from "@/components/ds";
@@ -118,6 +123,16 @@ export default async function VehiculoDetallePage({ params }: Props) {
     },
   };
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQS_VEHICULO.map((faq) => ({
+      "@type": "Question",
+      name: faq.pregunta,
+      acceptedAnswer: { "@type": "Answer", text: faq.respuesta },
+    })),
+  };
+
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -173,6 +188,11 @@ export default async function VehiculoDetallePage({ params }: Props) {
         type="application/ld+json"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD serializado desde datos propios, no entrada de usuario
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD estático, no entrada de usuario
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
       <main className="flex-1 bg-muted">
@@ -273,6 +293,19 @@ export default async function VehiculoDetallePage({ params }: Props) {
                   ))}
                 </ul>
               </section>
+
+              <FinanciamientoAside
+                precio={vehiculo.precio}
+                titulo={tituloCompleto}
+                vehiculoId={vehiculo.id}
+                slug={slug}
+                vehiculo={{
+                  marca: vehiculo.marca,
+                  modelo: vehiculo.modelo,
+                  anio: vehiculo.anio,
+                  color: vehiculo.color,
+                }}
+              />
             </div>
 
             {/* Columna de conversión, pegada al hacer scroll: la ficha es larga
@@ -350,6 +383,10 @@ export default async function VehiculoDetallePage({ params }: Props) {
               <VehiculosDisclaimer meses={vehiculo.meses ?? 36} />
             </aside>
           </div>
+
+          <section className="pt-10 lg:max-w-[calc(100%-360px-2rem)]">
+            <PreguntasFrecuentes />
+          </section>
 
           {similares.length > 0 && (
             <section className="pt-14">

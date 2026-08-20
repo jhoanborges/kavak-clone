@@ -1,4 +1,5 @@
 import { encodeVehiculoId, idDesdeSlugPublico } from "@/lib/api/id-publico";
+import { CATALOG_ORIGIN, IMAGES_ORIGIN } from "@/lib/env";
 
 /**
  * Cliente de la API de vehículos de Value Autos.
@@ -12,11 +13,12 @@ import { encodeVehiculoId, idDesdeSlugPublico } from "@/lib/api/id-publico";
  * CI/sandbox - pero sí desde el navegador del usuario final.
  */
 
-/** Origen real de Value. El proxy del servidor lo usa como destino fijo. */
-export const UPSTREAM_ORIGIN = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(
-  /\/$/,
-  ""
-);
+/**
+ * Origen real del CATÁLOGO de Value. El proxy del servidor lo usa como destino
+ * fijo. Se resuelve en src/lib/env.ts: NEXT_PUBLIC_API_URL en real, o el sitio
+ * público si NEXT_PUBLIC_DEMO_MODE=true.
+ */
+export const UPSTREAM_ORIGIN = CATALOG_ORIGIN;
 
 /**
  * ¿Pasamos por nuestro route handler en vez de llamar directo?
@@ -59,14 +61,9 @@ export const VEHICULOS_PARAMS = [
 /**
  * Base de las imágenes. `imagenes` devuelve NOMBRES DE ARCHIVO sueltos
  * ("12577-1_2_0-3-DEFAULT.JPG"), no URLs, así que hay que prefijarlos.
- *
- * ⚠️ La ruta real está SIN CONFIRMAR - no se pudo inspeccionar el HTML del
- * sitio. Sacarla del `src` de cualquier <img> del catálogo original y ponerla
- * en NEXT_PUBLIC_IMAGES_URL.
+ * Se resuelve en src/lib/env.ts (respeta NEXT_PUBLIC_DEMO_MODE).
  */
-export const IMAGES_BASE = (
-  process.env.NEXT_PUBLIC_IMAGES_URL ?? `${UPSTREAM_ORIGIN}/img/autos`
-).replace(/\/$/, "");
+export const IMAGES_BASE = IMAGES_ORIGIN;
 
 /* ────────────────────────────── petición ────────────────────────────────── */
 

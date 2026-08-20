@@ -8,19 +8,22 @@ import storage from "redux-persist/lib/storage";
 import carsReducer from "./slices/carsSlice";
 import searchesReducer from "./slices/searchesSlice";
 import agendarReducer from "./slices/agendarSlice";
+import financiamientoReducer from "./slices/financiamientoSlice";
 
 const persistConfig = {
   key: "root",
   storage,
-  // Ambos se persisten: filtros/favoritos y las búsquedas recientes.
+  // Se persisten: filtros/favoritos, búsquedas recientes, flujo de agenda y la
+  // caché de financiamiento (para nav interna sin re-cálculo).
   // El código OTP NO se persiste: vive en el estado local del flujo.
-  whitelist: ["cars", "searches", "agendar"],
+  whitelist: ["cars", "searches", "agendar", "financiamiento"],
 };
 
 const rootReducer = combineReducers({
   cars: carsReducer,
   searches: searchesReducer,
   agendar: agendarReducer,
+  financiamiento: financiamientoReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

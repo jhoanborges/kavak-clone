@@ -31,9 +31,12 @@ const buttonVariants = cva(
         // Type3 · fondo blanco, se usa SOBRE color (petróleo, aqua, foto clara)
         onColor:
           "border-border bg-white text-brand-ink hover:bg-ink-300 dark:border-transparent",
-        // Secondary · outline, se usa SOBRE oscuro (tinta, petróleo)
+        // Secondary · outline, se usa SOBRE oscuro (tinta, petróleo). Blanco
+        // fijo en ambos temas: la superficie siempre es oscura, así que NO debe
+        // seguir el token --background (que en dark se vuelve casi negro y
+        // dejaba el botón invisible sobre la tinta).
         onDark:
-          "border-background/90 bg-transparent text-background hover:bg-background/10",
+          "border-white/90 bg-transparent text-white hover:bg-white/10",
         // Type4 · vidrio 20%, se usa SOBRE imagen
         glass:
           "border-white/90 bg-white/20 text-white backdrop-blur-sm hover:bg-white/30",
