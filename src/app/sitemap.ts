@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { POSTS } from "@/data/blog";
-import { fetchTodosLosVehiculos } from "@/lib/api/vehiculos";
+import { fetchTodosLosVehiculos } from "@/lib/api/vehiculos-server";
 import { absoluteUrl } from "@/lib/seo";
 
 /**

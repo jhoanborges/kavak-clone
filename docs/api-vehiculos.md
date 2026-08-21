@@ -1,273 +1,141 @@
-# API de vehículos — Value Autos
+# API de vehículos — Webservice TRADEIN
 
-Documentación del endpoint que alimenta el catálogo.
+Documentación del backend que alimenta el catálogo, la ficha de detalle y el
+buscador. Transcrito del PDF **"Webservice API EXT VALUE TRADEIN" v1.1**.
 
-**Es una API pública.** Responde correctamente desde cualquier navegador. Sólo
-rechaza peticiones desde IPs de datacenter (WAF de Imperva → `403` + challenge
-JS), así que no se puede probar desde CI ni desde un sandbox — pero **sí funciona
-desde el navegador del usuario final**, que es donde corre nuestra integración.
-
-El contrato de abajo está transcrito de una respuesta real.
+**No es pública ni CORS-friendly.** Vive en una IP interna (requiere VPN/LAN),
+exige `Authorization: Bearer` y envuelve el cuerpo en base64. Por eso **todo el
+tráfico pasa por route handlers propios** (`/api/*`): el navegador nunca ve el
+token ni el host. Local no la alcanza; sólo el servidor desplegado (en la red).
 
 ---
 
 ## Base
 
 ```
-NEXT_PUBLIC_API_URL="https://www.valueautos.com.mx"
-NEXT_PUBLIC_IMAGES_URL="https://www.valueautos.com.mx/img/autos"   # ⚠️ ruta sin confirmar
+TRADEIN_URL="http://172.16.0.206/servicio_api_value_tdin"   # dev (prod = .142)
+TRADEIN_TOKEN="<bearer>"                                     # SECRETO, sólo .env.local
 ```
 
-El resto se concatena en `src/lib/api/vehiculos.ts`. Ningún componente conoce el
-host.
+Resuelto en `src/lib/env.ts` (`TRADEIN_ORIGIN`). El transporte (Bearer + base64)
+vive en `src/lib/api/tradein.ts`. Ningún componente conoce el host ni el token.
 
-```
-GET {NEXT_PUBLIC_API_URL}/api/vehiculos?<params>
-```
+## Contrato común
 
-## Parámetros
+- **Método:** `GET` (sólo `LISTADO_CAT_COMPLETO`) o `POST` (el resto).
+- **Cabeceras:** `Authorization: Bearer <token>`, `Content-Type: application/json`.
+- **Cuerpo POST:** `{ "Content": base64(JSON) }`.
+- **Respuesta:** `base64(JSON)` con forma `{ "Status": 1, ... }` o
+  `{ "Status": 0, "Body": "<error>" }`. Algunos entornos ya la devuelven como JSON
+  plano; el parser soporta ambos.
 
-| Parámetro | Tipo | Notas |
-|---|---|---|
-| `busqueda` | string | Texto libre. Ej. `audi` |
-| `segmento` | string | SUVs, Sedan, Coupe, Hatchback, Camionetas |
-| `transmision` | string | Automático, Manual |
-| `marca` / `modelo` | string | |
-| `anio` | string | |
-| `color` | string | |
-| `precio_min` / `precio_max` | number \| "" | Home manda `0`/`9999999`; el listado, `""` |
-| `km_min` / `km_max` | number \| "" | Igual |
-| `pagina` | number | 1-indexado |
-| `cantidad` | number | Tamaño de página |
-| `_` | number | Cache-buster de jQuery. **No lo usamos** |
+> Las `clave_*` llegan como **float** (`1.0`) y `anio` como **string** (`"2018"`).
 
-### Sobre `_=<timestamp>`
+## Endpoints
 
-El sitio original lo añade porque jQuery lo hace por defecto con `cache: false`.
-Nuestro cliente lo **omite a propósito**: cambiaría la clave de SWR en cada
-render y mataría caché y deduplicación. Si el backend cacheara de más, se
-resuelve con `Cache-Control`.
-
-## Respuesta
-
-```jsonc
-{
-  "query": "",
-  "autos": [ /* … */ ],
-  "total_autos": 29,
-  "paginas": 8,          // = ceil(total_autos / cantidad)
-  "filters": 1,
-  "filtros": { /* facetas con conteos */ }
-}
-```
-
-### Objeto `auto`
-
-```jsonc
-{
-  "id_row": 1,
-  "id_partida": 12577,              // ← identificador real
-  "anio": "2016",                   // string, no número
-  "clave_marca": 2,
-  "marca": "CHEVROLET",
-  "clave_modelo": 6,
-  "modelo": "SUBURBAN",
-  "modelo_string": "SUBURBAN",
-  "clave_tipo": 5,
-  "tipo": "5p HD V8/6.0 Aut 4WD",   // ← versión / trim, NO el segmento
-  "kms": 115118,
-  "precio_estimado_venta": 440000,
-  "clave_segmento": 1,
-  "segmento": "SUVs",
-  "clave_tipo_combustible": 1,
-  "tipo_combustible": "Gasolina",
-  "clave_color": 10,
-  "color": "PLATA",
-  "clave_transmision": 1,
-  "transmision": "Automático",
-  "monto_mes": 11586.629999999999,  // ruido de float: redondear
-  "meses": 36,
-  "imagenes": ["12577-1_2_0-3-DEFAULT.JPG"]   // nombres de archivo, NO URLs
-}
-```
-
-**Trampas del contrato:**
-
-1. El array es `autos`, no `vehiculos` / `data` / `items`.
-2. El id es `id_partida`. `id_row` es sólo el índice dentro de la página.
-3. `tipo` es la **versión**, no la carrocería. La carrocería es `segmento`.
-4. `anio` llega como **string**.
-5. `monto_mes` trae ruido de coma flotante (`11586.629999999999`) →
-   `Math.round()` antes de pintarlo.
-6. `imagenes` son **nombres de archivo sueltos**, hay que prefijarlos con
-   `NEXT_PUBLIC_IMAGES_URL`.
-
-> ⚠️ **La ruta de imágenes está sin confirmar.** Sácala del `src` de cualquier
-> `<img>` del catálogo original y ajusta `NEXT_PUBLIC_IMAGES_URL`. Hasta
-> entonces las fotos no cargan (la tarjeta muestra su estado "Sin imagen").
-
-### `filtros` — facetas con conteos
-
-Viene en **cada** respuesta, sin pedirla. Sirve para construir el sidebar de
-filtros sin un segundo endpoint:
-
-| Clave | Forma |
-|---|---|
-| `marcas` | `{clave_marca, marca, total_clave_marca, modelos:[{clave_modelo, modelo, total_clave_modelo}]}` |
-| `anios` | `{anio, total_anio}` |
-| `segmentos` | `{clave_segmento, segmento, total_clave_segmento}` |
-| `transmisiones` | `{clave_transmision, transmision, total_clave_transmision}` |
-| `colores` | `{clave_color, color, total_clave_color}` |
-
-Los `modelos` van anidados dentro de su marca, así que el filtro
-marca → modelo es dependiente sin trabajo extra.
-
-## Las tres llamadas del sitio
-
-### 1. Home — "Ofertas destacadas"
-
-```
-/api/vehiculos?busqueda=&segmento=&transmision=&marca=&modelo=&anio=&color=
-  &precio_min=0&precio_max=9999999&km_min=0&km_max=999999&pagina=1&cantidad=4
-```
-
-**No son destacadas.** Es una búsqueda sin ningún filtro recortada a 4
-resultados; el orden lo decide el backend. El endpoint no expone ningún concepto
-de "destacado".
-
-> Implicación de producto: hoy la sección promete una curaduría que no existe.
-> Para tener destacados de verdad hace falta un campo nuevo (`destacado`,
-> `orden`) o un endpoint aparte.
-
-`VEHICULOS_PRESETS.destacados(4)`
-
-### 2. Listado paginado / scroll infinito
-
-```
-/api/vehiculos?precio_min=&precio_max=&km_min=&km_max=&pagina=1&cantidad=12
-```
-
-Filtros **vacíos**, no en cero. `VEHICULOS_PRESETS.listado(pagina, 12)`
-
-### 3. Búsqueda por texto
-
-```
-/api/vehiculos?busqueda=audi&precio_min=&precio_max=&km_min=&km_max=&pagina=1&cantidad=12
-```
-
-`VEHICULOS_PRESETS.busqueda(termino, pagina, 12)`
-
-## CORS — por qué hay un proxy
-
-El origen **no manda `Access-Control-Allow-Origin`**, así que el navegador
-bloquea cualquier `fetch` directo desde nuestro dominio:
-
-```
-Access to fetch at 'https://www.valueautos.com.mx/api/vehiculos?…'
-from origin 'http://localhost:3000' has been blocked by CORS policy:
-No 'Access-Control-Allow-Origin' header is present on the requested resource.
-```
-
-**Esto no se arregla desde el cliente.** CORS lo aplica el navegador a propósito;
-`mode: 'no-cors'` devuelve una respuesta opaca e ilegible, y los proxies
-públicos (corsproxy.io y similares) meten a un tercero en medio del tráfico.
-
-### Solución actual: proxy servidor-a-servidor
-
-`src/app/api/vehiculos/route.ts` reenvía la petición desde nuestro servidor.
-Servidor-a-servidor no aplica CORS. **Verificado funcionando** contra el origen
-real.
-
-No es un proxy abierto:
-
-- El destino está fijado (`UPSTREAM_ORIGIN` + ruta fija). El cliente no elige a
-  dónde se conecta el servidor — eso sería un SSRF.
-- Sólo se reenvían los parámetros de la allowlist (`VEHICULOS_PARAMS`).
-- Sólo GET. No se propagan cabeceras del cliente, ni cookies ni auth.
-- Cachea 300 s en servidor, para no golpear un upstream que está tras un WAF.
-
-### Solución correcta: que Value habilite CORS
-
-Cuando añadan `Access-Control-Allow-Origin` con nuestro dominio:
-
-```
-NEXT_PUBLIC_API_PROXY=false
-```
-
-Y listo — vuelve a llamada directa sin tocar un solo componente.
-
-> **Nota sobre Imperva:** el WAF bloquea IPs de datacenter. Desde una máquina de
-> desarrollo el proxy pasa sin problema (verificado). **En producción hay que
-> confirmar que la IP del servidor esté permitida**, o el proxy devolverá 502
-> con el aviso correspondiente. Es la razón principal para preferir CORS: en ese
-> modo quien llama es el navegador del usuario final, que nunca está bloqueado.
-
-## Formato de los filtros — VERIFICADO
-
-Probado contra el endpoint real. **No son intuitivos**: casi todos van por
-clave numérica, no por el nombre que muestra la faceta.
-
-| Parámetro | Formato | Ejemplo | Comprobación |
+| Ruta | Método | Uso | Nuestra ruta |
 |---|---|---|---|
-| `busqueda` | texto | `audi` | 3 resultados |
-| `marca` | **clave numérica** | `11` | 3 · con `AUDI` → **0** |
-| `segmento` | **clave numérica** | `1` | 18 · con `SUVs` → **0** |
-| `transmision` | **clave numérica** | `1` | 27 · con `Automático` → **0** |
-| `color` | **clave numérica** | `2` | 4 resultados |
-| `anio` | año literal | `2023` | 5 resultados |
-| `precio_min`+`precio_max` | número, **los dos** | `0` + `400000` | 18 resultados |
-| `km_min`+`km_max` | número, **los dos** | `0` + `20000` | 5 resultados |
-| `modelo` | — | cualquiera | **500 del origen** |
+| `/ENCABEZADO/LISTADO_CAT_COMPLETO` | GET | Todas las facetas sin filtrar | `fetchFiltros()` |
+| `/ENCABEZADO/LISTADO_CAT_VEHICULOS` | POST | Listado filtrado + facetas + imágenes | `GET /api/vehiculos` |
+| `/ENCABEZADO/LISTADO_BUSQUEDA` | POST | Autocomplete por texto | `GET /api/buscar?q=` |
+| `/DETALLE/VEHICULO` | POST | Ficha (specs) + tabla de plazos | ficha `/vehiculos/[slug]` |
+| `/ENCABEZADO/AGENDAR_CITA` | POST | Alta de cita | **PENDIENTE** (irá a Odoo) |
 
-Dos trampas:
+### `LISTADO_CAT_VEHICULOS` — cuerpo
 
-1. **Los rangos necesitan ambos límites.** Mandar sólo `precio_max` deja el
-   filtro sin efecto. `catalogoQuery()` rellena el que falte (0 o el tope).
-2. **`modelo` rompe la API.** Con cualquier valor, solo o combinado con
-   `marca`, el origen devuelve 500. Por eso el sidebar no ofrece filtro de
-   modelo, aunque las facetas anidan los modelos dentro de cada marca.
+```jsonc
+{
+  "Registro_Incial": 0, "Registro_Final": 12,   // rango de filas (offset), no página
+  "Anio": ["2018"], "Color": [2], "Marca": [11],
+  "Modelo": [], "Segmento": [1], "Transmision": [1],
+  "Precio": { "precio_minimo": 0, "precio_maximo": 99999999 },
+  "Kms": { "kms_minimo": 0, "kms_maximo": 99999999 },
+  "Texto_Busqueda": "audi"
+}
+```
 
-## Pendiente de confirmar
+Respuesta: `{ Status, Catalogos, Listado: { Total, Vehiculos[], Imagenes[] } }`.
+Las **imágenes van en un array aparte** (`Imagenes[]`) con `id_partida` +
+`nombre_imagen`; se unen a su vehículo por `id_partida`.
 
-- **Ruta base real de las imágenes** (bloquea que se vean las fotos). Nuestra
-  suposición es `NEXT_PUBLIC_IMAGES_URL=https://www.valueautos.com.mx/img/autos`.
-  Comprobación de 5 segundos: abre en el navegador
-  `https://www.valueautos.com.mx/img/autos/12577-1_2_0-3-DEFAULT.JPG`.
-  Si da 404, saca la ruta buena del `src` de cualquier `<img>` del catálogo
-  original. Las imágenes van por `<img>`, que NO sufre CORS: no necesitan proxy.
-- Convención de sufijos en los nombres: `-DEFAULT.JPG`, `_1_8_0-6`, `_2_2-10`
-  sugieren variantes de tamaño. Si hay thumbnails, conviene usarlos en la
-  tarjeta en lugar de la imagen completa.
-- **CORS**: ¿`Access-Control-Allow-Origin` incluye nuestro dominio? Si no, el
-  fetch desde el navegador fallará pese a que la API sea pública, y habría que
-  pasar por un route handler propio. **Es lo primero que hay que probar al
-  levantar el sitio.**
-- Comportamiento al pedir `pagina` > `paginas`.
+### `DETALLE/VEHICULO`
+
+Cuerpo `{ "id_partida": 10679 }`. Devuelve:
+- `Detalle[0]`: specs completas (mismos campos que un vehículo del listado +
+  `traccion`, `puertas`, `interiores`, etc.).
+- `Precio[]`: tabla de plazos `{ num_mes, monto_mes, enganche, precio_estimado_venta }`
+  para 6/12/18/24/36 meses. **Reemplaza el viejo hack de pedir el listado
+  completo y filtrar en memoria.**
+
+### `LISTADO_BUSQUEDA`
+
+Cuerpo `{ "busqueda": "au" }`. Devuelve `Posibles_Marcas[]` y
+`Posibles_Resultados[]` (con `descripcion`, ej. `"AUDI A5"`).
+
+## Traducción de filtros
+
+`GET /api/vehiculos` acepta los mismos parámetros públicos de siempre y los
+traduce al cuerpo de arriba en `src/lib/api/vehiculos-server.ts`.
+
+| Parámetro público | Al webservice | Notas |
+|---|---|---|
+| `busqueda` | `Texto_Busqueda` | texto libre |
+| `marca` / `color` / `segmento` / `transmision` | array de **clave numérica** | `marca=11`, no `AUDI` |
+| `anio` | array de año literal | `["2023"]` |
+| `precio_min`+`precio_max` | `Precio.precio_minimo/maximo` | el tope que falte se rellena |
+| `km_min`+`km_max` | `Kms.kms_minimo/maximo` | igual |
+| `pagina`+`cantidad` | `Registro_Incial/Final` | offset = `(pagina-1)*cantidad` |
+| `modelo` | — | no se usa (el sidebar no lo ofrece) |
+
+`total_autos` = `Listado.Total`; `paginas` = `ceil(Total / cantidad)`.
+
+## Imágenes — proxy propio
+
+La API devuelve **nombres de archivo** (`"10959-1-CHEVROLET.jpg"`), no URLs, y el
+host es la misma IP interna bajo `/thumbnail`. Como el navegador no la alcanza,
+se sirven por `GET /api/imagen/[nombre]` (`src/app/api/imagen/[nombre]/route.ts`),
+que las trae de `{TRADEIN_ORIGIN}/thumbnail/<nombre>` server-side. `imagenUrl()`
+construye la ruta `/api/imagen/…` (relativa), así que sirve en cliente y en SSR.
+
+Validación anti path-traversal: el `nombre` sólo admite `[A-Za-z0-9._-]`.
+
+## Por qué proxy (no llamada directa)
+
+- **Token:** `TRADEIN_TOKEN` es secreto; jamás puede viajar al bundle del cliente.
+- **Red:** IP interna, inalcanzable desde el navegador.
+- **CORS:** el origen no manda `Access-Control-Allow-Origin`.
+
+El proxy no es abierto: destino fijo (no SSRF), sólo los parámetros conocidos,
+y cachea en servidor (`revalidate`). La barrera `import "server-only"` en
+`vehiculos-server.ts` hace que el build falle si alguien lo importa desde cliente.
 
 ## Integración en este repo
 
 | Archivo | Rol |
 |---|---|
-| `src/lib/api/vehiculos.ts` | URLs, tipos, normalizadores, fetcher |
-| `src/lib/swr-provider.tsx` | `SWRConfig` global, montado en el root layout |
+| `src/lib/env.ts` | Resuelve `TRADEIN_ORIGIN` (y `PREESTUDIO_ORIGIN`) |
+| `src/lib/api/tradein.ts` | Transporte Bearer/base64 + métodos + tipos crudos |
+| `src/lib/api/vehiculos.ts` | **Cliente-safe**: tipos, query, normalizadores, `imagenUrl` |
+| `src/lib/api/vehiculos-server.ts` | **Server-only**: mappers TRADEIN→UI + fetchers |
+| `src/app/api/vehiculos/route.ts` | Proxy del listado (query → TRADEIN) |
+| `src/app/api/buscar/route.ts` | Proxy del autocomplete |
+| `src/app/api/imagen/[nombre]/route.ts` | Proxy de imágenes |
 | `src/hooks/useVehiculos.ts` | `useVehiculos`, `useVehiculosDestacados`, `useVehiculosInfinito` |
-| `src/components/catalog/VehiculoCard.tsx` | Tarjeta con carrusel Embla multi-imagen |
-| `src/components/catalog/VehiculoCardSkeleton.tsx` | Reserva el mismo alto → sin CLS |
-| `src/components/catalog/VehiculosEstado.tsx` | Estados de error y vacío |
-| `src/components/sections/OfertasDestacadas.tsx` | Sección del home |
-| `src/components/sections/CatalogoInfinito.tsx` | Scroll infinito — **para /compra, no para el home** |
-| `src/app/api/vehiculos/route.ts` | Proxy servidor-a-servidor (rodea CORS) |
+| `src/components/sections/SearchForm.tsx` | Buscador con autocomplete |
 
-El fin del scroll infinito se detecta con `paginas`, que la API devuelve de
-verdad; no se infiere de una página incompleta.
+El fin del scroll infinito se detecta con `paginas`, que la API devuelve; no se
+infiere de una página incompleta.
 
-### Defaults de SWR y por qué
+## Notas / pendientes
 
-| Opción | Valor | Motivo |
-|---|---|---|
-| `revalidateOnFocus` | `false` | Volver a la pestaña no debe reordenar el listado bajo el cursor |
-| `dedupingInterval` | 60 s | Varias tarjetas con la misma URL → una sola petición |
-| `errorRetryCount` | 2 | Reintentar contra un WAF sólo empeora las cosas |
-| `keepPreviousData` | `true` | Al paginar/buscar la lista no se vacía → sin salto de layout |
-| `shouldRetryOnError` | sólo ≥500 | Un 4xx no se arregla reintentando |
-| `revalidateFirstPage` | `false` | Evita repedir la página 1 cada vez que se carga otra |
+- **`AGENDAR_CITA` no está conectado.** El agendado en línea será otra lógica
+  (caerá en Odoo, ERP aún no disponible), pendiente de aprobación. La página
+  `/agendar` muestra un panel "próximamente" con derivación a WhatsApp; el funnel
+  completo sigue en `src/components/agendar/AgendarFlow.tsx`, listo para reconectar.
+- **`/contacto`** también quedó pendiente (mismo destino Odoo): el submit muestra
+  un aviso, no manda a ningún backend.
+- **Financiamiento:** la ficha muestra la tabla de plazos real de `DETALLE`. El
+  cotizador interactivo (`FinanciamientoAside`) sigue usando el webservice de
+  pre-estudio vía `/api/financiamiento` (backend DISTINTO, ver `src/lib/api/preestudio.ts`).
+- **Host de imágenes:** se asume `{TRADEIN_ORIGIN}/thumbnail`. Confirmar la ruta
+  exacta con Value si algún thumbnail devuelve 404.

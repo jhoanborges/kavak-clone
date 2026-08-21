@@ -1,4 +1,5 @@
-import { fetchTodosLosVehiculos, type Vehiculo } from "@/lib/api/vehiculos";
+import type { Vehiculo } from "@/lib/api/vehiculos";
+import { fetchTodosLosVehiculos } from "@/lib/api/vehiculos-server";
 import { APP_NAME } from "@/lib/config";
 import { SITE_DESCRIPTION, absoluteUrl } from "@/lib/seo";
 

@@ -17,11 +17,6 @@ import {
   ETIQUETA,
 } from "@/lib/form-styles";
 import { cn } from "@/lib/utils";
-import {
-  obtenerTokenRecaptcha,
-  verificarRecaptcha,
-  RECAPTCHA_ACCIONES,
-} from "@/lib/recaptcha";
 
 // ── Zod schema ──────────────────────────────────────────────────────────────
 const schema = z.object({
@@ -50,8 +45,6 @@ function validate(values: FormValues) {
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
-
 const infoItems = [
   {
     icon: Phone,
@@ -133,42 +126,15 @@ export default function ContactoPage() {
       description: "",
     },
     validate,
-    onSubmit: async (values, { setSubmitting, resetForm }) => {
-      try {
-        // reCAPTCHA antes del POST. Con el interruptor apagado el token es
-        // null y el servidor responde `omitido`, así que no bloquea el envío.
-        const token = await obtenerTokenRecaptcha(RECAPTCHA_ACCIONES.contacto);
-        const check = await verificarRecaptcha(token, RECAPTCHA_ACCIONES.contacto);
-        if (!check.ok) {
-          toast.error("No pudimos verificar tu envío", {
-            description: check.error,
-          });
-          setSubmitting(false);
-          return;
-        }
-
-        const res = await fetch(`${API_URL}/api/leads`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(values),
-        });
-
-        if (!res.ok) throw new Error(`Error ${res.status}`);
-
-        toast.success("¡Mensaje enviado!", {
-          description: "Nos pondremos en contacto contigo pronto.",
-        });
-        resetForm();
-      } catch {
-        toast.error("No pudimos enviar tu mensaje", {
-          description: "Por favor intenta de nuevo o escríbenos directamente.",
-        });
-      } finally {
-        setSubmitting(false);
-      }
+    onSubmit: (_values, { setSubmitting }) => {
+      // Captura de leads PENDIENTE: el flujo irá a Odoo (ERP aún no disponible).
+      // No se manda a ningún backend todavía; avisamos y ofrecemos los canales
+      // directos, sin fingir un envío que no ocurre.
+      toast("Estamos habilitando este canal", {
+        description:
+          "Muy pronto podrás enviarnos tu mensaje desde aquí. Mientras tanto, llámanos o escríbenos por WhatsApp.",
+      });
+      setSubmitting(false);
     },
   });
 

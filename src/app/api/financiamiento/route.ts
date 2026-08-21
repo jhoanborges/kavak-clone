@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { PREESTUDIO_ENDPOINTS } from "@/lib/api/preestudio";
-import { DEMO_MODE, PREESTUDIO_ORIGIN } from "@/lib/env";
+import { PREESTUDIO_ORIGIN } from "@/lib/env";
 
 /**
  * Proxy server-a-servidor para el cotizador (método MENSUALIDADES).
@@ -52,32 +52,6 @@ function parseRespuesta(texto: string): unknown {
   }
 }
 
-/**
- * Cotización SIMULADA para DEMO_MODE: no pega al webservice interno (que exige
- * VPN + token). Escala el caso de referencia del sitio real
- * (valor 440000, enganche 88000, 6 meses -> $74,313.61) por monto financiado y
- * por plazo, así la tabla y la calculadora dan cifras plausibles y distintas.
- */
-function fakeCotizacion(numeroRentas: number, valor: number, enganche: number) {
-  const REF_PAGO = 74313.61;
-  const REF_FINANCIADO = 352000;
-  const REF_MESES = 6;
-  const financiado = valor - enganche;
-  const pagoMensual =
-    Math.round(
-      REF_PAGO *
-        (financiado / REF_FINANCIADO) *
-        (REF_MESES / numeroRentas) *
-        100
-    ) / 100;
-
-  return {
-    numeroRentas,
-    pagoMensual,
-    totalAPagar: Math.round((enganche + pagoMensual * numeroRentas) * 100) / 100,
-  };
-}
-
 export async function POST(request: Request) {
   let body: Body;
   try {
@@ -100,13 +74,6 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: "El enganche debe ser menor al valor del auto." },
       { status: 400 }
-    );
-  }
-
-  // DEMO: se responde una cotización simulada, sin token ni red interna.
-  if (DEMO_MODE) {
-    return NextResponse.json(
-      fakeCotizacion(numero_rentas, monto_capital_total, monto_enganche)
     );
   }
 

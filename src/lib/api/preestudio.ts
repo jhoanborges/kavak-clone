@@ -10,7 +10,7 @@
  *  - Respuesta: base64(JSON) con forma { "Status": 1, ... } | { "Status": 0, "Body": "<error>" }
  *
  * El HOST sale de PREESTUDIO_ORIGIN (ver src/lib/env.ts), que ya aplica el
- * cambio dev/prod y el override de DEMO_MODE. Aquí sólo viven las RUTAS.
+ * cambio dev/prod. Aquí sólo viven las RUTAS.
  */
 
 import { PREESTUDIO_ORIGIN } from "@/lib/env";
@@ -60,8 +60,7 @@ export const PREESTUDIO_ENDPOINTS = {
 export function preestudioUrl(path: string): string {
   if (!PREESTUDIO_ORIGIN) {
     throw new Error(
-      "PREESTUDIO_ORIGIN está vacío: define NEXT_PUBLIC_PREESTUDIO_URL " +
-        "(o activa NEXT_PUBLIC_DEMO_MODE) en .env."
+      "PREESTUDIO_ORIGIN está vacío: define NEXT_PUBLIC_PREESTUDIO_URL en .env."
     );
   }
   return `${PREESTUDIO_ORIGIN}${path}`;

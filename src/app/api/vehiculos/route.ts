@@ -1,89 +1,58 @@
 import { NextResponse } from "next/server";
 
-import { UPSTREAM_ORIGIN, VEHICULOS_PARAMS } from "@/lib/api/vehiculos";
+import { TradeinError } from "@/lib/api/tradein";
+import type { VehiculosQuery } from "@/lib/api/vehiculos";
+import { listadoRaw } from "@/lib/api/vehiculos-server";
 
 /**
- * Proxy servidor-a-servidor para /api/vehiculos.
+ * Endpoint del catálogo. Traduce la query pública al webservice TRADEIN
+ * (LISTADO_CAT_VEHICULOS) y devuelve la forma cruda que consume el cliente.
  *
- * POR QUÉ EXISTE: el origen de Value no manda `Access-Control-Allow-Origin`,
- * así que el navegador bloquea cualquier fetch directo. CORS es una política
- * del NAVEGADOR: una petición servidor-a-servidor no la aplica. Este handler
- * hace de puente.
+ * POR QUÉ EXISTE: TRADEIN exige Bearer (token SECRETO, sólo servidor) y vive en
+ * una IP interna. El navegador no puede llamarlo; este handler hace de puente
+ * servidor-a-servidor y esconde token + host.
  *
- * ES UN PARCHE, NO LA SOLUCIÓN. Lo correcto es que Value añada la cabecera CORS
- * con nuestro dominio; entonces se apaga `NEXT_PUBLIC_API_PROXY` y se vuelve a
- * llamada directa, sin tocar una línea de componente.
- *
- * SEGURIDAD - esto NO es un proxy abierto:
- *  - La URL de destino está fijada (UPSTREAM_ORIGIN + ruta fija). El cliente no
- *    puede elegir a dónde se conecta el servidor (eso sería un SSRF de manual).
- *  - Sólo se reenvían los parámetros de la allowlist; cualquier otro se ignora.
- *  - Sólo GET. No se propagan cabeceras del cliente (ni cookies ni auth).
+ * SEGURIDAD: sólo se leen los parámetros conocidos; el resto se ignora. El
+ * destino está fijado en el cliente TRADEIN, el cliente no elige URL (no SSRF).
  */
 
-/** El upstream sí puede bloquear por IP (WAF de Imperva), así que no cacheamos errores. */
 export const revalidate = 300;
 
+/** Un valor de query o cadena vacía. */
+const q = (params: URLSearchParams, key: string) => params.get(key) ?? "";
+
 export async function GET(request: Request) {
-  if (!UPSTREAM_ORIGIN) {
-    return NextResponse.json(
-      { error: "NEXT_PUBLIC_API_URL no está configurado en el servidor." },
-      { status: 500 }
-    );
-  }
+  const p = new URL(request.url).searchParams;
 
-  const incoming = new URL(request.url).searchParams;
-
-  // Allowlist estricta: sólo los parámetros que el endpoint conoce. Se
-  // reenvían TODOS los valores de cada uno, y también la variante `clave[]`
-  // que el sitio original usa para selección múltiple.
-  const forwarded = new URLSearchParams();
-  for (const key of VEHICULOS_PARAMS) {
-    for (const value of incoming.getAll(key)) forwarded.append(key, value);
-    for (const value of incoming.getAll(`${key}[]`))
-      forwarded.append(`${key}[]`, value);
-  }
-
-  const upstream = `${UPSTREAM_ORIGIN}/api/vehiculos?${forwarded.toString()}`;
+  const query: VehiculosQuery = {
+    busqueda: q(p, "busqueda"),
+    marca: q(p, "marca"),
+    anio: q(p, "anio"),
+    segmento: q(p, "segmento"),
+    transmision: q(p, "transmision"),
+    color: q(p, "color"),
+    precio_min: q(p, "precio_min"),
+    precio_max: q(p, "precio_max"),
+    km_min: q(p, "km_min"),
+    km_max: q(p, "km_max"),
+    pagina: Number(p.get("pagina")) || 1,
+    cantidad: Number(p.get("cantidad")) || 12,
+  };
 
   try {
-    const res = await fetch(upstream, {
-      headers: { Accept: "application/json" },
-      // Cachea en el servidor: varias pestañas pidiendo lo mismo no golpean
-      // el upstream (que además está tras un WAF sensible al volumen).
-      next: { revalidate },
-      signal: AbortSignal.timeout(15_000),
-    });
-
-    if (!res.ok) {
-      // 403 aquí = Imperva bloqueó la IP DEL SERVIDOR, no la del usuario.
-      return NextResponse.json(
-        {
-          error: `El origen respondió ${res.status}.`,
-          hint:
-            res.status === 403
-              ? "El WAF de Value bloquea la IP de este servidor. Pide que la pongan en allowlist."
-              : undefined,
-        },
-        { status: res.status === 403 ? 502 : res.status }
-      );
-    }
-
-    const data = await res.json();
+    const data = await listadoRaw(query);
     return NextResponse.json(data, {
       headers: {
         "Cache-Control": `public, s-maxage=${revalidate}, stale-while-revalidate=600`,
       },
     });
   } catch (error) {
-    const timedOut = error instanceof Error && error.name === "TimeoutError";
+    if (error instanceof TradeinError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     return NextResponse.json(
-      {
-        error: timedOut
-          ? "El origen tardó demasiado en responder."
-          : "No se pudo contactar al origen.",
-      },
-      { status: 504 }
+      { error: "No se pudo contactar al catálogo." },
+      { status: 502 }
     );
   }
 }

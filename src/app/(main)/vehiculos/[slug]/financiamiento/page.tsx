@@ -4,11 +4,8 @@ import { ChevronRight, Fuel, Gauge, Palette, Settings2 } from "lucide-react";
 
 import { GaleriaVehiculo } from "@/components/catalog/GaleriaVehiculo";
 import { FinanciamientoPageClient } from "@/components/catalog/FinanciamientoPageClient";
-import {
-  fetchImagenes,
-  fetchVehiculoPorId,
-  idDesdeSlug,
-} from "@/lib/api/vehiculos";
+import { idDesdeSlug } from "@/lib/api/vehiculos";
+import { fetchImagenes, fetchVehiculoPorId } from "@/lib/api/vehiculos-server";
 import { buildMetadata } from "@/lib/seo";
 
 type Props = {

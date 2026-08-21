@@ -1,69 +1,17 @@
-import { encodeVehiculoId, idDesdeSlugPublico } from "@/lib/api/id-publico";
-import { CATALOG_ORIGIN, IMAGES_ORIGIN } from "@/lib/env";
+import { idDesdeSlugPublico, encodeVehiculoId } from "@/lib/api/id-publico";
 
 /**
- * Cliente de la API de vehículos de Value Autos.
+ * Contrato del catálogo, lado CLIENTE.
  *
- * Base: NEXT_PUBLIC_API_URL (ver .env.*). Todo lo demás se concatena aquí, así
- * que si cambia el host no hay que tocar ningún componente.
+ * Este módulo es seguro para el bundle del navegador: sólo tipos, construcción
+ * de query, normalizadores y el fetcher de SWR. NO importa el cliente TRADEIN
+ * (token + Buffer + IP interna): eso vive en `vehiculos-server.ts` y sólo corre
+ * en el servidor.
  *
- * El contrato de abajo está transcrito de una respuesta REAL del endpoint.
- * La API es pública y responde bien desde un navegador; sólo bloquea peticiones
- * desde IPs de datacenter (WAF de Imperva), así que no se puede probar desde
- * CI/sandbox - pero sí desde el navegador del usuario final.
+ * El cliente siempre pega a NUESTRO route handler `/api/vehiculos`, que traduce
+ * la query al webservice TRADEIN y devuelve la forma cruda que se normaliza aquí.
+ * Así, si cambia el backend, el componente no se entera.
  */
-
-/**
- * Origen real del CATÁLOGO de Value. El proxy del servidor lo usa como destino
- * fijo. Se resuelve en src/lib/env.ts: NEXT_PUBLIC_API_URL en real, o el sitio
- * público si NEXT_PUBLIC_DEMO_MODE=true.
- */
-export const UPSTREAM_ORIGIN = CATALOG_ORIGIN;
-
-/**
- * ¿Pasamos por nuestro route handler en vez de llamar directo?
- *
- * El origen de Value NO manda `Access-Control-Allow-Origin`, así que el
- * navegador bloquea el fetch directo. CORS sólo lo aplica el navegador: una
- * petición servidor-a-servidor no lo sufre, y por eso existe el proxy en
- * src/app/api/vehiculos/route.ts.
- *
- * Es un parche. Cuando Value añada la cabecera CORS con nuestro dominio, se
- * pone NEXT_PUBLIC_API_PROXY=false y se vuelve a llamada directa sin tocar
- * ningún componente.
- */
-export const USE_PROXY = process.env.NEXT_PUBLIC_API_PROXY !== "false";
-
-/**
- * Base contra la que se construyen las URLs del cliente.
- * Con proxy queda vacía a propósito: la URL sale relativa y pega a nuestro
- * propio origen, que es justo lo que queremos en ese modo.
- */
-export const API_BASE = USE_PROXY ? "" : UPSTREAM_ORIGIN;
-
-/** Parámetros que el endpoint acepta. El proxy sólo reenvía éstos. */
-export const VEHICULOS_PARAMS = [
-  "busqueda",
-  "segmento",
-  "transmision",
-  "marca",
-  "modelo",
-  "anio",
-  "color",
-  "precio_min",
-  "precio_max",
-  "km_min",
-  "km_max",
-  "pagina",
-  "cantidad",
-] as const;
-
-/**
- * Base de las imágenes. `imagenes` devuelve NOMBRES DE ARCHIVO sueltos
- * ("12577-1_2_0-3-DEFAULT.JPG"), no URLs, así que hay que prefijarlos.
- * Se resuelve en src/lib/env.ts (respeta NEXT_PUBLIC_DEMO_MODE).
- */
-export const IMAGES_BASE = IMAGES_ORIGIN;
 
 /* ────────────────────────────── petición ────────────────────────────────── */
 
@@ -83,44 +31,43 @@ export type VehiculosQuery = {
   cantidad?: number;
 };
 
+/** Parámetros que el route handler conoce y reenvía. */
+export const VEHICULOS_PARAMS = [
+  "busqueda",
+  "segmento",
+  "transmision",
+  "marca",
+  "modelo",
+  "anio",
+  "color",
+  "precio_min",
+  "precio_max",
+  "km_min",
+  "km_max",
+  "pagina",
+  "cantidad",
+] as const;
+
 /**
- * Construye la URL del endpoint.
- *
- * El `_=<timestamp>` del sitio original es el cache-buster de jQuery. NO lo
- * añadimos: cambiaría la clave de SWR en cada render y mataría la caché y la
- * deduplicación. Si el backend cacheara de más se controla con Cache-Control.
+ * Construye la URL de NUESTRO endpoint. Siempre relativa: pega a nuestro propio
+ * origen, que es quien habla con TRADEIN.
  */
 export function buildVehiculosUrl(query: VehiculosQuery = {}): string {
-  // En modo directo la base es obligatoria: sin ella la URL saldría relativa y
-  // pegaría a nuestro propio host devolviendo 404 sin explicar por qué.
-  // Ojo con la precedencia de Next: .env.local gana sobre .env.development.
-  if (!USE_PROXY && !UPSTREAM_ORIGIN) {
-    throw new Error(
-      "NEXT_PUBLIC_API_URL está vacío y el proxy está desactivado. " +
-        "Revisa .env.local (tiene prioridad sobre .env.development)."
-    );
-  }
-
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(query)) {
-    // Se mandan también los vacíos: el sitio original lo hace así
-    // (?precio_min=&precio_max=…) y no conviene desviarse del contrato.
+    // Se mandan también los vacíos: el route handler los interpreta como
+    // "sin filtro" y así la clave de SWR es estable.
     params.set(key, value === undefined || value === null ? "" : String(value));
   }
-  return `${API_BASE}/api/vehiculos?${params.toString()}`;
+  return `/api/vehiculos?${params.toString()}`;
 }
 
 /**
  * Filtros del catálogo, ya en el formato que espera la API.
  *
- * VERIFICADO CONTRA EL ENDPOINT REAL:
- *  - `marca`, `segmento`, `transmision` y `color` van por CLAVE NUMÉRICA, no
- *    por nombre. `marca=AUDI` devuelve 0 resultados; `marca=11` devuelve 3.
- *  - `anio` sí va como el año literal ("2023").
- *  - `precio_*` y `km_*` necesitan AMBOS límites; con uno solo se ignora el
- *    filtro entero.
- *  - `modelo` NO SE USA: con cualquier valor, y con o sin `marca`, el origen
- *    responde 500. Por eso no hay filtro de modelo en la interfaz.
+ * `marca`, `segmento`, `transmision` y `color` van por CLAVE NUMÉRICA (no por
+ * nombre); `anio` va como el año literal ("2023"). `precio_*` y `km_*` se mandan
+ * como par; el route handler rellena el tope que falte.
  */
 export type FiltrosSeleccionados = {
   marca?: string;
@@ -150,11 +97,7 @@ export const FILTRO_KEYS = [
 const PRECIO_TOPE = 9999999;
 const KM_TOPE = 999999;
 
-/**
- * Consulta del catálogo: búsqueda opcional + filtros + paginación.
- * Rellena el límite que falte en los rangos, porque la API los ignora si sólo
- * viene uno.
- */
+/** Consulta del catálogo: búsqueda opcional + filtros + paginación. */
 export function catalogoQuery({
   busqueda = "",
   filtros = {},
@@ -186,50 +129,31 @@ export function catalogoQuery({
 }
 
 export const VEHICULOS_PRESETS = {
-  /** Home · "Ofertas destacadas" - en realidad una búsqueda sin filtros. */
+  /** Home · "Ofertas destacadas" - una búsqueda sin filtros. */
   destacados: (cantidad = 4): VehiculosQuery => ({
     busqueda: "",
-    segmento: "",
-    transmision: "",
-    marca: "",
-    modelo: "",
-    anio: "",
-    color: "",
-    precio_min: 0,
-    precio_max: 9999999,
-    km_min: 0,
-    km_max: 999999,
     pagina: 1,
     cantidad,
   }),
 
   /** Listado paginado / scroll infinito. */
-  listado: (pagina = 1, cantidad = 12): VehiculosQuery => ({
-    precio_min: "",
-    precio_max: "",
-    km_min: "",
-    km_max: "",
-    pagina,
-    cantidad,
-  }),
+  listado: (pagina = 1, cantidad = 12): VehiculosQuery => ({ pagina, cantidad }),
 
   /** Búsqueda por texto libre. */
   busqueda: (termino: string, pagina = 1, cantidad = 12): VehiculosQuery => ({
     busqueda: termino,
-    precio_min: "",
-    precio_max: "",
-    km_min: "",
-    km_max: "",
     pagina,
     cantidad,
   }),
 } as const;
 
-/* ──────────────────────── respuesta cruda (real) ─────────────────────────── */
+/* ──────────────────────── respuesta cruda (del route) ────────────────────── */
 
-/** Un auto tal como lo devuelve la API. */
+/**
+ * Un auto tal como lo devuelve NUESTRO route handler (traducido de TRADEIN).
+ * Las `clave_*` llegan como número (TRADEIN las manda como float, ej. 1.0).
+ */
 export type AutoRaw = {
-  id_row: number;
   id_partida: number;
   anio: string;
   clave_marca: number;
@@ -237,9 +161,9 @@ export type AutoRaw = {
   clave_modelo: number;
   modelo: string;
   modelo_string: string;
-  clave_tipo: number;
-  /** Versión / trim. Ej. "5p HD V8/6.0 Aut 4WD". */
-  tipo: string;
+  clave_tipo: number | null;
+  /** Versión / trim. */
+  tipo: string | null;
   kms: number;
   precio_estimado_venta: number;
   clave_segmento: number;
@@ -250,10 +174,10 @@ export type AutoRaw = {
   color: string;
   clave_transmision: number;
   transmision: string;
-  /** Mensualidad estimada. Viene con ruido de coma flotante (11586.6299999…). */
+  /** Mensualidad estimada. */
   monto_mes: number;
   meses: number;
-  /** Nombres de archivo, NO URLs. Se prefijan con IMAGES_BASE. */
+  /** Nombres de archivo, NO URLs. Se prefijan con imagenUrl(). */
   imagenes: string[];
 };
 
@@ -291,7 +215,6 @@ export type VehiculosRespuestaRaw = {
   total_autos: number;
   /** Total de páginas = ceil(total_autos / cantidad). */
   paginas: number;
-  filters: number;
   filtros: FiltrosRaw;
 };
 
@@ -334,10 +257,14 @@ function slugify(value: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
-/** Prefija un nombre de archivo con la base de imágenes. */
+/**
+ * Prefija un nombre de archivo con nuestro proxy de imágenes.
+ * TRADEIN devuelve nombres sueltos ("10959-1-CHEVROLET.jpg") servidos desde una
+ * IP interna; el proxy /api/imagen los trae server-side.
+ */
 export function imagenUrl(nombre: string): string {
   if (/^https?:\/\//i.test(nombre)) return nombre;
-  return `${IMAGES_BASE}/${nombre.replace(/^\//, "")}`;
+  return `/api/imagen/${encodeURIComponent(nombre.replace(/^\//, ""))}`;
 }
 
 export function normalizeVehiculo(raw: AutoRaw): Vehiculo {
@@ -346,11 +273,8 @@ export function normalizeVehiculo(raw: AutoRaw): Vehiculo {
   return {
     id: String(raw.id_partida),
     marca: raw.marca ?? "",
-    // `modelo` antes que `modelo_string`: el segundo NO es fiable. A veces trae
-    // la descripción comercial completa, con la marca repetida dentro
-    // ("VOLKSWAGEN TERAMONT HIGHLINE 3.6 L V6 280 HP … NEGRO PROFUNDO PERLADO"),
-    // lo que producía títulos de 89 caracteres y duplicados como
-    // "VOLKSWAGEN VOLKSWAGEN TERAMONT…". `modelo` siempre viene limpio.
+    // `modelo` antes que `modelo_string`: el segundo NO es fiable (a veces trae
+    // la descripción comercial completa, con la marca repetida). `modelo` limpio.
     modelo: raw.modelo || raw.modelo_string || "",
     version: raw.tipo ?? "",
     anio: Number.isFinite(anio) ? anio : null,
@@ -360,12 +284,10 @@ export function normalizeVehiculo(raw: AutoRaw): Vehiculo {
     combustible: raw.tipo_combustible ?? "",
     color: raw.color ?? "",
     segmento: raw.segmento ?? "",
-    // monto_mes llega con ruido de float (11586.629999999999): a pesos enteros.
+    // monto_mes puede llegar con ruido de float: a pesos enteros.
     mensualidad: typeof raw.monto_mes === "number" ? Math.round(raw.monto_mes) : null,
     meses: typeof raw.meses === "number" ? raw.meses : null,
     imagenes: (raw.imagenes ?? []).filter(Boolean).map(imagenUrl),
-    // El último segmento es un token opaco, no el id crudo. El slug
-    // descriptivo se mantiene delante para no perder las palabras clave.
     href: `/vehiculos/${slugify(`${raw.marca}-${raw.modelo || raw.modelo_string}`)}-${encodeVehiculoId(raw.id_partida)}`,
   };
 }
@@ -387,10 +309,9 @@ export async function fetchVehiculos(url: string): Promise<unknown> {
   const res = await fetch(url, { headers: { Accept: "application/json" } });
 
   if (!res.ok) {
-    throw Object.assign(
-      new Error(`La API de vehículos respondió ${res.status}`),
-      { status: res.status }
-    );
+    throw Object.assign(new Error(`La API de vehículos respondió ${res.status}`), {
+      status: res.status,
+    });
   }
 
   return res.json();
@@ -398,140 +319,20 @@ export async function fetchVehiculos(url: string): Promise<unknown> {
 
 /* ─────────────────────────── ficha de detalle ───────────────────────────── */
 
-/** Galería agrupada por categoría, tal como la devuelve el origen. */
-export type ImagenesRaw = Record<string, { fotos: string[] } | undefined>;
-
 export type GrupoFotos = { categoria: string; fotos: string[] };
 
-const ORDEN_CATEGORIAS = ["exterior", "interior", "detalles", "otros"];
-
-const TITULO_CATEGORIA: Record<string, string> = {
-  exterior: "Exterior",
-  interior: "Interior",
-  detalles: "Detalles",
-  otros: "Otros",
+/** Una fila de la tabla de plazos (de DETALLE/VEHICULO). */
+export type Plazo = {
+  meses: number;
+  /** Mensualidad ya redondeada a pesos. */
+  mensualidad: number;
+  enganche: number | null;
 };
-
-/** Aplana la galería a grupos con URL absoluta, descartando los vacíos. */
-export function normalizeImagenes(data: unknown): GrupoFotos[] {
-  const raw = (data ?? {}) as ImagenesRaw;
-  const claves = Object.keys(raw).sort(
-    (a, b) => ORDEN_CATEGORIAS.indexOf(a) - ORDEN_CATEGORIAS.indexOf(b)
-  );
-
-  return claves
-    .map((clave) => ({
-      categoria: TITULO_CATEGORIA[clave] ?? clave,
-      fotos: (raw[clave]?.fotos ?? []).filter(Boolean).map(imagenUrl),
-    }))
-    .filter((g) => g.fotos.length > 0);
-}
 
 /**
  * Traduce el último segmento del slug al id de la API.
- * Acepta tanto el token público ("k3f9m") como un id crudo heredado.
+ * Acepta el token público ("k3f9m") y un id crudo heredado.
  */
 export function idDesdeSlug(slug: string): string | null {
   return idDesdeSlugPublico(slug);
-}
-
-/**
- * Busca un vehículo por id, en SERVIDOR.
- *
- * Todavía no hay endpoint de detalle - el equipo lo pasará más adelante - así
- * que se pide el listado completo y se filtra. Funciona porque la API devuelve
- * las 29 unidades en una sola respuesta; con un catálogo grande esto no se
- * sostiene y habrá que sustituirlo por el endpoint real.
- *
- * Va servidor-a-servidor: sin CORS, y además permite renderizar la ficha en el
- * HTML para que Google la indexe.
- */
-export async function fetchVehiculoPorId(
-  id: string
-): Promise<{ vehiculo: Vehiculo | null; similares: Vehiculo[] }> {
-  const url = `${UPSTREAM_ORIGIN}/api/vehiculos?${new URLSearchParams({
-    busqueda: "",
-    precio_min: "",
-    precio_max: "",
-    km_min: "",
-    km_max: "",
-    pagina: "1",
-    cantidad: "500",
-  })}`;
-
-  const res = await fetch(url, {
-    headers: { Accept: "application/json" },
-    next: { revalidate: 300 },
-  });
-  if (!res.ok) return { vehiculo: null, similares: [] };
-
-  const { vehiculos } = normalizeRespuesta(await res.json());
-  const vehiculo = vehiculos.find((v) => v.id === id) ?? null;
-
-  /**
-   * Similares: primero la misma carrocería, que es la afinidad más útil que
-   * permiten los datos. Si no llegan a cuatro, se completa con el resto del
-   * inventario.
-   *
-   * Es deliberado: con carrocerías de las que sólo hay una unidad (Coupe,
-   * Hatchback) la sección salía vacía o con un solo auto, y una fila a medias
-   * es peor que una fila con opciones aunque no sean equivalentes. La gente
-   * llega aquí a seguir mirando, no sólo a comparar carrocerías.
-   */
-  const OBJETIVO = 4;
-  const otros = vehiculos.filter((v) => v.id !== id);
-  const mismoSegmento = vehiculo
-    ? otros.filter((v) => v.segmento === vehiculo.segmento)
-    : [];
-  const relleno = vehiculo
-    ? otros.filter((v) => v.segmento !== vehiculo.segmento)
-    : [];
-  const similares = vehiculo
-    ? [...mismoSegmento, ...relleno].slice(0, OBJETIVO)
-    : [];
-
-  return { vehiculo, similares };
-}
-
-/** Galería de un vehículo, en SERVIDOR. */
-export async function fetchImagenes(id: string): Promise<GrupoFotos[]> {
-  const res = await fetch(`${UPSTREAM_ORIGIN}/api/vehiculos/${id}/imagenes`, {
-    headers: { Accept: "application/json" },
-    next: { revalidate: 3600 },
-  });
-  if (!res.ok) return [];
-  return normalizeImagenes(await res.json());
-}
-
-/**
- * Inventario completo, en SERVIDOR. Lo usan el sitemap y llms.txt.
- *
- * Devuelve un array vacío si la API falla: un sitemap sin fichas es un
- * inconveniente, uno que no responde es un error de rastreo.
- */
-export async function fetchTodosLosVehiculos(): Promise<Vehiculo[]> {
-  if (!UPSTREAM_ORIGIN) return [];
-
-  try {
-    const url = `${UPSTREAM_ORIGIN}/api/vehiculos?${new URLSearchParams({
-      busqueda: "",
-      precio_min: "",
-      precio_max: "",
-      km_min: "",
-      km_max: "",
-      pagina: "1",
-      cantidad: "500",
-    })}`;
-
-    const res = await fetch(url, {
-      headers: { Accept: "application/json" },
-      next: { revalidate: 3600 },
-      signal: AbortSignal.timeout(15_000),
-    });
-    if (!res.ok) return [];
-
-    return normalizeRespuesta(await res.json()).vehiculos;
-  } catch {
-    return [];
-  }
 }

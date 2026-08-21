@@ -1,11 +1,13 @@
 import Image from "next/image";
+import Link from "next/link";
 import { CalendarCheck, Clock, MessageCircle, ShieldCheck } from "lucide-react";
 
-import { AgendarFlow } from "@/components/agendar/AgendarFlow";
 import { DudasBanner } from "@/components/ds";
+import { Button } from "@/components/ui/button";
 import { decodeVehiculoId } from "@/lib/api/id-publico";
-import { fetchVehiculoPorId } from "@/lib/api/vehiculos";
+import { fetchVehiculoPorId } from "@/lib/api/vehiculos-server";
 import { buildMetadata } from "@/lib/seo";
+import { CONTACT, whatsappHref } from "@/lib/site";
 
 type Props = { searchParams: Promise<{ vehiculo?: string | string[] }> };
 
@@ -123,8 +125,53 @@ export default async function AgendarPage({ searchParams }: Props) {
             </p>
           </aside>
 
+          {/*
+            Agendado en línea PENDIENTE: el flujo irá a Odoo (ERP aún no
+            disponible) y es lógica distinta pendiente de aprobación. Mientras,
+            no se finge un formulario que no envía a ningún lado: se avisa y se
+            deriva a WhatsApp. El funnel completo vive en components/agendar/
+            AgendarFlow.tsx, listo para reconectarse cuando el ERP esté.
+          */}
           <div className="rounded-xl border border-border bg-card p-8 md:p-10">
-            <AgendarFlow vehiculoId={vehiculo?.id} resumen={resumen} />
+            <div className="flex flex-col gap-6">
+              <span className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <CalendarCheck aria-hidden className="size-6" />
+              </span>
+              <div>
+                <h1 className="font-heading text-h2 font-light">
+                  Agendado en línea, muy pronto
+                </h1>
+                <p className="mt-3 text-body-2 text-ink-800">
+                  Estamos conectando el agendado de citas con nuestros sistemas.
+                  Mientras tanto, escríbenos por WhatsApp
+                  {resumen ? ` sobre el ${resumen}` : ""} y un asesor coordina tu
+                  visita el mismo día.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                {CONTACT.whatsapp && (
+                  <Button variant="petrol" size="cta" asChild>
+                    <a
+                      href={whatsappHref(
+                        CONTACT.whatsapp,
+                        resumen
+                          ? `Hola, quiero agendar una cita para el ${resumen}.`
+                          : "Hola, quiero agendar una cita."
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <MessageCircle data-icon="inline-start" />
+                      Escríbenos por WhatsApp
+                    </a>
+                  </Button>
+                )}
+                <Button variant="outline" size="cta" asChild>
+                  <Link href="/vehiculos">Ver catálogo</Link>
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
 

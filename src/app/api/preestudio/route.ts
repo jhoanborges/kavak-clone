@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { PREESTUDIO_ENDPOINTS } from "@/lib/api/preestudio";
-import { fakePreestudio } from "@/lib/api/preestudio-fakes";
-import { DEMO_MODE, PREESTUDIO_ORIGIN } from "@/lib/env";
+import { PREESTUDIO_ORIGIN } from "@/lib/env";
 
 /**
  * Proxy genérico del webservice pre-estudio / BC.
@@ -13,7 +12,6 @@ import { DEMO_MODE, PREESTUDIO_ORIGIN } from "@/lib/env";
  *  - Token: Authorization Bearer desde PREESTUDIO_TOKEN (secreto, solo servidor).
  *  - Formato: envuelve el payload en base64 dentro de { Content } y decodifica
  *    la respuesta (que viene en base64).
- *  - DEMO: responde datos simulados sin red ni token.
  *
  * SEGURIDAD: el destino sale de una ALLOWLIST (ENDPOINTS), el cliente solo manda
  * una clave de endpoint + payload; no puede elegir URL arbitraria (evita SSRF).
@@ -76,11 +74,6 @@ export async function POST(request: Request) {
 
   const payload =
     body.payload && typeof body.payload === "object" ? body.payload : {};
-
-  // DEMO: respuesta simulada, sin token ni red interna.
-  if (DEMO_MODE) {
-    return NextResponse.json(fakePreestudio(endpoint, payload as Record<string, unknown>));
-  }
 
   if (!PREESTUDIO_ORIGIN) {
     return NextResponse.json(

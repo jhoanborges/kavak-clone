@@ -22,12 +22,8 @@ import { VehiculosDisclaimer } from "@/components/catalog/VehiculosEstado";
 import { DudasBanner, SectionHeading } from "@/components/ds";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  fetchImagenes,
-  fetchVehiculoPorId,
-  idDesdeSlug,
-  type Vehiculo,
-} from "@/lib/api/vehiculos";
+import { idDesdeSlug, type Vehiculo } from "@/lib/api/vehiculos";
+import { fetchImagenes, fetchVehiculoPorId } from "@/lib/api/vehiculos-server";
 import { APP_NAME } from "@/lib/config";
 import { absoluteUrl, buildMetadata } from "@/lib/seo";
 import { encodeVehiculoId } from "@/lib/api/id-publico";
@@ -82,7 +78,7 @@ export default async function VehiculoDetallePage({ params }: Props) {
   const id = idDesdeSlug(slug);
   if (!id) notFound();
 
-  const [{ vehiculo, similares }, grupos] = await Promise.all([
+  const [{ vehiculo, similares, plazos }, grupos] = await Promise.all([
     fetchVehiculoPorId(id),
     fetchImagenes(id),
   ]);
@@ -333,18 +329,40 @@ export default async function VehiculoDetallePage({ params }: Props) {
                   </span>
                 </div>
 
-                {/*
-                  Sólo se muestra el plazo que devuelve la API. Calcular 6, 12,
-                  18 o 24 meses exigiría una tasa fija, y la implícita varía
-                  entre unidades (1.72%-1.75% mensual): saldrían cifras
-                  inventadas en un producto financiero regulado. Pendiente del
-                  endpoint de financiamiento real.
-                */}
-                {vehiculo.meses != null && (
-                  <p className="mt-3 text-caption text-ink-600">
-                    Mensualidad calculada a {vehiculo.meses} meses con 30% de
-                    enganche.
-                  </p>
+                {/* Tabla de plazos real de DETALLE/VEHICULO: mensualidad por
+                    cada plazo que devuelve el webservice, sin tasas inventadas. */}
+                {plazos.length > 0 ? (
+                  <div className="mt-4 border-t border-border pt-4">
+                    <p className="mb-2 font-label text-label font-medium text-foreground">
+                      Mensualidades por plazo
+                    </p>
+                    <ul className="overflow-hidden rounded-lg border border-border text-body-2">
+                      {plazos.map((p, i) => (
+                        <li
+                          key={p.meses}
+                          className={`flex items-center justify-between px-4 py-2 tabular-nums ${
+                            i % 2 ? "bg-muted/40" : ""
+                          }`}
+                        >
+                          <span>
+                            {p.meses}{" "}
+                            <span className="text-caption text-ink-600">meses</span>
+                          </span>
+                          <span className="font-medium">{mxn(p.mensualidad)}/mes</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mt-2 text-caption text-ink-600">
+                      Estimado con 30% de enganche. Sujeto a aprobación de crédito.
+                    </p>
+                  </div>
+                ) : (
+                  vehiculo.meses != null && (
+                    <p className="mt-3 text-caption text-ink-600">
+                      Mensualidad calculada a {vehiculo.meses} meses con 30% de
+                      enganche.
+                    </p>
+                  )
                 )}
 
                 <div className="mt-6 flex flex-col gap-3">
