@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { APP_NAME } from "@/lib/config";
@@ -110,7 +110,16 @@ export const metadata: Metadata = {
     locale: "es_MX",
   },
   twitter: { card: "summary_large_image" },
-  manifest: "/site.webmanifest",
+  // El `<link rel="manifest">` lo inyecta la convención app/manifest.ts; no se
+  // declara aquí para no duplicar el enlace.
+  appleWebApp: {
+    // Habilita modo standalone al añadir a pantalla de inicio en iOS.
+    capable: true,
+    title: APP_NAME,
+    // "black-translucent": la barra de estado se funde con la cabecera oscura
+    // de la marca (#0D1F26) y el contenido usa toda la pantalla.
+    statusBarStyle: "black-translucent",
+  },
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
@@ -118,6 +127,20 @@ export const metadata: Metadata = {
     ],
     apple: "/apple-touch-icon.png",
   },
+};
+
+/**
+ * theme-color: color de la barra del navegador / UI del sistema cuando la PWA
+ * está instalada. En Next 16 va en el export `viewport`, no en `metadata`.
+ */
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#EEF1F1" },
+    { media: "(prefers-color-scheme: dark)", color: "#0D1F26" },
+  ],
+  // iOS instalado: el contenido llega hasta los bordes/notch. Los componentes
+  // que lo necesiten usan las env(safe-area-inset-*) para no quedar tapados.
+  viewportFit: "cover",
 };
 
 /** Organization: identifica la marca ante Google (Knowledge Panel, sitelinks). */

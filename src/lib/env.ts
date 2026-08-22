@@ -29,3 +29,12 @@ export const TRADEIN_ORIGIN = trimSlash(process.env.TRADEIN_URL);
  * En dev/prod es una IP interna (ver .env.*).
  */
 export const PREESTUDIO_ORIGIN = trimSlash(process.env.NEXT_PUBLIC_PREESTUDIO_URL);
+
+/**
+ * Backend que guarda las suscripciones push y dispara los envíos (web-push).
+ * Server-only: el cliente manda su PushSubscription a /api/push/*, y el proxy
+ * la reenvía aquí con PUSH_BACKEND_TOKEN. Así la URL interna y el secreto nunca
+ * viajan al navegador. La clave VAPID PÚBLICA sí es pública (va en el bundle):
+ * NEXT_PUBLIC_VAPID_PUBLIC_KEY.
+ */
+export const PUSH_BACKEND_ORIGIN = trimSlash(process.env.PUSH_BACKEND_URL);

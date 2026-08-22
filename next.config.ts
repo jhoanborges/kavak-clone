@@ -20,6 +20,36 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  /**
+   * Cabeceras de seguridad (guía PWA oficial de Next) + reglas del service
+   * worker. El SW se sirve como JS y SIN caché para que una actualización
+   * llegue al usuario en la siguiente visita en vez de quedar pegada.
+   */
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        ],
+      },
+      {
+        source: "/sw.js",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/javascript; charset=utf-8",
+          },
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
+        ],
+      },
+    ];
+  },
   images: {
     // The standalone runner image has no sharp/optimizer. Serve next/image
     // assets directly instead of via /_next/image (which 400s/404s there).

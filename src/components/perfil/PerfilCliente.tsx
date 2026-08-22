@@ -30,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import Creditos from "@/components/perfil/Creditos";
+import PushNotifications from "@/components/pwa/PushNotifications";
 import { CARS, type Car } from "@/data/cars";
 import type { RootState } from "@/redux/store";
 import { cn } from "@/lib/utils";
@@ -592,11 +593,7 @@ function Preferencias() {
         inicial
       />
       <div className="h-px bg-border" />
-      <Toggle
-        label="Recordatorios de cita"
-        descripcion="Notificaciones antes de una cita agendada."
-        inicial={false}
-      />
+      <PushNotifications />
     </div>
   );
 }
