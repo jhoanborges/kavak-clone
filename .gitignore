@@ -40,6 +40,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# salesforce cli (metadata cache local)
+.sf/
+.sfdx/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
