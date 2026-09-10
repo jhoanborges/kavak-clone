@@ -37,7 +37,7 @@ se hornean los valores `NEXT_PUBLIC_*` en build y qué puerto se publica.
 
 ```bash
 # 1. Código
-git clone <repo> value-arrendadora && cd value-arrendadora
+git clone https://lnxarrgitdes.afavalue.com/devwebext/seminuevos.git value-arrendadora && cd value-arrendadora
 
 # 2. Runtime env — OBLIGATORIO. El compose declara `- .env` sin `required: false`,
 #    así que si el archivo no existe `docker compose up` falla de entrada.
