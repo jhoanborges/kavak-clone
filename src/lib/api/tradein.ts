@@ -18,6 +18,7 @@
  */
 
 import { TRADEIN_ORIGIN } from "@/lib/env";
+import { logUpstreamError } from "@/lib/log";
 
 /** Rutas del webservice. */
 export const TRADEIN_ENDPOINTS = {
@@ -218,10 +219,20 @@ async function pedir(path: string, opts: PedirOpts = {}): Promise<unknown> {
     init.body = JSON.stringify({ Content });
   }
 
+  const url = `${TRADEIN_ORIGIN}${path}`;
+
   let res: Response;
   try {
-    res = await fetch(`${TRADEIN_ORIGIN}${path}`, init);
+    res = await fetch(url, init);
   } catch (error) {
+    // Fallo de red o timeout: no hubo respuesta. Se loguea el throw crudo.
+    logUpstreamError({
+      servicio: "TRADEIN",
+      metodo: init.method ?? "GET",
+      url,
+      payload: opts.payload,
+      error,
+    });
     const timedOut = error instanceof Error && error.name === "TimeoutError";
     throw new TradeinError(
       timedOut
@@ -231,17 +242,52 @@ async function pedir(path: string, opts: PedirOpts = {}): Promise<unknown> {
     );
   }
 
+  // Se lee el cuerpo SIEMPRE (una sola vez): en fallo sirve para el log; en éxito
+  // para parsearlo. Sin esto, el motivo del fallo del backend se perdía.
+  const texto = await res.text();
+
   if (!res.ok) {
+    logUpstreamError({
+      servicio: "TRADEIN",
+      metodo: init.method ?? "GET",
+      url,
+      status: res.status,
+      body: texto,
+      payload: opts.payload,
+    });
     throw new TradeinError(
       `El webservice respondió ${res.status}.`,
       res.status === 403 ? 502 : res.status
     );
   }
 
-  const data = parseRespuesta(await res.text());
+  const data = parseRespuesta(texto);
   if (data == null || typeof data !== "object") {
+    logUpstreamError({
+      servicio: "TRADEIN",
+      metodo: init.method ?? "GET",
+      url,
+      status: res.status,
+      body: texto,
+      payload: opts.payload,
+    });
     throw new TradeinError("Respuesta ilegible del webservice.");
   }
+
+  // TRADEIN señala fallo de negocio con { Status: 0, Body: "<error>" } y HTTP 200.
+  // Se loguea el detalle pero NO se lanza: cada método decide qué hacer con Status.
+  const status = (data as { Status?: number }).Status;
+  if (status !== undefined && status !== 1) {
+    logUpstreamError({
+      servicio: "TRADEIN",
+      metodo: init.method ?? "GET",
+      url,
+      status: res.status,
+      body: texto,
+      payload: opts.payload,
+    });
+  }
+
   return data;
 }
 

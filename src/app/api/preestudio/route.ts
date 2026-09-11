@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { PREESTUDIO_ENDPOINTS } from "@/lib/api/preestudio";
 import { PREESTUDIO_ORIGIN } from "@/lib/env";
+import { logUpstreamError } from "@/lib/log";
 
 /**
  * Proxy genérico del webservice pre-estudio / BC.
@@ -91,9 +92,10 @@ export async function POST(request: Request) {
   }
 
   const Content = Buffer.from(JSON.stringify(payload)).toString("base64");
+  const url = `${PREESTUDIO_ORIGIN}${path}`;
 
   try {
-    const res = await fetch(`${PREESTUDIO_ORIGIN}${path}`, {
+    const res = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -105,25 +107,65 @@ export async function POST(request: Request) {
       cache: "no-store",
     });
 
+    // Cuerpo leído SIEMPRE: en fallo alimenta el log, en éxito se parsea.
+    const texto = await res.text();
+
     if (!res.ok) {
+      logUpstreamError({
+        servicio: "PREESTUDIO",
+        metodo: "POST",
+        url,
+        status: res.status,
+        body: texto,
+        payload: { endpoint, payload },
+      });
       return NextResponse.json(
         { error: `El webservice respondió ${res.status}.` },
         { status: res.status === 403 ? 502 : res.status }
       );
     }
 
-    const data = parseRespuesta(await res.text());
+    const data = parseRespuesta(texto);
     if (data == null || typeof data !== "object") {
+      logUpstreamError({
+        servicio: "PREESTUDIO",
+        metodo: "POST",
+        url,
+        status: res.status,
+        body: texto,
+        payload: { endpoint, payload },
+      });
       return NextResponse.json(
         { error: "Respuesta ilegible del webservice." },
         { status: 502 }
       );
     }
 
+    // Fallo de negocio: { Status: 0, Body: "<mensaje>" } con HTTP 200. Se loguea
+    // el detalle pero se reenvía tal cual (el cliente muestra el Body).
+    const status = (data as { Status?: number }).Status;
+    if (status !== undefined && status !== 1) {
+      logUpstreamError({
+        servicio: "PREESTUDIO",
+        metodo: "POST",
+        url,
+        status: res.status,
+        body: texto,
+        payload: { endpoint, payload },
+      });
+    }
+
     // Se reenvía tal cual (incluye Status 0/1 y Body con el mensaje de error de
     // negocio). El cliente decide cómo mostrarlo.
     return NextResponse.json(data);
   } catch (error) {
+    logUpstreamError({
+      servicio: "PREESTUDIO",
+      metodo: "POST",
+      url,
+      payload: { endpoint, payload },
+      error,
+    });
     const timedOut = error instanceof Error && error.name === "TimeoutError";
     return NextResponse.json(
       {

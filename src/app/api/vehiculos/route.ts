@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { TradeinError } from "@/lib/api/tradein";
 import type { VehiculosQuery } from "@/lib/api/vehiculos";
 import { listadoRaw } from "@/lib/api/vehiculos-server";
+import { logUpstreamError } from "@/lib/log";
 
 /**
  * Endpoint del catálogo. Traduce la query pública al webservice TRADEIN
@@ -48,8 +49,17 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     if (error instanceof TradeinError) {
+      // Ya se logueó el detalle upstream dentro de pedir(); aquí sólo se mapea.
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
+    // Error inesperado (no del webservice): se loguea entero, se veía como 502 mudo.
+    logUpstreamError({
+      servicio: "vehiculos",
+      metodo: "GET",
+      url: new URL(request.url).pathname,
+      payload: query,
+      error,
+    });
     return NextResponse.json(
       { error: "No se pudo contactar al catálogo." },
       { status: 502 }
