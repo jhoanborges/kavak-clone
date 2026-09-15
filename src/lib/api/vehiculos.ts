@@ -264,6 +264,9 @@ function slugify(value: string): string {
  */
 export function imagenUrl(nombre: string): string {
   if (/^https?:\/\//i.test(nombre)) return nombre;
+  // Siempre vía nuestro proxy same-origin (/api/imagen). En demo el proxy trae la
+  // imagen de valueautos.com.mx; en prod, de la IP interna de TRADEIN. El cliente
+  // no distingue: mismo origen, sin CORS.
   return `/api/imagen/${encodeURIComponent(nombre.replace(/^\//, ""))}`;
 }
 

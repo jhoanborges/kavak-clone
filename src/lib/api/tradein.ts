@@ -17,6 +17,13 @@
  * armado base64/Bearer y los tipos crudos de la respuesta.
  */
 
+import {
+  DEMO_MODE,
+  demoBusqueda,
+  demoCatalogoCompleto,
+  demoDetalle,
+  demoListado,
+} from "@/lib/api/demo-data";
 import { TRADEIN_ORIGIN } from "@/lib/env";
 import { logUpstreamError } from "@/lib/log";
 
@@ -334,6 +341,7 @@ export async function listadoVehiculos(
     Kms: { kms_minimo: f.kmsMin ?? 0, kms_maximo: f.kmsMax ?? KMS_TOPE },
     Texto_Busqueda: f.texto ?? "",
   };
+  if (DEMO_MODE) return demoListado(f);
   return (await pedir(TRADEIN_ENDPOINTS.listado, {
     payload,
     revalidate: opts.revalidate,
@@ -344,6 +352,7 @@ export async function listadoVehiculos(
 export async function catalogoCompleto(
   opts: { revalidate?: number } = {}
 ): Promise<TradeinCatCompletoResp> {
+  if (DEMO_MODE) return demoCatalogoCompleto();
   return (await pedir(TRADEIN_ENDPOINTS.catalogoCompleto, {
     revalidate: opts.revalidate,
   })) as TradeinCatCompletoResp;
@@ -351,6 +360,7 @@ export async function catalogoCompleto(
 
 /** POST LISTADO_BUSQUEDA: autocomplete por texto. */
 export async function busqueda(termino: string): Promise<TradeinBusquedaResp> {
+  if (DEMO_MODE) return demoBusqueda(termino);
   return (await pedir(TRADEIN_ENDPOINTS.busqueda, {
     payload: { busqueda: termino },
   })) as TradeinBusquedaResp;
@@ -361,6 +371,7 @@ export async function detalleVehiculo(
   idPartida: number,
   opts: { revalidate?: number } = {}
 ): Promise<TradeinDetalleResp> {
+  if (DEMO_MODE) return demoDetalle(idPartida);
   return (await pedir(TRADEIN_ENDPOINTS.detalle, {
     payload: { id_partida: idPartida },
     revalidate: opts.revalidate,
