@@ -5,7 +5,7 @@
  * falló (status + cuerpo crudo del webservice, no sólo el mensaje limpio que se
  * manda al cliente). En producción se calla el detalle: sólo un error breve.
  *
- * SÓLO SERVIDOR: se importa desde route handlers y clientes server-side (tradein,
+ * SÓLO SERVIDOR: se importa desde route handlers y clientes server-side (catalogo,
  * preestudio, instrumentation). Nunca desde componentes cliente (filtraría URLs
  * internas y cuerpos de error al navegador).
  *
@@ -33,7 +33,7 @@ function saneaHeaders(headers?: HeadersInit): Record<string, string> {
 }
 
 type UpstreamInfo = {
-  /** Nombre del backend, ej. "TRADEIN" o "PREESTUDIO". */
+  /** Nombre del backend, ej. "CATALOGO" o "PREESTUDIO". */
   servicio: string;
   metodo: string;
   url: string;

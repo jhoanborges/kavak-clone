@@ -7,7 +7,7 @@ import { DEBUG } from "@/lib/log";
  *
  * `onRequestError` lo dispara Next SÓLO con errores que NO capturamos nosotros:
  * throws en render de Server Components, en route handlers sin try/catch, en
- * Server Actions, etc. Los fallos del webservice que YA atrapamos (tradein /
+ * Server Actions, etc. Los fallos del webservice que YA atrapamos (catalogo /
  * preestudio) se loguean en su propio sitio (ver src/lib/log.ts); acá caen los
  * inesperados que antes sólo aparecían como un 500 mudo.
  *

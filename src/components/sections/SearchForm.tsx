@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 /**
  * Buscador de vehículos con autocomplete. Se usa en el hero y sobre el catálogo.
  *
- * Sugerencias en vivo desde /api/buscar (webservice TRADEIN, LISTADO_BUSQUEDA),
+ * Sugerencias en vivo desde /api/buscar (LISTADO_BUSQUEDA),
  * con debounce y navegación por teclado. Registra el término en redux y navega a
  * /vehiculos?busqueda=…, que es donde se consulta la API.
  *

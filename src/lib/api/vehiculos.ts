@@ -4,12 +4,12 @@ import { idDesdeSlugPublico, encodeVehiculoId } from "@/lib/api/id-publico";
  * Contrato del catálogo, lado CLIENTE.
  *
  * Este módulo es seguro para el bundle del navegador: sólo tipos, construcción
- * de query, normalizadores y el fetcher de SWR. NO importa el cliente TRADEIN
- * (token + Buffer + IP interna): eso vive en `vehiculos-server.ts` y sólo corre
- * en el servidor.
+ * de query, normalizadores y el fetcher de SWR. NO importa el cliente del catálogo
+ * (Buffer + IP interna): eso vive en `vehiculos-server.ts` y sólo corre en el
+ * servidor.
  *
  * El cliente siempre pega a NUESTRO route handler `/api/vehiculos`, que traduce
- * la query al webservice TRADEIN y devuelve la forma cruda que se normaliza aquí.
+ * la query a la API del catálogo y devuelve la forma cruda que se normaliza aquí.
  * Así, si cambia el backend, el componente no se entera.
  */
 
@@ -50,7 +50,7 @@ export const VEHICULOS_PARAMS = [
 
 /**
  * Construye la URL de NUESTRO endpoint. Siempre relativa: pega a nuestro propio
- * origen, que es quien habla con TRADEIN.
+ * origen, que es quien habla con la API del catálogo.
  */
 export function buildVehiculosUrl(query: VehiculosQuery = {}): string {
   const params = new URLSearchParams();
@@ -150,8 +150,8 @@ export const VEHICULOS_PRESETS = {
 /* ──────────────────────── respuesta cruda (del route) ────────────────────── */
 
 /**
- * Un auto tal como lo devuelve NUESTRO route handler (traducido de TRADEIN).
- * Las `clave_*` llegan como número (TRADEIN las manda como float, ej. 1.0).
+ * Un auto tal como lo devuelve NUESTRO route handler (traducido de la API).
+ * Las `clave_*` llegan como número (la API las manda como float, ej. 1.0).
  */
 export type AutoRaw = {
   id_partida: number;
@@ -259,14 +259,11 @@ function slugify(value: string): string {
 
 /**
  * Prefija un nombre de archivo con nuestro proxy de imágenes.
- * TRADEIN devuelve nombres sueltos ("10959-1-CHEVROLET.jpg") servidos desde una
- * IP interna; el proxy /api/imagen los trae server-side.
+ * La API devuelve nombres sueltos ("10959-1-CHEVROLET.jpg") servidos desde una
+ * IP interna; el proxy /api/imagen los trae server-side (mismo origen, sin CORS).
  */
 export function imagenUrl(nombre: string): string {
   if (/^https?:\/\//i.test(nombre)) return nombre;
-  // Siempre vía nuestro proxy same-origin (/api/imagen). En demo el proxy trae la
-  // imagen de valueautos.com.mx; en prod, de la IP interna de TRADEIN. El cliente
-  // no distingue: mismo origen, sin CORS.
   return `/api/imagen/${encodeURIComponent(nombre.replace(/^\//, ""))}`;
 }
 

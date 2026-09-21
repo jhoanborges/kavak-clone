@@ -2,13 +2,13 @@ import "server-only";
 
 import {
   catalogoCompleto,
+  type CatalogoDetallePrecio,
+  type CatalogoFacetas,
+  type CatalogoImagen,
+  type CatalogoVehiculo,
   detalleVehiculo,
   listadoVehiculos,
-  type TradeinCatalogos,
-  type TradeinDetallePrecio,
-  type TradeinImagen,
-  type TradeinVehiculo,
-} from "@/lib/api/tradein";
+} from "@/lib/api/catalogo";
 import {
   type AutoRaw,
   type FiltrosRaw,
@@ -22,7 +22,7 @@ import {
 } from "@/lib/api/vehiculos";
 
 /**
- * Catálogo, lado SERVIDOR. Habla con el webservice TRADEIN (token + IP interna)
+ * Catálogo, lado SERVIDOR. Habla con la API del catálogo (IP interna)
  * y traduce su forma cruda a los tipos que consume la UI.
  *
  * `import "server-only"` es la barrera: si alguien lo importa desde un componente
@@ -32,7 +32,7 @@ import {
 /* ─────────────────────────────── mapeos ──────────────────────────────────── */
 
 /** Índice id_partida -> nombres de archivo de imagen. */
-function indexarImagenes(imagenes: TradeinImagen[]): Map<number, string[]> {
+function indexarImagenes(imagenes: CatalogoImagen[]): Map<number, string[]> {
   const idx = new Map<number, string[]>();
   for (const img of imagenes ?? []) {
     if (!img?.nombre_imagen) continue;
@@ -43,8 +43,8 @@ function indexarImagenes(imagenes: TradeinImagen[]): Map<number, string[]> {
   return idx;
 }
 
-/** Un vehículo del listado TRADEIN -> forma cruda que normaliza la UI. */
-function mapVehiculoRaw(v: TradeinVehiculo, imagenes: string[]): AutoRaw {
+/** Un vehículo del listado -> forma cruda que normaliza la UI. */
+function mapVehiculoRaw(v: CatalogoVehiculo, imagenes: string[]): AutoRaw {
   return {
     id_partida: v.id_partida,
     anio: v.anio,
@@ -71,9 +71,9 @@ function mapVehiculoRaw(v: TradeinVehiculo, imagenes: string[]): AutoRaw {
   };
 }
 
-/** Facetas TRADEIN -> FiltrosRaw (anida los modelos bajo su marca). */
-function mapCatalogos(cat: TradeinCatalogos | undefined): FiltrosRaw {
-  const c = cat ?? ({} as TradeinCatalogos);
+/** Facetas -> FiltrosRaw (anida los modelos bajo su marca). */
+function mapCatalogos(cat: CatalogoFacetas | undefined): FiltrosRaw {
+  const c = cat ?? ({} as CatalogoFacetas);
   const modelos = c.Modelo ?? [];
 
   return {
@@ -166,7 +166,7 @@ export async function listadoRaw(
 /* ─────────────────────────── fetchers de página ──────────────────────────── */
 
 /** Convierte un vehículo crudo del listado en el tipo normalizado de la UI. */
-function normalizarListado(v: TradeinVehiculo, imagenes: string[]): Vehiculo {
+function normalizarListado(v: CatalogoVehiculo, imagenes: string[]): Vehiculo {
   return normalizeVehiculo(mapVehiculoRaw(v, imagenes));
 }
 
@@ -229,11 +229,11 @@ export async function fetchVehiculoPorId(
  * el "Desde $X/mes" de la ficha. Devuelve sólo los campos que pisa en el crudo.
  */
 function precioEnVehiculo(
-  d0: TradeinVehiculo,
-  precios: TradeinDetallePrecio[] | undefined
-): Pick<TradeinVehiculo, "monto_mes" | "meses" | "precio_estimado_venta"> {
+  d0: CatalogoVehiculo,
+  precios: CatalogoDetallePrecio[] | undefined
+): Pick<CatalogoVehiculo, "monto_mes" | "meses" | "precio_estimado_venta"> {
   const filas = precios ?? [];
-  const mejor = filas.reduce<TradeinDetallePrecio | null>(
+  const mejor = filas.reduce<CatalogoDetallePrecio | null>(
     (min, f) => (min === null || f.monto_mes < min.monto_mes ? f : min),
     null
   );

@@ -1,20 +1,19 @@
 import { NextResponse } from "next/server";
 
-import { TradeinError } from "@/lib/api/tradein";
+import { CatalogoError } from "@/lib/api/catalogo";
 import type { VehiculosQuery } from "@/lib/api/vehiculos";
 import { listadoRaw } from "@/lib/api/vehiculos-server";
 import { logUpstreamError } from "@/lib/log";
 
 /**
- * Endpoint del catálogo. Traduce la query pública al webservice TRADEIN
+ * Endpoint del catálogo. Traduce la query pública a la API del catálogo
  * (LISTADO_CAT_VEHICULOS) y devuelve la forma cruda que consume el cliente.
  *
- * POR QUÉ EXISTE: TRADEIN exige Bearer (token SECRETO, sólo servidor) y vive en
- * una IP interna. El navegador no puede llamarlo; este handler hace de puente
- * servidor-a-servidor y esconde token + host.
+ * POR QUÉ EXISTE: la API vive en una IP interna. El navegador no puede llamarla;
+ * este handler hace de puente servidor-a-servidor y esconde el host.
  *
  * SEGURIDAD: sólo se leen los parámetros conocidos; el resto se ignora. El
- * destino está fijado en el cliente TRADEIN, el cliente no elige URL (no SSRF).
+ * destino está fijado en el cliente, el cliente no elige URL (no SSRF).
  */
 
 export const revalidate = 300;
@@ -48,7 +47,7 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    if (error instanceof TradeinError) {
+    if (error instanceof CatalogoError) {
       // Ya se logueó el detalle upstream dentro de pedir(); aquí sólo se mapea.
       return NextResponse.json({ error: error.message }, { status: error.status });
     }

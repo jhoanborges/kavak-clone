@@ -1,53 +1,39 @@
 /**
- * Cliente del WEBSERVICE AUTOMOTRIZ TRADEIN (catálogo de autos + citas).
- *
- * Transcrito de "Webservice API EXT VALUE TRADEIN" v1.1.
+ * Cliente de la API del catálogo de vehículos.
  *
  * Contrato COMÚN:
  *  - Método: GET (sólo LISTADO_CAT_COMPLETO) o POST (el resto).
- *  - Cabeceras: Authorization: Bearer <token>, Content-Type: application/json.
+ *  - Cabeceras: Content-Type: application/json (Bearer opcional; el backend no lo
+ *    valida y el token va vacío).
  *  - Cuerpo POST: { "Content": base64(JSON) }.
  *  - Respuesta: base64(JSON) con forma { "Status": 1, ... } | { "Status": 0, "Body": "<error>" }.
  *    (En algunos entornos ya llega como JSON plano; se soportan ambos.)
  *
- * SÓLO SERVIDOR: el token es secreto y el host es IP interna. El cliente nunca
- * llama aquí directo; pasa por los route handlers de /api que envuelven esto.
+ * SÓLO SERVIDOR: el host es IP interna. El cliente nunca llama aquí directo; pasa
+ * por los route handlers de /api que envuelven esto.
  *
- * El HOST sale de TRADEIN_ORIGIN (ver src/lib/env.ts). Aquí viven las RUTAS, el
- * armado base64/Bearer y los tipos crudos de la respuesta.
+ * El HOST sale de CATALOGO_ORIGIN (ver src/lib/env.ts). Aquí viven las RUTAS, el
+ * armado base64 y los tipos crudos de la respuesta.
  */
 
-import {
-  DEMO_MODE,
-  demoBusqueda,
-  demoCatalogoCompleto,
-  demoDetalle,
-  demoListado,
-} from "@/lib/api/demo-data";
-import { TRADEIN_ORIGIN } from "@/lib/env";
+import { CATALOGO_ORIGIN } from "@/lib/env";
 import { logUpstreamError } from "@/lib/log";
 
-/** Rutas del webservice. */
-export const TRADEIN_ENDPOINTS = {
+/** Rutas de la API. */
+export const CATALOGO_ENDPOINTS = {
   /** GET · catálogo completo de facetas (sin filtrar). */
   catalogoCompleto: "/ENCABEZADO/LISTADO_CAT_COMPLETO",
   /** POST · listado filtrado + facetas + imágenes. */
   listado: "/ENCABEZADO/LISTADO_CAT_VEHICULOS",
   /** POST · autocomplete por texto. */
   busqueda: "/ENCABEZADO/LISTADO_BUSQUEDA",
-  /**
-   * POST · alta de cita. PENDIENTE de conectar: el agendado irá a Odoo (ERP aún
-   * no disponible), es lógica distinta pendiente de aprobación. Aquí queda la
-   * ruta documentada; el cliente no la llama todavía.
-   */
-  agendarCita: "/ENCABEZADO/AGENDAR_CITA",
   /** POST · ficha de detalle + tabla de plazos. */
   detalle: "/DETALLE/VEHICULO",
 } as const;
 
-/* ─────────────────────────── tipos crudos (PDF) ──────────────────────────── */
+/* ─────────────────────────── tipos crudos ────────────────────────────────── */
 
-export type TradeinCatalogos = {
+export type CatalogoFacetas = {
   Anio: Array<{ anio: string; total_anio: number }>;
   Color: Array<{ clave_color: number; color: string; total_clave_color: number }>;
   Marca: Array<{ clave_marca: number; marca: string; total_clave_marca: number }>;
@@ -70,7 +56,7 @@ export type TradeinCatalogos = {
   }>;
 };
 
-export type TradeinVehiculo = {
+export type CatalogoVehiculo = {
   id_partida: number;
   anio: string;
   clave_marca: number;
@@ -94,7 +80,7 @@ export type TradeinVehiculo = {
   meses: number;
 };
 
-export type TradeinImagen = {
+export type CatalogoImagen = {
   id_partida: number;
   id_image: number;
   nombre_imagen: string;
@@ -102,15 +88,15 @@ export type TradeinImagen = {
   clave_tipo_acc_imagen: number | null;
 };
 
-export type TradeinListadoResp = {
+export type CatalogoListadoResp = {
   Status: number;
-  Catalogos: TradeinCatalogos;
-  Listado: { Total: number; Vehiculos: TradeinVehiculo[]; Imagenes: TradeinImagen[] };
+  Catalogos: CatalogoFacetas;
+  Listado: { Total: number; Vehiculos: CatalogoVehiculo[]; Imagenes: CatalogoImagen[] };
 };
 
-export type TradeinCatCompletoResp = { Status: number; Catalogos: TradeinCatalogos };
+export type CatalogoCompletoResp = { Status: number; Catalogos: CatalogoFacetas };
 
-export type TradeinBusquedaResp = {
+export type CatalogoBusquedaResp = {
   Status: number;
   Cadena_a_Buscar: string;
   Posibles_Marcas: Array<{ clave_marca: string; marca: string }>;
@@ -127,7 +113,7 @@ export type TradeinBusquedaResp = {
 };
 
 /** Una fila de la tabla de plazos que devuelve el detalle. */
-export type TradeinDetallePrecio = {
+export type CatalogoDetallePrecio = {
   id_partida: number;
   precio_estimado_venta: number;
   enganche: number | null;
@@ -135,7 +121,7 @@ export type TradeinDetallePrecio = {
   num_mes: number;
 };
 
-export type TradeinDetalle = TradeinVehiculo & {
+export type CatalogoDetalle = CatalogoVehiculo & {
   clave_traccion: number | null;
   traccion: string | null;
   puertas: number | null;
@@ -146,20 +132,20 @@ export type TradeinDetalle = TradeinVehiculo & {
   nivel_gas: number | null;
 };
 
-export type TradeinDetalleResp = {
+export type CatalogoDetalleResp = {
   Status: number;
-  Precio: TradeinDetallePrecio[];
-  Detalle: TradeinDetalle[];
+  Precio: CatalogoDetallePrecio[];
+  Detalle: CatalogoDetalle[];
 };
 
 /* ─────────────────────────────── transporte ──────────────────────────────── */
 
 /** Error con status HTTP para que los route handlers decidan el código. */
-export class TradeinError extends Error {
+export class CatalogoError extends Error {
   status: number;
   constructor(message: string, status = 502) {
     super(message);
-    this.name = "TradeinError";
+    this.name = "CatalogoError";
     this.status = status;
   }
 }
@@ -190,32 +176,22 @@ type PedirOpts = {
 };
 
 /**
- * Petición cruda al webservice. Devuelve el objeto ya decodificado.
- * Lanza TradeinError si falta config, la red falla, o el HTTP no es 2xx.
+ * Petición cruda a la API. Devuelve el objeto ya decodificado.
+ * Lanza CatalogoError si falta config, la red falla, o el HTTP no es 2xx.
  */
 async function pedir(path: string, opts: PedirOpts = {}): Promise<unknown> {
-  if (!TRADEIN_ORIGIN) {
-    throw new TradeinError(
-      "El catálogo TRADEIN no está configurado: falta TRADEIN_URL.",
+  if (!CATALOGO_ORIGIN) {
+    throw new CatalogoError(
+      "El catálogo no está configurado: falta CATALOGO_URL.",
       500
-    );
-  }
-  const token = process.env.TRADEIN_TOKEN;
-  if (!token) {
-    throw new TradeinError(
-      "Servicio no disponible: falta TRADEIN_TOKEN en el servidor.",
-      503
     );
   }
 
   const esPost = opts.payload !== undefined;
   const init: RequestInit & { next?: { revalidate: number } } = {
     method: esPost ? "POST" : "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/json",
-      ...(esPost ? { "Content-Type": "application/json" } : {}),
-    },
+    // El contrato pide application/json en GET y POST.
+    headers: { Accept: "application/json", "Content-Type": "application/json" },
     signal: AbortSignal.timeout(20_000),
     ...(opts.revalidate === undefined
       ? { cache: "no-store" as const }
@@ -226,7 +202,7 @@ async function pedir(path: string, opts: PedirOpts = {}): Promise<unknown> {
     init.body = JSON.stringify({ Content });
   }
 
-  const url = `${TRADEIN_ORIGIN}${path}`;
+  const url = `${CATALOGO_ORIGIN}${path}`;
 
   let res: Response;
   try {
@@ -234,17 +210,17 @@ async function pedir(path: string, opts: PedirOpts = {}): Promise<unknown> {
   } catch (error) {
     // Fallo de red o timeout: no hubo respuesta. Se loguea el throw crudo.
     logUpstreamError({
-      servicio: "TRADEIN",
+      servicio: "CATALOGO",
       metodo: init.method ?? "GET",
       url,
       payload: opts.payload,
       error,
     });
     const timedOut = error instanceof Error && error.name === "TimeoutError";
-    throw new TradeinError(
+    throw new CatalogoError(
       timedOut
-        ? "El webservice tardó demasiado en responder."
-        : "No se pudo contactar al webservice TRADEIN.",
+        ? "La API tardó demasiado en responder."
+        : "No se pudo contactar a la API del catálogo.",
       504
     );
   }
@@ -255,15 +231,15 @@ async function pedir(path: string, opts: PedirOpts = {}): Promise<unknown> {
 
   if (!res.ok) {
     logUpstreamError({
-      servicio: "TRADEIN",
+      servicio: "CATALOGO",
       metodo: init.method ?? "GET",
       url,
       status: res.status,
       body: texto,
       payload: opts.payload,
     });
-    throw new TradeinError(
-      `El webservice respondió ${res.status}.`,
+    throw new CatalogoError(
+      `La API respondió ${res.status}.`,
       res.status === 403 ? 502 : res.status
     );
   }
@@ -271,22 +247,22 @@ async function pedir(path: string, opts: PedirOpts = {}): Promise<unknown> {
   const data = parseRespuesta(texto);
   if (data == null || typeof data !== "object") {
     logUpstreamError({
-      servicio: "TRADEIN",
+      servicio: "CATALOGO",
       metodo: init.method ?? "GET",
       url,
       status: res.status,
       body: texto,
       payload: opts.payload,
     });
-    throw new TradeinError("Respuesta ilegible del webservice.");
+    throw new CatalogoError("Respuesta ilegible de la API.");
   }
 
-  // TRADEIN señala fallo de negocio con { Status: 0, Body: "<error>" } y HTTP 200.
+  // La API señala fallo de negocio con { Status: 0, Body: "<error>" } y HTTP 200.
   // Se loguea el detalle pero NO se lanza: cada método decide qué hacer con Status.
   const status = (data as { Status?: number }).Status;
   if (status !== undefined && status !== 1) {
     logUpstreamError({
-      servicio: "TRADEIN",
+      servicio: "CATALOGO",
       metodo: init.method ?? "GET",
       url,
       status: res.status,
@@ -300,7 +276,7 @@ async function pedir(path: string, opts: PedirOpts = {}): Promise<unknown> {
 
 /* ──────────────────────────────── métodos ────────────────────────────────── */
 
-/** Filtros del listado, en claves numéricas (ver contrato del PDF). */
+/** Filtros del listado, en claves numéricas. */
 export type ListadoFiltros = {
   registroInicial?: number;
   registroFinal?: number;
@@ -324,7 +300,7 @@ const KMS_TOPE = 99999999;
 export async function listadoVehiculos(
   f: ListadoFiltros = {},
   opts: { revalidate?: number } = {}
-): Promise<TradeinListadoResp> {
+): Promise<CatalogoListadoResp> {
   const payload = {
     Registro_Incial: f.registroInicial ?? 0,
     Registro_Final: f.registroFinal ?? 0,
@@ -341,39 +317,35 @@ export async function listadoVehiculos(
     Kms: { kms_minimo: f.kmsMin ?? 0, kms_maximo: f.kmsMax ?? KMS_TOPE },
     Texto_Busqueda: f.texto ?? "",
   };
-  if (DEMO_MODE) return demoListado(f);
-  return (await pedir(TRADEIN_ENDPOINTS.listado, {
+  return (await pedir(CATALOGO_ENDPOINTS.listado, {
     payload,
     revalidate: opts.revalidate,
-  })) as TradeinListadoResp;
+  })) as CatalogoListadoResp;
 }
 
 /** GET LISTADO_CAT_COMPLETO: todas las facetas sin filtrar. */
 export async function catalogoCompleto(
   opts: { revalidate?: number } = {}
-): Promise<TradeinCatCompletoResp> {
-  if (DEMO_MODE) return demoCatalogoCompleto();
-  return (await pedir(TRADEIN_ENDPOINTS.catalogoCompleto, {
+): Promise<CatalogoCompletoResp> {
+  return (await pedir(CATALOGO_ENDPOINTS.catalogoCompleto, {
     revalidate: opts.revalidate,
-  })) as TradeinCatCompletoResp;
+  })) as CatalogoCompletoResp;
 }
 
 /** POST LISTADO_BUSQUEDA: autocomplete por texto. */
-export async function busqueda(termino: string): Promise<TradeinBusquedaResp> {
-  if (DEMO_MODE) return demoBusqueda(termino);
-  return (await pedir(TRADEIN_ENDPOINTS.busqueda, {
+export async function busqueda(termino: string): Promise<CatalogoBusquedaResp> {
+  return (await pedir(CATALOGO_ENDPOINTS.busqueda, {
     payload: { busqueda: termino },
-  })) as TradeinBusquedaResp;
+  })) as CatalogoBusquedaResp;
 }
 
 /** POST DETALLE/VEHICULO: ficha + tabla de plazos. */
 export async function detalleVehiculo(
   idPartida: number,
   opts: { revalidate?: number } = {}
-): Promise<TradeinDetalleResp> {
-  if (DEMO_MODE) return demoDetalle(idPartida);
-  return (await pedir(TRADEIN_ENDPOINTS.detalle, {
+): Promise<CatalogoDetalleResp> {
+  return (await pedir(CATALOGO_ENDPOINTS.detalle, {
     payload: { id_partida: idPartida },
     revalidate: opts.revalidate,
-  })) as TradeinDetalleResp;
+  })) as CatalogoDetalleResp;
 }

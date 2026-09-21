@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 
-import { busqueda, TradeinError } from "@/lib/api/tradein";
+import { busqueda, CatalogoError } from "@/lib/api/catalogo";
 
 /**
- * Autocomplete del buscador. Traduce ?q=<texto> al webservice TRADEIN
+ * Autocomplete del buscador. Traduce ?q=<texto> a la API del catálogo
  * (LISTADO_BUSQUEDA) y devuelve una lista plana de sugerencias.
  *
- * POR QUÉ EXISTE: TRADEIN exige Bearer (token secreto, sólo servidor) e IP
- * interna. El navegador no puede llamarlo; este handler hace de puente.
+ * POR QUÉ EXISTE: la API vive en una IP interna. El navegador no puede llamarla;
+ * este handler hace de puente.
  */
 
 export const dynamic = "force-dynamic";
@@ -41,7 +41,7 @@ export async function GET(request: Request) {
       { headers: { "Cache-Control": "no-store" } }
     );
   } catch (error) {
-    if (error instanceof TradeinError) {
+    if (error instanceof CatalogoError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
     return NextResponse.json(
