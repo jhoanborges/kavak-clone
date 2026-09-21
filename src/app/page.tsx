@@ -2,6 +2,8 @@ import Navbar from "@/components/sections/Navbar";
 import Hero from "@/components/sections/Hero";
 import PromoCards from "@/components/sections/PromoCards";
 import OfertasDestacadas from "@/components/sections/OfertasDestacadas";
+import MasEconomicos from "@/components/sections/MasEconomicos";
+import PorSegmento from "@/components/sections/PorSegmento";
 import CreditSimulator from "@/components/sections/CreditSimulator";
 import TrustSection from "@/components/sections/TrustSection";
 import WhyUs from "@/components/sections/WhyUs";
@@ -29,7 +31,9 @@ export default function HomePage() {
       <main>
         <Hero />
         <PromoCards />
-        <OfertasDestacadas cantidad={4} />
+        <OfertasDestacadas cantidad={10} />
+        <MasEconomicos />
+        <PorSegmento />
         <CreditSimulator />
         <TrustSection />
         <WhyUs />

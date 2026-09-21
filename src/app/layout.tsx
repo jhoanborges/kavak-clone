@@ -6,7 +6,8 @@ import { SITE_URL, SITE_DESCRIPTION, absoluteUrl } from "@/lib/seo";
 import { SWRProvider } from "@/lib/swr-provider";
 import { ReduxProvider } from "@/redux/provider";
 import { ThemeProvider } from "@/components/theme-provider";
-import OdooLivechat from "@/components/OdooLivechat";
+// Chat en vivo de Odoo desactivado por ahora.
+// import OdooLivechat from "@/components/OdooLivechat";
 
 /**
  * Design System VALUE: Avenir (títulos) + Museo Sans (cuerpo) + Raleway
@@ -190,7 +191,7 @@ export default function RootLayout({
             <ReduxProvider>{children}</ReduxProvider>
           </SWRProvider>
         </ThemeProvider>
-        <OdooLivechat />
+        {/* <OdooLivechat /> */}
       </body>
     </html>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 
 import { SectionHeading } from "@/components/ds";
@@ -11,25 +12,39 @@ import {
   VehiculosVacio,
 } from "@/components/catalog/VehiculosEstado";
 import { Button } from "@/components/ui/button";
-import { useVehiculosDestacados } from "@/hooks/useVehiculos";
+import { useVehiculos } from "@/hooks/useVehiculos";
 
 /**
- * "Ofertas destacadas" del home: carrusel con autoplay (5 s) y flechas.
+ * "Los más económicos" del home: los N autos de menor precio, en carrusel.
  *
- * OJO con el nombre: el endpoint no tiene ningún concepto de destacado. Es una
- * búsqueda SIN filtros recortada a unos pocos resultados - el orden lo decide el
- * backend. El botón "Ver más" lleva a /vehiculos (listado completo con filtros).
+ * La API no ordena por precio, así que se pide un lote grande y se ordena en
+ * cliente por `precio` ascendente. El botón "Ver más" lleva al listado completo.
  */
-export default function OfertasDestacadas({ cantidad = 10 }: { cantidad?: number }) {
-  const { vehiculos, isLoading, error } = useVehiculosDestacados(cantidad);
+export default function MasEconomicos({
+  cantidad = 10,
+  lote = 60,
+}: {
+  cantidad?: number;
+  lote?: number;
+}) {
+  const { vehiculos, isLoading, error } = useVehiculos({ pagina: 1, cantidad: lote });
+
+  const baratos = useMemo(
+    () =>
+      vehiculos
+        .filter((v) => typeof v.precio === "number")
+        .sort((a, b) => (a.precio ?? 0) - (b.precio ?? 0))
+        .slice(0, cantidad),
+    [vehiculos, cantidad]
+  );
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-14 md:px-14">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <SectionHeading
-          overline="Inventario"
-          title="Ofertas destacadas"
-          lead="Unidades certificadas, listas para entrega."
+          overline="Precio"
+          title="Los más económicos"
+          lead="Las unidades de menor precio del inventario."
           className="mb-0"
         />
         <Button variant="petrol" size="cta" asChild>
@@ -47,12 +62,12 @@ export default function OfertasDestacadas({ cantidad = 10 }: { cantidad?: number
             </li>
           ))}
         </ul>
-      ) : vehiculos.length === 0 ? (
+      ) : baratos.length === 0 ? (
         <VehiculosVacio />
       ) : (
         <>
-          <VehiculoCarousel vehiculos={vehiculos} autoplay />
-          <VehiculosDisclaimer meses={vehiculos[0]?.meses ?? 36} />
+          <VehiculoCarousel vehiculos={baratos} />
+          <VehiculosDisclaimer meses={baratos[0]?.meses ?? 36} />
         </>
       )}
     </section>

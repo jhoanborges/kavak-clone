@@ -150,7 +150,13 @@ export class CatalogoError extends Error {
   }
 }
 
-/** Decodifica la respuesta: JSON plano o base64 -> JSON. */
+/**
+ * Decodifica la respuesta. La API puede mandar tres formas:
+ *  1. JSON plano -> { Status, ... }
+ *  2. base64 CRUDO de un JSON -> "eyJ..." sin comillas.
+ *  3. base64 ENVUELTO en comillas JSON -> `"eyJ..."` (el caso real de esta API).
+ * Devuelve el objeto ya decodificado, o undefined si ninguna forma cuaja.
+ */
 function parseRespuesta(texto: string): unknown {
   const intento = (s: string) => {
     try {
@@ -159,10 +165,16 @@ function parseRespuesta(texto: string): unknown {
       return undefined;
     }
   };
+
   const directo = intento(texto);
-  if (directo !== undefined) return directo;
+  // Caso 1: ya es un objeto JSON.
+  if (directo !== null && typeof directo === "object") return directo;
+
+  // Caso 3: JSON.parse dio un string (base64 entre comillas). Caso 2: no parseó,
+  // el texto crudo es el base64. En ambos, se decodifica base64 -> JSON.
+  const b64 = typeof directo === "string" ? directo : texto;
   try {
-    return intento(Buffer.from(texto, "base64").toString("utf8"));
+    return intento(Buffer.from(b64, "base64").toString("utf8"));
   } catch {
     return undefined;
   }

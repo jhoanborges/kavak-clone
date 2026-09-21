@@ -31,7 +31,7 @@ export function useVehiculos(query: VehiculosQuery) {
 }
 
 /** Home · "Ofertas destacadas" (que en realidad es una búsqueda sin filtros). */
-export function useVehiculosDestacados(cantidad = 4) {
+export function useVehiculosDestacados(cantidad = 9) {
   return useVehiculos(VEHICULOS_PRESETS.destacados(cantidad));
 }
 
