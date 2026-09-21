@@ -2,7 +2,7 @@
 # Deploy SIN internet.
 #
 # El server de dev/prod no tiene salida a internet, así que `docker compose build`
-# (que corre el Dockerfile: `yarn install` desde npm + pull de node:22-alpine)
+# (que corre el Dockerfile: `npm ci` desde el registry + pull de node:22-alpine)
 # falla ahí. El flujo es:
 #
 #   MÁQUINA CON INTERNET            SERVER OFFLINE

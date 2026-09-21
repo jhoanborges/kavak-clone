@@ -8,8 +8,6 @@ node_modules
 .next
 out
 build
-.yarn/cache
-.yarn/install-state.gz
 
 # Secrets — injected at runtime via env_file, never baked into the image.
 # `.env` is the runtime file (copy of .env.production with the real values) and is

@@ -148,7 +148,7 @@ docker compose -f docker-compose.development.yml config | grep -A2 ports
 ```
 
 **b) `NEXT_PUBLIC_APP_URL` se hornea en build.** Es `NEXT_PUBLIC_*`: Next la
-inlinea en el bundle durante `yarn build`, no se lee en runtime. La consume
+inlinea en el bundle durante `npm run build`, no se lee en runtime. La consume
 `src/lib/seo.ts` para el origen canónico (metadata, Open Graph, sitemap). Si
 cambias puerto o dominio y sólo haces `restart`, el sitio sigue anunciando la URL
 vieja. **Siempre `--build`.** Si la imagen quedó con cachés sucias:
@@ -268,4 +268,4 @@ docker compose -f $C exec web env | sort    # ver el env real dentro del contene
 | Cambié `NEXT_PUBLIC_PREESTUDIO_URL` y no aplica | Variable horneada | `up -d --build` |
 | Catálogo vacío o timeout | Sin VPN/LAN, o `TRADEIN_URL`/`TRADEIN_TOKEN` mal | Prueba desde el host: `curl -I http://172.16.0.206/servicio_api_value_tdin` |
 | Contenedor arriba pero `curl` al host falla | Mapeo mal o firewall | `docker compose ps` y revisa la columna PORTS |
-| Build falla en `yarn install --immutable` | `yarn.lock` desincronizado | Corre `yarn install` en local y commitea el lock |
+| Build falla en `npm ci` | `package-lock.json` desincronizado | Corre `npm install` en local y commitea el lock |

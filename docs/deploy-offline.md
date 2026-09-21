@@ -1,10 +1,10 @@
 # Deploy en servidor SIN internet
 
 El servidor de dev/prod no tiene salida a internet. Por eso
-`docker compose up --build` **falla ahí**: el `Dockerfile` corre `yarn install`
-(baja de npm) y necesita bajar la imagen base `node:22-alpine`.
+`docker compose up --build` **falla ahí**: el `Dockerfile` corre `npm ci`
+(baja del registry) y necesita bajar la imagen base `node:22-alpine`.
 
-La solución no es hacer `yarn build` en el server, sino **construir la imagen
+La solución no es hacer `npm run build` en el server, sino **construir la imagen
 completa donde SÍ hay internet y llevar la imagen ya hecha** al server. El server
 sólo la carga y la levanta — cero descargas.
 
@@ -18,7 +18,7 @@ sólo la carga y la levanta — cero descargas.
 ```
 
 > Nota: el server ejecuta la imagen ya construida — dentro ya está el resultado de
-> `yarn build` con las librerías horneadas. No compila ni instala nada en el server.
+> `npm run build` con las librerías horneadas. No compila ni instala nada en el server.
 
 ---
 
