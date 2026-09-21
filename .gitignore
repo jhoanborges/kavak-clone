@@ -40,3 +40,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# heavy build/deploy archives (exceed GitHub 100MB limit)
+*.tar.gz
+value-arrendadora-prod.tar.gz
