@@ -316,7 +316,9 @@ export async function listadoVehiculos(
   const payload = {
     Registro_Incial: f.registroInicial ?? 0,
     Registro_Final: f.registroFinal ?? 0,
-    Anio: f.anio ?? [],
+    // El backend espera Anio como ENTEROS (Nullable<Int32>), no strings: mandar
+    // ["2020"] da Status:0 "could not be converted to System.Nullable`1[Int32]".
+    Anio: (f.anio ?? []).map(Number).filter(Number.isFinite),
     Color: f.color ?? [],
     Marca: f.marca ?? [],
     Modelo: f.modelo ?? [],

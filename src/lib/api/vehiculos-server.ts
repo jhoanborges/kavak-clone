@@ -180,7 +180,15 @@ export async function fetchVehiculoPorId(
   const nid = Number(id);
   if (!Number.isFinite(nid)) return { vehiculo: null, similares: [], plazos: [] };
 
-  const detalle = await detalleVehiculo(nid, { revalidate: 300 });
+  // Si el detalle falla (id inexistente, la API devuelve una página HTML de error,
+  // red caída…), se trata como "no encontrado": la página hace notFound() en vez
+  // de reventar con un 500.
+  let detalle: Awaited<ReturnType<typeof detalleVehiculo>>;
+  try {
+    detalle = await detalleVehiculo(nid, { revalidate: 300 });
+  } catch {
+    return { vehiculo: null, similares: [], plazos: [] };
+  }
   const d0 = detalle.Detalle?.[0];
   if (!d0) return { vehiculo: null, similares: [], plazos: [] };
 
@@ -194,12 +202,18 @@ export async function fetchVehiculoPorId(
     .sort((a, b) => a.meses - b.meses);
 
   // Pool de la misma carrocería: sirve para similares y para las fotos de la
-  // ficha (DETALLE no devuelve imágenes; el listado sí).
-  const pool = await listadoVehiculos(
-    { segmento: [d0.clave_segmento], registroInicial: 0, registroFinal: 60 },
-    { revalidate: 300 }
-  );
-  const imgIdx = indexarImagenes(pool.Listado?.Imagenes ?? []);
+  // ficha (DETALLE no devuelve imágenes; el listado sí). Si falla, la ficha se
+  // muestra igual, sólo sin fotos ni similares.
+  let pool: Awaited<ReturnType<typeof listadoVehiculos>> | null = null;
+  try {
+    pool = await listadoVehiculos(
+      { segmento: [d0.clave_segmento], registroInicial: 0, registroFinal: 60 },
+      { revalidate: 300 }
+    );
+  } catch {
+    pool = null;
+  }
+  const imgIdx = indexarImagenes(pool?.Listado?.Imagenes ?? []);
 
   const vehiculo = normalizarListado(
     { ...d0, ...precioEnVehiculo(d0, detalle.Precio) },
@@ -207,7 +221,7 @@ export async function fetchVehiculoPorId(
   );
 
   const OBJETIVO = 4;
-  const otros = (pool.Listado?.Vehiculos ?? [])
+  const otros = (pool?.Listado?.Vehiculos ?? [])
     .filter((v) => v.id_partida !== nid)
     .map((v) => normalizarListado(v, imgIdx.get(v.id_partida) ?? []));
 
@@ -249,15 +263,22 @@ export async function fetchImagenes(id: string): Promise<GrupoFotos[]> {
   const nid = Number(id);
   if (!Number.isFinite(nid)) return [];
 
-  const detalle = await detalleVehiculo(nid, { revalidate: 3600 });
-  const d0 = detalle.Detalle?.[0];
-  if (!d0) return [];
-
-  // Acota por marca + año para traer la partida (no hay filtro por id).
-  const pool = await listadoVehiculos(
-    { marca: [d0.clave_marca], anio: [d0.anio], registroInicial: 0, registroFinal: 60 },
-    { revalidate: 3600 }
-  );
+  // Mismo criterio que fetchVehiculoPorId: si el detalle o el pool fallan, la
+  // galería queda vacía en vez de tumbar la ficha.
+  let detalle: Awaited<ReturnType<typeof detalleVehiculo>>;
+  let pool: Awaited<ReturnType<typeof listadoVehiculos>>;
+  try {
+    detalle = await detalleVehiculo(nid, { revalidate: 3600 });
+    const d0 = detalle.Detalle?.[0];
+    if (!d0) return [];
+    // Acota por marca + año para traer la partida (no hay filtro por id).
+    pool = await listadoVehiculos(
+      { marca: [d0.clave_marca], anio: [d0.anio], registroInicial: 0, registroFinal: 60 },
+      { revalidate: 3600 }
+    );
+  } catch {
+    return [];
+  }
   const nombres = (pool.Listado?.Imagenes ?? [])
     .filter((img) => img.id_partida === nid && img.nombre_imagen)
     .map((img) => img.nombre_imagen);
