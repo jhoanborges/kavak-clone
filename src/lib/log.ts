@@ -67,11 +67,25 @@ export function logUpstreamError(info: UpstreamInfo): void {
   }
   if (info.body !== undefined) console.error(`  body   : ${recorta(info.body)}`);
   if (info.error !== undefined) {
-    const e = info.error;
-    console.error(`  throw  : ${e instanceof Error ? `${e.name}: ${e.message}` : String(e)}`);
-    if (e instanceof Error && e.stack) console.error(e.stack);
+    console.error(`  throw  : ${fmtError(info.error)}`);
+    // undici (fetch de Node) envuelve el motivo REAL en error.cause: cert TLS,
+    // ECONNREFUSED, ETIMEDOUT, DNS… El "TypeError: fetch failed" de arriba es
+    // genérico; la causa es la que dice qué falló de verdad.
+    let causa: unknown = info.error instanceof Error ? info.error.cause : undefined;
+    for (let i = 0; causa !== undefined && i < 5; i++) {
+      console.error(`  cause  : ${fmtError(causa)}`);
+      causa = causa instanceof Error ? causa.cause : undefined;
+    }
+    if (info.error instanceof Error && info.error.stack) console.error(info.error.stack);
   }
   console.error("────────────────────────────────────────\n");
+}
+
+/** Formatea un error incluyendo su `code` (ej. UNABLE_TO_VERIFY_LEAF_SIGNATURE). */
+function fmtError(e: unknown): string {
+  if (!(e instanceof Error)) return String(e);
+  const code = (e as { code?: string }).code;
+  return `${e.name}: ${e.message}${code ? ` (code: ${code})` : ""}`;
 }
 
 /** Log de éxito (sólo en debug) para trazar qué se llamó y con qué latencia. */
