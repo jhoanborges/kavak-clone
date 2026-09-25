@@ -1,98 +1,77 @@
-# ─────────────────────────────────────────────────────────────────────────────
-# Deploy SIN internet.
-#
-# El server de dev/prod no tiene salida a internet, así que `docker compose build`
-# (que corre el Dockerfile: `npm ci` desde el registry + pull de node:22-alpine)
-# falla ahí. El flujo es:
-#
-#   MÁQUINA CON INTERNET            SERVER OFFLINE
-#   ───────────────────            ──────────────
-#   make prod-package     ── tar ─►  make prod-deploy
-#   (build + save)          copia     (load + up, cero descargas)
-#
-# La imagen se construye una vez donde hay red, se exporta a un .tar.gz, se sube al
-# server y ahí sólo se carga y se levanta. El contenedor arranca con las librerías
-# ya horneadas en la imagen; no baja nada.
-#
-# Requisitos en el server (no dependen de internet):
-#   - Docker Engine + Compose v2 ≥ 2.24
-#   - `.env` presente (cp .env.production .env / cp .env.development .env y rellenar)
-# ─────────────────────────────────────────────────────────────────────────────
+# Makefile — despliegue Docker (dev / prod) para el servidor.
+# Uso: make dev-up | make dev-down | make prod-up | make prod-down
+# Server CON internet: build corre en el propio server (git pull + build + up).
+# Requiere Docker + Docker Compose v2. Sin grupo docker -> usa: sudo make <target>
 
 SHELL := /bin/sh
 
-# ── producción ──────────────────────────────────────────────────────────────
-PROD_COMPOSE := docker-compose.prod.yml
-PROD_IMAGE   := value-arrendadora:prod
-PROD_TAR     := value-arrendadora-prod.tar.gz
+DEV    := docker-compose.development.yml
+PROD   := docker-compose.prod.yml
+BRANCH := master
 
-# ── desarrollo ──────────────────────────────────────────────────────────────
-DEV_COMPOSE  := docker-compose.development.yml
-DEV_IMAGE    := value-arrendadora:dev
-DEV_TAR      := value-arrendadora-dev.tar.gz
+.DEFAULT_GOAL := help
+.PHONY: help dev-up dev-down dev-logs dev-ps dev-restart \
+        prod-up prod-down prod-logs prod-ps prod-restart
 
-.PHONY: help \
-        prod-build prod-save prod-package prod-load prod-up prod-deploy \
-        prod-down prod-logs prod-ps prod-restart \
-        dev-build dev-save dev-package dev-load dev-up dev-deploy \
-        dev-down dev-logs dev-ps dev-restart
+## --------------------------- DEV ---------------------------
 
-help: ## Lista los targets
-	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
-		sort | awk 'BEGIN{FS=":.*?## "}{printf "  \033[36m%-16s\033[0m %s\n", $$1, $$2}'
+# Flujo completo dev: pull -> .env -> build -> down -> up (un comando).
+# El compose de dev exige `.env` (runtime), por eso se copia de .env.development.
+dev-up:
+	git pull origin $(BRANCH)
+	cp .env.development .env
+	docker compose -f $(DEV) build
+	docker compose -f $(DEV) down
+	docker compose -f $(DEV) up -d
+	docker compose -f $(DEV) ps
 
-# ═══════════════ MÁQUINA CON INTERNET (build) ═══════════════
+dev-down:
+	docker compose -f $(DEV) down
 
-prod-build: ## [internet] Construye la imagen de prod (baja libs + base)
-	docker compose -f $(PROD_COMPOSE) build
+dev-logs:
+	docker compose -f $(DEV) logs -f web
 
-prod-save: ## [internet] Exporta la imagen de prod a un .tar.gz para subir
-	docker save $(PROD_IMAGE) | gzip > $(PROD_TAR)
-	@echo "Creado $(PROD_TAR) ($$(du -h $(PROD_TAR) | cut -f1)). Súbelo al server."
+dev-ps:
+	docker compose -f $(DEV) ps
 
-prod-package: prod-build prod-save ## [internet] build + save en un paso
+dev-restart:
+	docker compose -f $(DEV) restart web
 
-# ═══════════════ SERVER OFFLINE (deploy) ═══════════════
+## -------------------------- PROD ---------------------------
 
-prod-load: ## [offline] Carga la imagen desde el .tar.gz (sin red)
-	gunzip -c $(PROD_TAR) | docker load
+# Flujo completo prod: pull -> .env -> build -> down -> up.
+# prod lee runtime desde .env (copiado de .env.production).
+prod-up:
+	git pull origin $(BRANCH)
+	cp .env.production .env
+	docker compose -f $(PROD) build
+	docker compose -f $(PROD) down
+	docker compose -f $(PROD) up -d
+	docker compose -f $(PROD) ps
 
-prod-up: ## [offline] Levanta con la imagen cargada, SIN build ni descargas
-	docker compose -f $(PROD_COMPOSE) up -d --no-build
+prod-down:
+	docker compose -f $(PROD) down
 
-prod-deploy: prod-load prod-up ## [offline] load + up
-	docker compose -f $(PROD_COMPOSE) ps
+prod-logs:
+	docker compose -f $(PROD) logs -f web
 
-# ═══════════════ operación ═══════════════
+prod-ps:
+	docker compose -f $(PROD) ps
 
-prod-down: ## Baja el contenedor de prod
-	docker compose -f $(PROD_COMPOSE) down
-prod-logs: ## Sigue los logs de prod
-	docker compose -f $(PROD_COMPOSE) logs -f web
-prod-ps: ## Estado del contenedor de prod
-	docker compose -f $(PROD_COMPOSE) ps
-prod-restart: ## Reinicia prod (sin recrear)
-	docker compose -f $(PROD_COMPOSE) restart web
+prod-restart:
+	docker compose -f $(PROD) restart web
 
-# ═══════════════ development (mismo flujo) ═══════════════
+## --------------------------------------------------------
 
-dev-build: ## [internet] Construye la imagen de development
-	docker compose -f $(DEV_COMPOSE) build
-dev-save: ## [internet] Exporta la imagen de development a .tar.gz
-	docker save $(DEV_IMAGE) | gzip > $(DEV_TAR)
-	@echo "Creado $(DEV_TAR) ($$(du -h $(DEV_TAR) | cut -f1)). Súbelo al server."
-dev-package: dev-build dev-save ## [internet] build + save
-dev-load: ## [offline] Carga la imagen de development
-	gunzip -c $(DEV_TAR) | docker load
-dev-up: ## [offline] Levanta development sin build
-	docker compose -f $(DEV_COMPOSE) up -d --no-build
-dev-deploy: dev-load dev-up ## [offline] load + up
-	docker compose -f $(DEV_COMPOSE) ps
-dev-down: ## Baja development
-	docker compose -f $(DEV_COMPOSE) down
-dev-logs: ## Logs de development
-	docker compose -f $(DEV_COMPOSE) logs -f web
-dev-ps: ## Estado de development
-	docker compose -f $(DEV_COMPOSE) ps
-dev-restart: ## Reinicia development
-	docker compose -f $(DEV_COMPOSE) restart web
+help:
+	@echo "Targets:"
+	@echo "  make dev-up       pull + .env + build + down + up (development)"
+	@echo "  make dev-down     baja development"
+	@echo "  make dev-logs     logs -f (development)"
+	@echo "  make dev-ps       estado (development)"
+	@echo "  make dev-restart  reinicia development"
+	@echo "  make prod-up      pull + .env + build + down + up (production)"
+	@echo "  make prod-down    baja production"
+	@echo "  make prod-logs    logs -f (production)"
+	@echo "  make prod-ps      estado (production)"
+	@echo "  make prod-restart reinicia production"
